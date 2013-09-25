@@ -1,6 +1,54 @@
 <img src="http://img.jcabi.com/logo.png" width="200px" height="48px" />
 
-More details are here: [www.jcabi.com/jcabi-beanstalk-maven-plugin](http://www.jcabi.com/jcabi-beanstalk-maven-plugin/index.html)
+More details are here:
+[www.jcabi.com/jcabi-beanstalk-maven-plugin](http://www.jcabi.com/jcabi-beanstalk-maven-plugin/index.html)
+
+The plugin automates deployment of Java WAR applications
+to [AWS Elastic Beanstalk](http://aws.amazon.com/elasticbeanstalk/).
+The plugin is designed with a minimalistic
+approach, so that you don't need to provide a lot of configuration
+options. Instead, there are a few conventions:
+
+ * CNAME of a "primary" environment is always the same as the application name
+
+ * Environments are configured only by
+   [saved configuration templates](http://docs.amazonwebservices.com/elasticbeanstalk/latest/dg/using-features.managing.html#using-features.managing.saving)
+
+ * Deployment is done either by
+   [CNAME swap](http://docs.amazonwebservices.com/elasticbeanstalk/latest/dg/using-features.CNAMESwap.html)
+   or version update
+
+ * An application always contains only one "primary" environment.
+
+Details are explained in [usage documentation](http://www.jcabi.com/jcabi-beanstalk-maven-plugin/index.html),
+but in short it works like this:
+
+```xml
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.jcabi</groupId>
+        <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
+        <version>0.8.1</version>
+        <configuration>
+          <name>example</name>
+          <bucket>webapps.example.com</bucket>
+          <key>${project.artifactId}-${project.version}.war</key>
+          <template>example</template>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+```
 
 ## Questions?
 
