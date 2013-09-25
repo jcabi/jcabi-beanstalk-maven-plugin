@@ -1,5 +1,5 @@
  ------
- Usage of Amazon Beanstalk Maven Plugin
+ Deploying to AWS Beanstalk with Maven
  ------
  Yegor Bugayenko
  ------
@@ -37,7 +37,7 @@
 ~~ OF THE POSSIBILITY OF SUCH DAMAGE.
 ~~
 
-Deploying WAR projects to Amazon Elastic Beanstalk
+Deploying WAR projects to AWS Elastic Beanstalk
 
   {{{http://docs.amazonwebservices.com/elasticbeanstalk/latest/dg/using-features.deployment.newapp.html}Create
   new application}} in Amazon Elastic Beanstalk.
