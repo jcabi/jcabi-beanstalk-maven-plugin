@@ -58,6 +58,7 @@ public final class UpdateMojo extends AbstractBeanstalkMojo {
             primary = app.primary();
             primary.update(version);
         } else {
+            app.clean(false);
             primary = app.candidate(version, template);
         }
         if (!primary.green()) {
