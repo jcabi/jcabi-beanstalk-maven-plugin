@@ -38,6 +38,7 @@ import com.amazonaws.services.elasticbeanstalk.model.DescribeEnvironmentsResult;
 import com.amazonaws.services.elasticbeanstalk.model.EnvironmentDescription;
 import com.amazonaws.services.elasticbeanstalk.model.SwapEnvironmentCNAMEsRequest;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -72,12 +73,12 @@ final class Application {
      * @param clnt The client
      * @param app Application name
      */
-    public Application(@NotNull final AWSElasticBeanstalk clnt,
+    protected Application(@NotNull final AWSElasticBeanstalk clnt,
         @NotNull final String app) {
         this.client = clnt;
         this.name = app;
         Logger.info(
-            this,
+            Application.class,
             "Working with application '%s'",
             this.name
         );
@@ -182,8 +183,7 @@ final class Application {
         Logger.info(
             this,
             "Environment '%s' swapped CNAME with '%s'",
-            candidate.name(),
-            primary.name()
+            candidate.name(), primary.name()
         );
         if (candidate.stable() && !candidate.primary()) {
             throw new DeploymentException(
@@ -333,8 +333,7 @@ final class Application {
         return String.format(
             "%s-e%03d",
             this.name,
-            // @checkstyle MagicNumber (1 line)
-            100 + new Random().nextInt(900)
+            Tv.HUNDRED + new Random().nextInt(Tv.NINE * Tv.HUNDRED)
         );
     }
 

@@ -36,21 +36,21 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import java.io.File;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
 import org.jfrog.maven.annomojo.annotations.MojoParameter;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
- * Deploys WAR artifact to Amazon Elastic Beanstalk.
+ * Abstract MOJO for this plugin.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.7.1
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
-abstract class AbstractMojo
-    extends org.apache.maven.plugin.AbstractMojo {
+abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Setting.xml.

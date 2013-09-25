@@ -43,7 +43,7 @@ import org.jfrog.maven.annomojo.annotations.MojoPhase;
  */
 @MojoGoal("update")
 @MojoPhase("deploy")
-public final class UpdateMojo extends AbstractMojo {
+public final class UpdateMojo extends AbstractBeanstalkMojo {
 
     /**
      * {@inheritDoc}
@@ -65,8 +65,7 @@ public final class UpdateMojo extends AbstractMojo {
         Logger.info(
             this,
             "Environment '%s' successfully updated to '%s'",
-            primary,
-            version
+            primary, version
         );
     }
 

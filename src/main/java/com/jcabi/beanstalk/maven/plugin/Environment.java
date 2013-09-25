@@ -91,7 +91,7 @@ final class Environment {
      * @param clnt The client
      * @param idnt Environment ID
      */
-    public Environment(@NotNull final AWSElasticBeanstalk clnt,
+    protected Environment(@NotNull final AWSElasticBeanstalk clnt,
         @NotNull final String idnt) {
         this.client = clnt;
         this.eid = idnt;
@@ -107,19 +107,16 @@ final class Environment {
             for (ConfigurationSettingsDescription config
                 : res.getConfigurationSettings()) {
                 Logger.debug(
-                    this,
+                    Environment.class,
                     "Environment '%s/%s/%s' settings:",
-                    config.getApplicationName(),
-                    config.getEnvironmentName()
+                    config.getApplicationName(), config.getEnvironmentName()
                 );
                 for (ConfigurationOptionSetting opt
                     : config.getOptionSettings()) {
                     Logger.debug(
-                        this,
+                        Environment.class,
                         "  %s/%s: %s",
-                        opt.getNamespace(),
-                        opt.getOptionName(),
-                        opt.getValue()
+                        opt.getNamespace(), opt.getOptionName(), opt.getValue()
                     );
                 }
             }
@@ -134,9 +131,7 @@ final class Environment {
         final EnvironmentDescription desc = this.description();
         return String.format(
             "%s/%s/%s",
-            desc.getEnvironmentName(),
-            desc.getEnvironmentId(),
-            desc.getCNAME()
+            desc.getEnvironmentName(), desc.getEnvironmentId(), desc.getCNAME()
         );
     }
 
@@ -153,16 +148,14 @@ final class Environment {
         if (primary) {
             Logger.info(
                 this,
-                "Environment '%s' considered primary",
-                this
+                "Environment '%s' considered primary", this
             );
         } else {
             Logger.info(
                 this,
                 // @checkstyle LineLength (1 line)
                 "Environment '%s' considered secondary since its CNAME doesn't start with '%s'",
-                this,
-                prefix
+                this, prefix
             );
         }
         return primary;
@@ -276,7 +269,7 @@ final class Environment {
                 )
             );
         }
-        return events.toArray(new String[] {});
+        return events.toArray(new String[events.size()]);
     }
 
     /**

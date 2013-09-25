@@ -43,7 +43,7 @@ import org.jfrog.maven.annomojo.annotations.MojoPhase;
  */
 @MojoGoal("deploy")
 @MojoPhase("deploy")
-public final class DeployMojo extends AbstractMojo {
+public final class DeployMojo extends AbstractBeanstalkMojo {
 
     /**
      * {@inheritDoc}
