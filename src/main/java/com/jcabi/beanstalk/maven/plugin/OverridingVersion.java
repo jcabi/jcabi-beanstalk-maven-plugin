@@ -49,6 +49,7 @@ import lombok.EqualsAndHashCode;
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "application", "bundle" })
+@Loggable(Loggable.DEBUG)
 final class OverridingVersion implements Version {
 
     /**
@@ -72,7 +73,7 @@ final class OverridingVersion implements Version {
      * @param app Application name
      * @param bndl Bundle
      */
-    public OverridingVersion(@NotNull final AWSElasticBeanstalk clnt,
+    protected OverridingVersion(@NotNull final AWSElasticBeanstalk clnt,
         @NotNull final String app, @NotNull final Bundle bndl) {
         this.client = clnt;
         this.application = app;
@@ -91,7 +92,6 @@ final class OverridingVersion implements Version {
      * {@inheritDoc}
      */
     @Override
-    @Loggable(Loggable.DEBUG)
     public String label() {
         if (this.exists()) {
             Logger.info(

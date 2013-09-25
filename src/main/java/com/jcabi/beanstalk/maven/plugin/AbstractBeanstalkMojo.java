@@ -33,7 +33,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
@@ -134,7 +133,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * Set skip option.
      * @param skp Shall we skip execution?
      */
-    @Loggable(Loggable.DEBUG)
     public void setSkip(final boolean skp) {
         this.skip = skp;
     }
@@ -143,7 +141,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * {@inheritDoc}
      */
     @Override
-    @Loggable(Loggable.INFO)
     public void execute() throws MojoFailureException {
         StaticLoggerBinder.getSingleton().setMavenLog(this.getLog());
         if (this.skip) {

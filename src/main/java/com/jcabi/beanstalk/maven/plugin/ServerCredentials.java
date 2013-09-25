@@ -48,6 +48,7 @@ import org.apache.maven.settings.Settings;
  */
 @ToString
 @EqualsAndHashCode(of = { "key", "secret" })
+@Loggable(Loggable.DEBUG)
 final class ServerCredentials implements AWSCredentials {
 
     /**
@@ -66,7 +67,7 @@ final class ServerCredentials implements AWSCredentials {
      * @param name Name of server ID
      * @throws MojoFailureException If some error
      */
-    public ServerCredentials(@NotNull final Settings settings,
+    protected ServerCredentials(@NotNull final Settings settings,
         @NotNull final String name)
         throws MojoFailureException {
         final Server server = settings.getServer(name);
@@ -110,7 +111,6 @@ final class ServerCredentials implements AWSCredentials {
      * {@inheritDoc}
      */
     @Override
-    @Loggable(Loggable.DEBUG)
     public String getAWSAccessKeyId() {
         return this.key;
     }
@@ -119,7 +119,6 @@ final class ServerCredentials implements AWSCredentials {
      * {@inheritDoc}
      */
     @Override
-    @Loggable(Loggable.DEBUG)
     public String getAWSSecretKey() {
         return this.secret;
     }

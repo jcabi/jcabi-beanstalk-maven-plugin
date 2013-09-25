@@ -58,6 +58,7 @@ import org.apache.commons.io.IOUtils;
  */
 @ToString
 @EqualsAndHashCode(of = { "client", "bucket", "key", "war" })
+@Loggable(Loggable.DEBUG)
 final class OverridingBundle implements Bundle {
 
     /**
@@ -109,7 +110,6 @@ final class OverridingBundle implements Bundle {
      *  https://github.com/yegor256/jcabi/issues/105
      */
     @Override
-    @Loggable(Loggable.DEBUG)
     public S3Location location() {
         if (this.exists()) {
             Logger.info(
@@ -148,7 +148,6 @@ final class OverridingBundle implements Bundle {
      * {@inheritDoc}
      */
     @Override
-    @Loggable(Loggable.DEBUG)
     public String name() {
         return this.key;
     }
@@ -157,7 +156,6 @@ final class OverridingBundle implements Bundle {
      * {@inheritDoc}
      */
     @Override
-    @Loggable(Loggable.DEBUG)
     public String etag() {
         try {
             final InputStream stream = new FileInputStream(this.war);

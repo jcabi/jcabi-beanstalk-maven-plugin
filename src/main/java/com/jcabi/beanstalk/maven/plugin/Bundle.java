@@ -68,6 +68,7 @@ interface Bundle {
      */
     @ToString
     @EqualsAndHashCode(of = "origin")
+    @Loggable(Loggable.DEBUG)
     final class Safe implements Bundle {
         /**
          * Original bundle.
@@ -84,7 +85,6 @@ interface Bundle {
          * {@inheritDoc}
          */
         @Override
-        @Loggable(Loggable.DEBUG)
         public String name() {
             return this.origin.name().replace("/", "_");
         }
@@ -92,7 +92,6 @@ interface Bundle {
          * {@inheritDoc}
          */
         @Override
-        @Loggable(Loggable.DEBUG)
         public S3Location location() {
             return this.origin.location();
         }
@@ -100,7 +99,6 @@ interface Bundle {
          * {@inheritDoc}
          */
         @Override
-        @Loggable(Loggable.DEBUG)
         public String etag() {
             return this.origin.etag();
         }

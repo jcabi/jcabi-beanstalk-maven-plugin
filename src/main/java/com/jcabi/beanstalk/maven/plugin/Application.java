@@ -56,6 +56,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(of = { "client", "name" })
 @SuppressWarnings("PMD.TooManyMethods")
+@Loggable(Loggable.DEBUG)
 final class Application {
 
     /**
@@ -88,7 +89,6 @@ final class Application {
      * Clean it up beforehand.
      * @param wipe Kill all existing environments no matter what?
      */
-    @Loggable(Loggable.DEBUG)
     public void clean(final boolean wipe) {
         for (Environment env : this.environments()) {
             if (env.primary() && env.green() && !wipe) {
@@ -132,7 +132,6 @@ final class Application {
      * Get primary environment or throws a runtime exception if it is absent.
      * @return Primary environment
      */
-    @Loggable(Loggable.DEBUG)
     public Environment primary() {
         Environment primary = null;
         for (Environment env : this.environments()) {
@@ -156,7 +155,6 @@ final class Application {
      * This application has a primary environment?
      * @return TRUE if it exists
      */
-    @Loggable(Loggable.DEBUG)
     public boolean hasPrimary() {
         boolean has = false;
         for (Environment env : this.environments()) {
@@ -172,7 +170,6 @@ final class Application {
      * Activate candidate environment by swap of CNAMEs.
      * @param candidate The candidate to make a primary environment
      */
-    @Loggable(Loggable.DEBUG)
     public void swap(@NotNull final Environment candidate) {
         final Environment primary = this.primary();
         this.client.swapEnvironmentCNAMEs(
@@ -210,7 +207,6 @@ final class Application {
      * @param template EBT configuration template
      * @return The environment
      */
-    @Loggable(Loggable.DEBUG)
     public Environment candidate(@NotNull final Version version,
         @NotNull final String template) {
         final CreateEnvironmentRequest request = this.suggest();

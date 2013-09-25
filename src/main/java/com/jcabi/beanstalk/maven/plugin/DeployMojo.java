@@ -29,13 +29,14 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
+import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import javax.validation.constraints.NotNull;
 import org.jfrog.maven.annomojo.annotations.MojoGoal;
 import org.jfrog.maven.annomojo.annotations.MojoPhase;
 
 /**
- * Deploys WAR artifact to Amazon Elastic Beanstalk.
+ * Deploys WAR artifact to AWS Elastic Beanstalk.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
@@ -43,6 +44,7 @@ import org.jfrog.maven.annomojo.annotations.MojoPhase;
  */
 @MojoGoal("deploy")
 @MojoPhase("deploy")
+@Loggable(Loggable.INFO)
 public final class DeployMojo extends AbstractBeanstalkMojo {
 
     /**
@@ -50,8 +52,7 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
      */
     @Override
     protected void exec(@NotNull final Application app,
-        @NotNull final Version version,
-        final String template) {
+        @NotNull final Version version, @NotNull final String template) {
         try {
             this.deploy(app, version, template);
         } catch (DeploymentException ex) {
