@@ -36,7 +36,7 @@ package com.jcabi.beanstalk.maven.plugin;
  * @version $Id$
  * @since 0.3
  */
-public final class DeploymentException extends RuntimeException {
+final class DeploymentException extends RuntimeException {
 
     /**
      * Serialization marker.
@@ -47,7 +47,7 @@ public final class DeploymentException extends RuntimeException {
      * Public ctor.
      * @param cause The cause of it
      */
-    public DeploymentException(final Throwable cause) {
+    protected DeploymentException(final Throwable cause) {
         super(cause);
     }
 
@@ -55,7 +55,7 @@ public final class DeploymentException extends RuntimeException {
      * Public ctor.
      * @param cause The cause of it
      */
-    public DeploymentException(final String cause) {
+    protected DeploymentException(final String cause) {
         super(cause);
     }
 

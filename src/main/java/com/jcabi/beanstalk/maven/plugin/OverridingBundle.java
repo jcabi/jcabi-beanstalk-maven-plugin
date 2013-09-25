@@ -89,7 +89,7 @@ final class OverridingBundle implements Bundle {
      * @param file WAR file location
      * @checkstyle ParameterNumber (4 lines)
      */
-    public OverridingBundle(@NotNull final AmazonS3 clnt,
+    protected OverridingBundle(@NotNull final AmazonS3 clnt,
         @NotNull final String bckt, @NotNull final String label,
         @NotNull final File file) {
         this.client = clnt;
