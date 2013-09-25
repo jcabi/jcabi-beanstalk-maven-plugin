@@ -56,7 +56,7 @@ Amazon Elastic Beanstalk Deployment Maven Plugin
 
    * An application always contains only one "primary" environment.
 
-  See {{{./usage.html}Usage}} page.
+  See {{{./usage.html}usage page}}.
 
   If you need more precise and custom configuration we recommend to use
   {{{http://beanstalker.ingenieux.com.br/beanstalk-maven-plugin/}beanstalk-maven-plugin}}.
