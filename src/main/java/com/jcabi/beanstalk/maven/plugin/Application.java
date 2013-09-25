@@ -226,12 +226,9 @@ final class Application {
             this,
             // @checkstyle LineLength (1 line)
             "Candidate environment '%s/%s/%s' created at CNAME '%s' (status:%s, health:%s)",
-            res.getApplicationName(),
-            res.getEnvironmentName(),
-            res.getEnvironmentId(),
-            res.getCNAME(),
-            res.getStatus(),
-            res.getHealth()
+            res.getApplicationName(), res.getEnvironmentName(),
+            res.getEnvironmentId(), res.getCNAME(),
+            res.getStatus(), res.getHealth()
         );
         return new Environment(this.client, res.getEnvironmentId());
     }

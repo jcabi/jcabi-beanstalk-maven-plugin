@@ -49,6 +49,7 @@ import com.amazonaws.services.elasticbeanstalk.model.TerminateEnvironmentResult;
 import com.amazonaws.services.elasticbeanstalk.model.UpdateEnvironmentRequest;
 import com.amazonaws.services.elasticbeanstalk.model.UpdateEnvironmentResult;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.net.URL;
@@ -76,7 +77,7 @@ final class Environment {
     /**
      * For how long we can wait until env reaches certain status.
      */
-    private static final int MAX_DELAY_MS = 30 * 60 * 1000;
+    private static final long DELAY_MS = TimeUnit.MINUTES.toMillis(Tv.THIRTY);
 
     /**
      * AWS beanstalk client.
@@ -228,12 +229,9 @@ final class Environment {
             Logger.info(
                 this,
                 "Environment '%s/%s/%s' is terminated (label:'%s', status:%s)",
-                res.getApplicationName(),
-                res.getEnvironmentName(),
-                res.getEnvironmentId(),
-                res.getCNAME(),
-                res.getVersionLabel(),
-                res.getStatus()
+                res.getApplicationName(), res.getEnvironmentName(),
+                res.getEnvironmentId(), res.getCNAME(),
+                res.getVersionLabel(), res.getStatus()
             );
         }
     }
@@ -257,11 +255,7 @@ final class Environment {
         final Collection<String> events = new LinkedList<String>();
         for (EventDescription desc : res.getEvents()) {
             events.add(
-                String.format(
-                    "[%s]: %s",
-                    desc.getSeverity(),
-                    desc.getMessage()
-                )
+                String.format("[%s]: %s", desc.getSeverity(), desc.getMessage())
             );
         }
         return events.toArray(new String[events.size()]);
@@ -300,7 +294,7 @@ final class Environment {
         List<EnvironmentInfoDescription> infos;
         final long start = System.currentTimeMillis();
         do {
-            if (System.currentTimeMillis() - start > Environment.MAX_DELAY_MS) {
+            if (System.currentTimeMillis() - start > Environment.DELAY_MS) {
                 throw new DeploymentException(
                     String.format(
                         "env '%s' doesn't report its TAIL, time out",
@@ -392,7 +386,7 @@ final class Environment {
                 passed = true;
                 break;
             }
-            if (System.currentTimeMillis() - start > Environment.MAX_DELAY_MS) {
+            if (System.currentTimeMillis() - start > Environment.DELAY_MS) {
                 Logger.warn(
                     this,
                     "Environment failed to reach '%s' after %[ms]s",
