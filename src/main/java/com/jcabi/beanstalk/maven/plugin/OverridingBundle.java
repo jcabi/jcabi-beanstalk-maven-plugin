@@ -124,8 +124,7 @@ final class OverridingBundle implements Bundle {
                 "Uploading %s (%s) to s3://%s/%s... (may take a few minutes)",
                 this.war,
                 FileUtils.byteCountToDisplaySize(this.war.length()),
-                this.bucket,
-                this.key
+                this.bucket, this.key
             );
             final PutObjectResult res = this.client.putObject(
                 this.bucket, this.key, this.war
@@ -134,10 +133,8 @@ final class OverridingBundle implements Bundle {
                 this,
                 // @checkstyle LineLength (1 line)
                 "Uploaded successfully to S3, etag=%s, expires=%s, exp.rule=%s, encryption=%s, version=%s",
-                res.getETag(),
-                res.getExpirationTime(),
-                res.getExpirationTimeRuleId(),
-                res.getServerSideEncryption(),
+                res.getETag(), res.getExpirationTime(),
+                res.getExpirationTimeRuleId(), res.getServerSideEncryption(),
                 res.getVersionId()
             );
         }
@@ -183,8 +180,7 @@ final class OverridingBundle implements Bundle {
                     this,
                     // @checkstyle LineLength (1 line)
                     "MD5 ETag '%s' of existing S3 object '%s' (%s) equals to the one of the local file (%s)",
-                    meta.getETag(),
-                    this.key,
+                    meta.getETag(), this.key,
                     FileUtils.byteCountToDisplaySize(meta.getContentLength()),
                     FileUtils.byteCountToDisplaySize(this.war.length())
                 );
@@ -194,11 +190,9 @@ final class OverridingBundle implements Bundle {
                     this,
                     // @checkstyle LineLength (1 line)
                     "MD5 ETag '%s' of S3 object '%s' (%s) differs from '%s' of the local file (%s)",
-                    meta.getETag(),
-                    this.key,
+                    meta.getETag(), this.key,
                     FileUtils.byteCountToDisplaySize(meta.getContentLength()),
-                    etag,
-                    FileUtils.byteCountToDisplaySize(this.war.length())
+                    etag, FileUtils.byteCountToDisplaySize(this.war.length())
                 );
             }
         }
@@ -223,8 +217,7 @@ final class OverridingBundle implements Bundle {
             Logger.info(
                 this,
                 "S3 object '%s' not found in '%s' bucket",
-                this.key,
-                this.bucket
+                this.key, this.bucket
             );
         } else {
             final S3ObjectSummary summary = summaries.get(0);
@@ -232,11 +225,8 @@ final class OverridingBundle implements Bundle {
                 this,
                 // @checkstyle LineLength (1 line)
                 "S3 object '%s' found in '%s' bucket (size=%d, last-modified=%s, etag=%s)",
-                summary.getKey(),
-                summary.getBucketName(),
-                summary.getSize(),
-                summary.getLastModified(),
-                summary.getETag()
+                summary.getKey(), summary.getBucketName(), summary.getSize(),
+                summary.getLastModified(), summary.getETag()
             );
             exists = true;
         }

@@ -50,6 +50,7 @@ import com.amazonaws.services.elasticbeanstalk.model.UpdateEnvironmentRequest;
 import com.amazonaws.services.elasticbeanstalk.model.UpdateEnvironmentResult;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -68,7 +69,7 @@ import org.apache.commons.io.IOUtils;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @EqualsAndHashCode(of = { "client", "eid" })
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports" })
 @Loggable(Loggable.DEBUG)
 final class Environment {
 
@@ -319,7 +320,7 @@ final class Environment {
         final EnvironmentInfoDescription desc = infos.get(0);
         try {
             return IOUtils.toString(new URL(desc.getMessage()).openStream());
-        } catch (java.io.IOException ex) {
+        } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
     }
@@ -337,8 +338,7 @@ final class Environment {
         Logger.info(
             this,
             "Environment '%s' updated to '%s'",
-            res.getEnvironmentId(),
-            res.getVersionLabel()
+            res.getEnvironmentId(), res.getVersionLabel()
         );
     }
 
@@ -353,10 +353,7 @@ final class Environment {
         );
         if (res.getEnvironments().isEmpty()) {
             throw new DeploymentException(
-                String.format(
-                    "environment '%s' not found",
-                    this.eid
-                )
+                String.format("environment '%s' not found", this.eid)
             );
         }
         final EnvironmentDescription desc = res.getEnvironments().get(0);
@@ -364,13 +361,9 @@ final class Environment {
             this,
             // @checkstyle LineLength (1 line)
             "ID=%s, env=%s, app=%s, CNAME=%s, label=%s, template=%s, status=%s, health=%s",
-            desc.getEnvironmentId(),
-            desc.getEnvironmentName(),
-            desc.getApplicationName(),
-            desc.getCNAME(),
-            desc.getVersionLabel(),
-            desc.getTemplateName(),
-            desc.getStatus(),
+            desc.getEnvironmentId(), desc.getEnvironmentName(),
+            desc.getApplicationName(), desc.getCNAME(),
+            desc.getVersionLabel(), desc.getTemplateName(), desc.getStatus(),
             desc.getHealth()
         );
         return desc;
@@ -390,12 +383,9 @@ final class Environment {
                 this,
                 // @checkstyle LineLength (1 line)
                 "Environment '%s/%s/%s': health=%s, status=%s (waiting for %s, %[ms]s)",
-                desc.getApplicationName(),
-                desc.getEnvironmentName(),
-                desc.getEnvironmentId(),
-                desc.getHealth(),
-                desc.getStatus(),
-                barrier.message(),
+                desc.getApplicationName(), desc.getEnvironmentName(),
+                desc.getEnvironmentId(), desc.getHealth(),
+                desc.getStatus(), barrier.message(),
                 System.currentTimeMillis() - start
             );
             if (barrier.allow(desc)) {
@@ -406,8 +396,7 @@ final class Environment {
                 Logger.warn(
                     this,
                     "Environment failed to reach '%s' after %[ms]s",
-                    barrier.message(),
-                    System.currentTimeMillis() - start
+                    barrier.message(), System.currentTimeMillis() - start
                 );
                 break;
             }

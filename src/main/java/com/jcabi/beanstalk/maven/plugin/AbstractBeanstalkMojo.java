@@ -33,8 +33,10 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
@@ -216,6 +218,35 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         for (String line : lines) {
             Logger.info(this, ">> %s", line);
         }
+    }
+
+    /**
+     * Wait for green status.
+     * @param env The environment
+     * @return TRUE if green
+     */
+    protected boolean isGreen(final Environment env) {
+        boolean green;
+        final long start = System.currentTimeMillis();
+        while (true) {
+            green = env.green();
+            if (green) {
+                break;
+            }
+            final long age = System.currentTimeMillis() - start;
+            if (age > TimeUnit.MINUTES.toMillis(Tv.FIVE)) {
+                Logger.warn(this, "Waiting for %[ms]s, time to give up", age);
+                break;
+            }
+            Logger.warn(this, "%s is not GREEN, let's wait 15 second...", env);
+            try {
+                TimeUnit.SECONDS.sleep(Tv.FIFTEEN);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new DeploymentException(ex);
+            }
+        }
+        return green;
     }
 
 }

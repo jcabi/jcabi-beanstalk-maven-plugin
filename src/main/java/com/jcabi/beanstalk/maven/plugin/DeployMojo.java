@@ -71,7 +71,7 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
         final String template) {
         app.clean(false);
         final Environment candidate = app.candidate(version, template);
-        if (candidate.green()) {
+        if (this.isGreen(candidate)) {
             if (candidate.primary()) {
                 Logger.info(
                     this,
@@ -88,7 +88,7 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
             }
         } else {
             this.postMortem(candidate);
-            throw new DeploymentException("failed to deploy");
+            throw new DeploymentException("failed to deploy, see log above");
         }
     }
 

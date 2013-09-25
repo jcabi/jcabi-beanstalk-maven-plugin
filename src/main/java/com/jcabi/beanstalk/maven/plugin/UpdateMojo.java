@@ -61,9 +61,9 @@ public final class UpdateMojo extends AbstractBeanstalkMojo {
             app.clean(false);
             primary = app.candidate(version, template);
         }
-        if (!primary.green()) {
+        if (!this.isGreen(primary)) {
             this.postMortem(primary);
-            throw new DeploymentException("failed to deploy");
+            throw new DeploymentException("failed to deploy, see log above");
         }
         Logger.info(
             this,

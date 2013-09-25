@@ -73,10 +73,7 @@ final class ServerCredentials implements AWSCredentials {
         final Server server = settings.getServer(name);
         if (server == null) {
             throw new MojoFailureException(
-                String.format(
-                    "Server '%s' is absent in settings.xml",
-                    name
-                )
+                String.format("Server '%s' is absent in settings.xml", name)
             );
         }
         this.key = server.getUsername().trim();
@@ -84,8 +81,7 @@ final class ServerCredentials implements AWSCredentials {
             throw new MojoFailureException(
                 String.format(
                     "Key '%s' for server '%s' is not a valid AWS key",
-                    this.key,
-                    name
+                    this.key, name
                 )
             );
         }
@@ -94,16 +90,14 @@ final class ServerCredentials implements AWSCredentials {
             throw new MojoFailureException(
                 String.format(
                     "Secret '%s' for server '%s' is not a valid AWS secret",
-                    this.secret,
-                    name
+                    this.secret, name
                 )
             );
         }
         Logger.info(
-            this,
+            ServerCredentials.class,
             "Using server '%s' with AWS key '%s'",
-            name,
-            this.key
+            name, this.key
         );
     }
 
