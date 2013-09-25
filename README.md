@@ -30,7 +30,7 @@ but in short it works like this:
       <plugin>
         <groupId>com.jcabi</groupId>
         <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
-        <version>0.8.1</version>
+        <version>0.9</version>
         <configuration>
           <name>example</name>
           <bucket>webapps.example.com</bucket>
