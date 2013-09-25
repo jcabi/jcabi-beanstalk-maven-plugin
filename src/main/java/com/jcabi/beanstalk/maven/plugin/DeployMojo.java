@@ -88,7 +88,11 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
             }
         } else {
             this.postMortem(candidate);
-            throw new DeploymentException("failed to deploy, see log above");
+            throw new DeploymentException(
+                String.format(
+                    "failed to deploy, since %s never got GREEN", candidate
+                )
+            );
         }
     }
 

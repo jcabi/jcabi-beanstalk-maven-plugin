@@ -63,7 +63,11 @@ public final class UpdateMojo extends AbstractBeanstalkMojo {
         }
         if (!this.isGreen(primary)) {
             this.postMortem(primary);
-            throw new DeploymentException("failed to deploy, see log above");
+            throw new DeploymentException(
+                String.format(
+                    "failed to deploy since %s never got GREEN", primary
+                )
+            );
         }
         Logger.info(
             this,
