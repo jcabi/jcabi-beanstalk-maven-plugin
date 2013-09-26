@@ -373,6 +373,17 @@ final class Environment {
         final long start = System.currentTimeMillis();
         while (true) {
             final EnvironmentDescription desc = this.description();
+            if (barrier.allow(desc)) {
+                passed = true;
+                Logger.info(
+                    this,
+                    "Environment '%s/%s/%s': health=%s, status=%s",
+                    desc.getApplicationName(), desc.getEnvironmentName(),
+                    desc.getEnvironmentId(), desc.getHealth(),
+                    desc.getStatus()
+                );
+                break;
+            }
             Logger.info(
                 this,
                 // @checkstyle LineLength (1 line)
@@ -382,10 +393,6 @@ final class Environment {
                 desc.getStatus(), barrier.message(),
                 System.currentTimeMillis() - start
             );
-            if (barrier.allow(desc)) {
-                passed = true;
-                break;
-            }
             if (System.currentTimeMillis() - start > Environment.DELAY_MS) {
                 Logger.warn(
                     this,

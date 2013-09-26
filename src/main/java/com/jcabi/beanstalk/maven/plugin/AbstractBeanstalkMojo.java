@@ -230,11 +230,14 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         final long start = System.currentTimeMillis();
         while (!green) {
             final long age = System.currentTimeMillis() - start;
-            if (age > TimeUnit.MINUTES.toMillis(Tv.TEN)) {
+            if (age > TimeUnit.MINUTES.toMillis(Tv.FIFTEEN)) {
                 Logger.warn(this, "Waiting for %[ms]s, time to give up", age);
                 break;
             }
-            Logger.warn(this, "%s is not GREEN, let's wait 15 second...", env);
+            Logger.warn(
+                this,
+                "%s is not GREEN yet, let's wait another 15 second...", env
+            );
             try {
                 TimeUnit.SECONDS.sleep(Tv.FIFTEEN);
             } catch (InterruptedException ex) {
