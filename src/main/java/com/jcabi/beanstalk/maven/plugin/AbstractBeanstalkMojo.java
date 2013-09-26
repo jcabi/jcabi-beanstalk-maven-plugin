@@ -226,15 +226,11 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @return TRUE if green
      */
     protected boolean isGreen(final Environment env) {
-        boolean green;
+        boolean green = env.green();
         final long start = System.currentTimeMillis();
-        while (true) {
-            green = env.green();
-            if (green) {
-                break;
-            }
+        while (!green) {
             final long age = System.currentTimeMillis() - start;
-            if (age > TimeUnit.MINUTES.toMillis(Tv.FIVE)) {
+            if (age > TimeUnit.MINUTES.toMillis(Tv.TEN)) {
                 Logger.warn(this, "Waiting for %[ms]s, time to give up", age);
                 break;
             }
@@ -245,6 +241,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 Thread.currentThread().interrupt();
                 throw new DeploymentException(ex);
             }
+            green = env.green();
         }
         return green;
     }
