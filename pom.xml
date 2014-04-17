@@ -32,8 +32,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jcabi</groupId>
-        <artifactId>parent</artifactId>
-        <version>0.9</version>
+        <artifactId>jcabi</artifactId>
+        <version>1.5.1</version>
     </parent>
     <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -85,13 +85,11 @@
         <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-log</artifactId>
-            <version>0.8</version>
         </dependency>
         <dependency>
             <!-- Forward all calls to SLF4J to Maven log. -->
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-maven-slf4j</artifactId>
-            <version>0.8</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -248,6 +246,22 @@
                                     </reportSets>
                                 </plugin>
                             </reportPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>qulice</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.qulice</groupId>
+                        <artifactId>qulice-maven-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>findbugs:.*</exclude>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>

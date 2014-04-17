@@ -159,7 +159,7 @@ final class OverridingBundle implements Bundle {
             final String hash = DigestUtils.md5Hex(stream);
             IOUtils.closeQuietly(stream);
             return hash;
-        } catch (java.io.IOException ex) {
+        } catch (final java.io.IOException ex) {
             throw new DeploymentException(ex);
         }
     }

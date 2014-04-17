@@ -90,7 +90,7 @@ final class Application {
      * @param wipe Kill all existing environments no matter what?
      */
     public void clean(final boolean wipe) {
-        for (Environment env : this.environments()) {
+        for (final Environment env : this.environments()) {
             if (env.primary() && env.green() && !wipe) {
                 Logger.info(
                     this,
@@ -134,7 +134,7 @@ final class Application {
      */
     public Environment primary() {
         Environment primary = null;
-        for (Environment env : this.environments()) {
+        for (final Environment env : this.environments()) {
             if (env.primary()) {
                 primary = env;
                 break;
@@ -157,7 +157,7 @@ final class Application {
      */
     public boolean hasPrimary() {
         boolean has = false;
-        for (Environment env : this.environments()) {
+        for (final Environment env : this.environments()) {
             if (env.primary() && env.green()) {
                 has = true;
                 break;
@@ -243,7 +243,7 @@ final class Application {
             new DescribeEnvironmentsRequest().withApplicationName(this.name)
         );
         final Collection<Environment> envs = new LinkedList<Environment>();
-        for (EnvironmentDescription desc : res.getEnvironments()) {
+        for (final EnvironmentDescription desc : res.getEnvironments()) {
             envs.add(new Environment(this.client, desc.getEnvironmentId()));
         }
         return envs;
@@ -309,7 +309,7 @@ final class Application {
      */
     private boolean exists(final String ename) {
         boolean exists = false;
-        for (Environment env : this.environments()) {
+        for (final Environment env : this.environments()) {
             if (env.name().equals(ename)) {
                 exists = true;
                 break;

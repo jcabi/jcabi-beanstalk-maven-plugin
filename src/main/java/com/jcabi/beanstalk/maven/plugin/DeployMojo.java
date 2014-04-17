@@ -55,7 +55,7 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
         @NotNull final Version version, @NotNull final String template) {
         try {
             this.deploy(app, version, template);
-        } catch (DeploymentException ex) {
+        } catch (final DeploymentException ex) {
             app.clean(false);
             throw ex;
         }

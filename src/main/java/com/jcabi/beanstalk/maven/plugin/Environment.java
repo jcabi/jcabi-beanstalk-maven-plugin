@@ -107,14 +107,14 @@ final class Environment {
                         .withApplicationName(desc.getApplicationName())
                         .withTemplateName(template)
                 );
-            for (ConfigurationSettingsDescription config
+            for (final ConfigurationSettingsDescription config
                 : res.getConfigurationSettings()) {
                 Logger.debug(
                     Environment.class,
                     "Environment '%s/%s/%s' settings:",
                     config.getApplicationName(), config.getEnvironmentName()
                 );
-                for (ConfigurationOptionSetting opt
+                for (final ConfigurationOptionSetting opt
                     : config.getOptionSettings()) {
                     Logger.debug(
                         Environment.class,
@@ -230,7 +230,7 @@ final class Environment {
                 this,
                 "Environment '%s/%s/%s' is terminated (label:'%s', status:%s)",
                 res.getApplicationName(), res.getEnvironmentName(),
-                res.getEnvironmentId(), res.getCNAME(),
+                res.getEnvironmentId(),
                 res.getVersionLabel(), res.getStatus()
             );
         }
@@ -253,7 +253,7 @@ final class Environment {
             new DescribeEventsRequest().withEnvironmentId(this.eid)
         );
         final Collection<String> events = new LinkedList<String>();
-        for (EventDescription desc : res.getEvents()) {
+        for (final EventDescription desc : res.getEvents()) {
             events.add(
                 String.format("[%s]: %s", desc.getSeverity(), desc.getMessage())
             );
@@ -314,7 +314,7 @@ final class Environment {
         final EnvironmentInfoDescription desc = infos.get(0);
         try {
             return IOUtils.toString(new URL(desc.getMessage()).openStream());
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             throw new IllegalStateException(ex);
         }
     }
@@ -403,7 +403,7 @@ final class Environment {
             }
             try {
                 TimeUnit.MINUTES.sleep(1);
-            } catch (InterruptedException ex) {
+            } catch (final InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new DeploymentException(ex);
             }

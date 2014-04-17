@@ -176,7 +176,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 ),
                 this.template
             );
-        } catch (DeploymentException ex) {
+        } catch (final DeploymentException ex) {
             throw new MojoFailureException("failed to deploy", ex);
         } finally {
             ebt.shutdown();
@@ -215,7 +215,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @param lines All lines to log
      */
     private void log(final String[] lines) {
-        for (String line : lines) {
+        for (final String line : lines) {
             Logger.info(this, ">> %s", line);
         }
     }
@@ -240,7 +240,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
             try {
                 TimeUnit.SECONDS.sleep(Tv.FIFTEEN);
-            } catch (InterruptedException ex) {
+            } catch (final InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new DeploymentException(ex);
             }
