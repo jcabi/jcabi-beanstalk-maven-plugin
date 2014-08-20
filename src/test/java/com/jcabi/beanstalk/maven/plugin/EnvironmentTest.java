@@ -87,7 +87,7 @@ public final class EnvironmentTest {
         final AWSElasticBeanstalk ebt = Mockito.mock(AWSElasticBeanstalk.class);
         Mockito.doReturn(
             new DescribeConfigurationSettingsResult().withConfigurationSettings(
-                new ArrayList<ConfigurationSettingsDescription>()
+                new ArrayList<ConfigurationSettingsDescription>(0)
             )
         ).when(ebt)
             .describeConfigurationSettings(

@@ -51,7 +51,7 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
      * {@inheritDoc}
      */
     @Override
-    protected void exec(@NotNull final Application app,
+    public void exec(@NotNull final Application app,
         @NotNull final Version version, @NotNull final String template) {
         try {
             this.deploy(app, version, template);

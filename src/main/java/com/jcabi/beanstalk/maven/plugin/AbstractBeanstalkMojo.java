@@ -211,16 +211,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     }
 
     /**
-     * Log all lines from the collection.
-     * @param lines All lines to log
-     */
-    private void log(final String[] lines) {
-        for (final String line : lines) {
-            Logger.info(this, ">> %s", line);
-        }
-    }
-
-    /**
      * Wait for green status.
      * @param env The environment
      * @return TRUE if green
@@ -247,6 +237,16 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             green = env.green();
         }
         return green;
+    }
+
+    /**
+     * Log all lines from the collection.
+     * @param lines All lines to log
+     */
+    private void log(final String[] lines) {
+        for (final String line : lines) {
+            Logger.info(this, ">> %s", line);
+        }
     }
 
 }

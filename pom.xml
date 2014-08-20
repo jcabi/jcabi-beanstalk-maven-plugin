@@ -28,12 +28,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jcabi</groupId>
         <artifactId>jcabi</artifactId>
-        <version>1.5.1</version>
+        <version>1.14</version>
     </parent>
     <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -45,8 +47,8 @@
         <url>https://github.com/jcabi/jcabi-beanstalk-maven-plugin/issues</url>
     </issueManagement>
     <ciManagement>
-        <system>rultor</system>
-        <url>http://www.rultor.com/s/jcabi</url>
+        <system>travis</system>
+        <url>https://travis-ci.org/jcabi/jcabi-beanstalk-maven-plugin</url>
     </ciManagement>
     <scm>
         <connection>scm:git:github.com:jcabi/jcabi-beanstalk-maven-plugin.git</connection>
@@ -71,14 +73,8 @@
     </properties>
     <distributionManagement>
         <site>
-            <!--
-            Deploying the site to Amazon S3. "jcabi.s3" server details
-            are defined in "settings.xml" file, provided by continuous integration
-            server during build cycle.
-            -->
-            <id>www.jcabi.com</id>
-            <name>jcabi.com Project Site</name>
-            <url>s3://www.jcabi.com/jcabi-beanstalk-maven-plugin</url>
+            <id>gh-pages</id>
+            <url>http://beanstalk.jcabi.com/</url>
         </site>
     </distributionManagement>
     <dependencies>
@@ -158,17 +154,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <JCabi-Version>${project.version}</JCabi-Version>
-                            <JCabi-Build>${buildNumber}</JCabi-Build>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
                     <execution>
@@ -222,36 +207,6 @@
     </build>
     <profiles>
         <profile>
-            <id>site</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-site-plugin</artifactId>
-                        <configuration>
-                            <reportPlugins combine.children="append">
-                                <plugin>
-                                    <artifactId>maven-changes-plugin</artifactId>
-                                    <version>2.8</version>
-                                    <configuration>
-                                        <columnNames>Id, Priority, Summary, Reporter, Resolution</columnNames>
-                                        <includeOpenIssues>false</includeOpenIssues>
-                                    </configuration>
-                                    <reportSets>
-                                        <reportSet>
-                                            <reports>
-                                                <report>github-report</report>
-                                                <report>changes-report</report>
-                                            </reports>
-                                        </reportSet>
-                                    </reportSets>
-                                </plugin>
-                            </reportPlugins>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>qulice</id>
             <build>
                 <plugins>
@@ -261,6 +216,8 @@
                         <configuration>
                             <excludes>
                                 <exclude>findbugs:.*</exclude>
+                                <exclude>xml:/src/it/settings.xml</exclude>
+                                <exclude>xml:/src/it/skipped-deployment/src/main/webapp/WEB-INF/web.xml</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
