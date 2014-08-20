@@ -1,9 +1,13 @@
 <img src="http://img.jcabi.com/logo-square.png" width="64px" height="64px" />
- 
+
+[![Made By Teamed.io](http://img.teamed.io/btn.svg)](http://www.teamed.io)
+[![DevOps By Rultor.com](http://www.rultor.com/b/jcabi/jcabi-beanstalk-maven-plugin)](http://www.rultor.com/p/jcabi/jcabi-beanstalk-maven-plugin)
+
 [![Build Status](https://travis-ci.org/jcabi/jcabi-beanstalk-maven-plugin.svg?branch=master)](https://travis-ci.org/jcabi/jcabi-beanstalk-maven-plugin)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jcabi/jcabi-beanstalk-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jcabi/jcabi-beanstalk-maven-plugin)
 
 More details are here:
-[www.jcabi.com/jcabi-beanstalk-maven-plugin](http://www.jcabi.com/jcabi-beanstalk-maven-plugin/index.html)
+[beanstalk.jcabi.com](http://beanstalk.jcabi.com/index.html)
 
 The plugin automates deployment of Java WAR applications
 to [AWS Elastic Beanstalk](http://aws.amazon.com/elasticbeanstalk/).
@@ -32,7 +36,6 @@ but in short it works like this:
       <plugin>
         <groupId>com.jcabi</groupId>
         <artifactId>jcabi-beanstalk-maven-plugin</artifactId>
-        <version>0.9</version>
         <configuration>
           <name>example</name>
           <bucket>webapps.example.com</bucket>
@@ -56,7 +59,6 @@ but in short it works like this:
 
 If you have any questions about the framework, or something doesn't work as expected,
 please [submit an issue here](https://github.com/jcabi/jcabi-beanstalk-maven-plugin/issues/new).
-If you want to discuss, please use our [Google Group](https://groups.google.com/forum/#!forum/jcabi).
 
 ## How to contribute?
 
