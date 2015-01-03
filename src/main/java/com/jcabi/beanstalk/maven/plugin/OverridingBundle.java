@@ -36,6 +36,7 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import java.io.File;
@@ -103,12 +104,7 @@ final class OverridingBundle implements Bundle {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @todo #103 Would be nice to make it cacheable, as suggested in
-     *  https://github.com/yegor256/jcabi/issues/105
-     */
+    @Cacheable
     @Override
     public S3Location location() {
         if (this.exists()) {

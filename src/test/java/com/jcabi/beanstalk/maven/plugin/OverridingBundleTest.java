@@ -82,4 +82,24 @@ public final class OverridingBundleTest {
         );
     }
 
+    /**
+     * OverridingBundle caches result of location() method.
+     * @throws Exception If something is wrong
+     */
+    @Test
+    public void cachesResultOfLocation() throws Exception {
+        final AmazonS3 client = Mockito.mock(AmazonS3.class);
+        final File war = this.temp.newFile("temp1.war");
+        FileUtils.writeStringToFile(war, "some JAR file content");
+        final String bucket = "some-bucket-for-cache";
+        final String key = "some-key-for-cache";
+        Mockito.doReturn(new PutObjectResult())
+            .when(client).putObject(bucket, key, war);
+        Mockito.doReturn(new ObjectListing())
+            .when(client).listObjects(Mockito.any(ListObjectsRequest.class));
+        final Bundle bundle = new OverridingBundle(client, bucket, key, war);
+        bundle.location();
+        bundle.location();
+        Mockito.verify(client, Mockito.times(1)).putObject(bucket, key, war);
+    }
 }
