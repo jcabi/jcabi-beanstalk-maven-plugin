@@ -33,12 +33,23 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.google.common.base.Joiner;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
 import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.jfrog.maven.annomojo.annotations.MojoParameter;
 import org.slf4j.impl.StaticLoggerBinder;
@@ -131,6 +142,8 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     )
     private transient File war;
 
+    @MojoParameter(expression = "${project}", readonly = true, required = true)
+    protected MavenProject project;
     /**
      * Set skip option.
      * @param skp Shall we skip execution?
@@ -154,6 +167,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 String.format("WAR file '%s' doesn't exist", this.war)
             );
         }
+        checkEbextensionsValidity();
         final AWSCredentials creds = new ServerCredentials(
             this.settings,
             this.server
@@ -249,4 +263,80 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         }
     }
 
+    private void checkEbextensionsValidity() throws MojoFailureException {
+        try {
+            final ZipFile warfile = createZipFile();
+            final ZipEntry ebextdir = warfile.getEntry(".ebextensions");
+            if (ebextdir == null)
+                throw new MojoFailureException(
+                    ".ebextensions directory does not exist in the WAR file");
+            final Enumeration<? extends ZipEntry> entries = warfile.entries();
+            int files = 0;
+            while (entries.hasMoreElements()) {
+                final ZipEntry entry = entries.nextElement();
+                if (entry.getName().startsWith(".ebextensions/")
+                    && !entry.isDirectory()) {
+                    files++;
+                    final String text = readFile(warfile, entry);
+                    if (!(validJson(text) || validYaml(text))) {
+                        throw new MojoFailureException(Joiner.on("").join(
+                            "File '",
+                            entry.getName(),
+                            "' in .ebextensions is neither valid JSON,",
+                            " nor valid YAML"));
+                    }
+                }
+            }
+        } catch (final IOException e) {
+            Logger.error(this, e.getMessage());
+            throw new MojoFailureException(".ebextensions validation failed");
+        }
+    }
+
+    protected ZipFile createZipFile() throws IOException {
+        return new ZipFile(this.war);
+    }
+
+    protected String readFile(final ZipFile warfile, final ZipEntry entry) {
+        String text = null;
+        InputStream inputStream = null;
+        InputStreamReader reader = null;
+        try {
+            inputStream = warfile.getInputStream(entry);
+            reader = new InputStreamReader(inputStream);
+            text = CharStreams.toString(reader);
+        }
+        catch (IOException exception) {
+            Logger.error(this, exception.getMessage());
+        }
+        finally {
+            Closeables.closeQuietly(inputStream);
+            Closeables.closeQuietly(reader);
+        }
+        return text;
+    }
+
+    /**
+     * Validates a YAML string.
+     * @param text Text to validate
+     * @return True, if text is a valid YAML string.
+     * @todo #2:30min Implement validation of YAML inside the method
+     * AbstractBeanstalkMojo.validYaml. Remember to unit test your solution.
+     */
+    protected boolean validYaml(final String text) {
+        throw new NotImplementedException(
+            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson");
+    }
+
+    /**
+     * Validates a JSON string.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON string.
+     * @todo #2:30min Implement validation of JSON inside the method
+     * AbstractBeanstalkMojo.validJson(). Remember to unit test your solution.
+     */
+    protected boolean validJson(final String text) {
+        throw new NotImplementedException(
+            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson");
+    }
 }
