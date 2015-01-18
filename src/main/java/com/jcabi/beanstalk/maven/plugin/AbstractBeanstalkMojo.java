@@ -253,16 +253,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         return green;
     }
 
-    /**
-     * Log all lines from the collection.
-     * @param lines All lines to log
-     */
-    private void log(final String[] lines) {
-        for (final String line : lines) {
-            Logger.info(this, ">> %s", line);
-        }
-    }
-
     protected void checkEbextensionsValidity() throws MojoFailureException {
         try {
             final ZipFile warfile = createZipFile();
@@ -328,7 +318,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @param text Text to validate
      * @return True, if text is a valid YAML string.
      * @todo #2:30min Implement validation of YAML inside the method
-     * AbstractBeanstalkMojo.validYaml. Remember to unit test your solution.
+     *  AbstractBeanstalkMojo.validYaml. Remember to unit test your solution.
      */
     protected boolean validYaml(final String text) {
         throw new NotImplementedException(
@@ -340,10 +330,20 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @param text Text to validate
      * @return True, if text is a valid JSON string.
      * @todo #2:30min Implement validation of JSON inside the method
-     * AbstractBeanstalkMojo.validJson(). Remember to unit test your solution.
+     *  AbstractBeanstalkMojo.validJson(). Remember to unit test your solution.
      */
     protected boolean validJson(final String text) {
         throw new NotImplementedException(
             "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson");
+    }
+
+    /**
+     * Log all lines from the collection.
+     * @param lines All lines to log
+     */
+    private void log(final String[] lines) {
+        for (final String line : lines) {
+            Logger.info(this, ">> %s", line);
+        }
     }
 }
