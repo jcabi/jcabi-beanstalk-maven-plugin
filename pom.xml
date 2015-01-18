@@ -228,6 +228,7 @@
                                 <exclude>xml:/src/it/settings.xml</exclude>
                                 <exclude>xml:/src/it/skipped-deployment/src/main/webapp/WEB-INF/web.xml</exclude>
                             </excludes>
+                            <license>file:${basedir}/LICENSE.txt</license>
                         </configuration>
                     </plugin>
                 </plugins>
