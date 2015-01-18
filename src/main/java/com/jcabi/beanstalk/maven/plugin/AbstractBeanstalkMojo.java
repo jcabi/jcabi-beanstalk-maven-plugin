@@ -263,7 +263,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         }
     }
 
-    private void checkEbextensionsValidity() throws MojoFailureException {
+    protected void checkEbextensionsValidity() throws MojoFailureException {
         try {
             final ZipFile warfile = createZipFile();
             final ZipEntry ebextdir = warfile.getEntry(".ebextensions");
