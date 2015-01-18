@@ -43,18 +43,35 @@ public final class AbstractBeanstalkMojoTest {
         Mockito.verify(mojo).checkEbextensionsValidity();
     }
 
+    /**
+     * Verifies that checkEbextensionsValidity throws no exception, if a config
+     * file is a valid JSON file.
+     * @throws IOException Thrown in case of error.
+     * @throws MojoFailureException Thrown in case of error.
+     */
     @Test
     public void checkEbextensionsValidityNoExceptionOnValidJson()
         throws IOException, MojoFailureException {
         ebextensionsValidationTestLogic(true, false);
     }
 
+    /**
+     * Verifies that checkEbextensionsValidity throws no exception, if a config
+     * file is a valid YAML file.
+     * @throws IOException Thrown in case of error.
+     * @throws MojoFailureException Thrown in case of error.
+     */
     @Test
     public void checkEbextensionsValidityNoExceptionOnValidYaml()
         throws IOException, MojoFailureException {
         ebextensionsValidationTestLogic(false, true);
     }
 
+    /**
+     * Verifies that checkEbextensionsValidity throws an exception, if a config
+     * file is neither valid JSON, nor valid YAML file.
+     * @throws IOException Thrown in case of error.
+     */
     @Test
     public void checkEbextensionsValidityInvalidJsonInvalidYaml()
         throws IOException {
@@ -71,6 +88,12 @@ public final class AbstractBeanstalkMojoTest {
             );
         }
     }
+
+    /**
+     * Verifies that checkEbextensionsValidity throws an exception, if there is
+     * no .ebextensions directory in the WAR file.
+     * @throws IOException Thrown in case of error.
+     */
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoDir()
         throws IOException {
@@ -91,6 +114,12 @@ public final class AbstractBeanstalkMojoTest {
             );
         }
     }
+
+    /**
+     * Verifies that checkEbextensionsValidity throws an exception, if the
+     * .ebextensions is empty.
+     * @throws IOException Thrown in case of error.
+     */
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
         throws IOException {
@@ -111,7 +140,7 @@ public final class AbstractBeanstalkMojoTest {
             MatcherAssert.assertThat(
                 exception.getMessage(),
                 Matchers.equalTo(
-                    ""
+                    ".ebextensions contains no config files."
                 )
             );
         }
