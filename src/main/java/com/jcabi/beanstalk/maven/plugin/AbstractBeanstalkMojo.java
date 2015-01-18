@@ -287,9 +287,16 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                     }
                 }
             }
+            if (files < 1) {
+                throw new MojoFailureException(
+                    ".ebextensions contains no config files."
+                );
+            }
         } catch (final IOException e) {
             Logger.error(this, e.getMessage());
-            throw new MojoFailureException(".ebextensions validation failed");
+            throw new MojoFailureException(
+                ".ebextensions validation failed"
+            );
         }
     }
 
