@@ -49,6 +49,56 @@ public final class AbstractBeanstalkMojoTest {
         ebextensionsValidationTestLogic(true, false);
     }
 
+    @Test
+    public void checkEbextensionsValidityNoExceptionOnValidYaml()
+        throws IOException, MojoFailureException {
+        ebextensionsValidationTestLogic(false, true);
+    }
+
+    @Test
+    public void checkEbextensionsValidityInvalidJsonInvalidYaml()
+        throws IOException {
+        try {
+            ebextensionsValidationTestLogic(false, false);
+        } catch (final MojoFailureException exception) {
+            MatcherAssert.assertThat(
+                exception.getMessage(),
+                Matchers.equalTo(
+                    Joiner.on("").join(
+                        "File '.ebextensions/01run.config' in ",
+                        ".ebextensions is neither valid ",
+                        "JSON, nor valid YAML"))
+            );
+        }
+    }
+    @Test
+    public void checkEbextensionsValidityThrowsExceptionNoDir()
+        throws IOException {
+        final AbstractBeanstalkMojo mojo = Mockito.spy(
+            new BeanstalkMojoForTesting()
+        );
+        final ZipFile warfile = Mockito.mock(ZipFile.class);
+        Mockito.doReturn(warfile).when(mojo).createZipFile();
+        Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(null);
+        try {
+            mojo.checkEbextensionsValidity();
+        } catch (final MojoFailureException exception) {
+            MatcherAssert.assertThat(
+                exception.getMessage(),
+                Matchers.equalTo(
+                    Joiner.on("").join(
+                        "",
+                        "",
+                        ""
+                    )
+                )
+            );
+        }
+    }
+    @Test
+    public void checkEbextensionsValidityThrowsExceptionNoConfigFiles() {
+
+    }
     private void ebextensionsValidationTestLogic(final boolean jsonValid,
         final boolean yamlValid)
         throws IOException, MojoFailureException {
@@ -59,7 +109,6 @@ public final class AbstractBeanstalkMojoTest {
         Mockito.doReturn(warfile).when(mojo).createZipFile();
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
         Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(ebextdir);
-        warfile.getEntry(".ebextensions");
         final Enumeration entries =
             Mockito.mock(Enumeration.class);
         Mockito.when(warfile.entries()).thenReturn(entries);
@@ -78,35 +127,4 @@ public final class AbstractBeanstalkMojoTest {
         Mockito.doReturn(yamlValid).when(mojo).validYaml(text);
         mojo.checkEbextensionsValidity();
     }
-
-    @Test
-    public void checkEbextensionsValidityNoExceptionOnValidYaml()
-        throws IOException, MojoFailureException {
-        ebextensionsValidationTestLogic(false, true);
-    }
-    @Test
-    public void checkEbextensionsValidityInvalidJsonInvalidYaml()
-        throws IOException {
-        try {
-            ebextensionsValidationTestLogic(false, false);
-        } catch (final MojoFailureException exception) {
-            MatcherAssert.assertThat(
-                exception.getMessage(),
-                Matchers.equalTo(
-                    Joiner.on("").join(
-                        "File '.ebextensions/01run.config' in ",
-                        ".ebextensions is neither valid ",
-                        "JSON, nor valid YAML"))
-            );
-        }
-    }
-    @Test
-    public void checkEbextensionsValidityThrowsExceptionNoDir() {
-
-    }
-    @Test
-    public void checkEbextensionsValidityThrowsExceptionNoConfigFiles() {
-
-    }
-
 }
