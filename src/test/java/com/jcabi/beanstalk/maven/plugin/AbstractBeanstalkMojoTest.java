@@ -86,11 +86,7 @@ public final class AbstractBeanstalkMojoTest {
             MatcherAssert.assertThat(
                 exception.getMessage(),
                 Matchers.equalTo(
-                    Joiner.on("").join(
-                        "",
-                        "",
-                        ""
-                    )
+                    ".ebextensions directory does not exist in the WAR file"
                 )
             );
         }
