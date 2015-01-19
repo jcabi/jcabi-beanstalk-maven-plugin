@@ -50,6 +50,7 @@ import org.mockito.Mockito;
  * @checkstyle MultipleStringLiteralsCheck (1 lines)
  */
 public final class DeployMojoTest {
+    // @checkstyle MultipleStringLiteralsCheck (10 lines)
 
     /**
      * DeployMojo can skip execution when flag is set.
@@ -235,8 +236,7 @@ public final class DeployMojoTest {
         Mockito.doReturn(yamlvalid).when(mojo).validYaml(text);
         mojo.checkEbextensionsValidity();
     }
-    private static class BeanstalkMojoForTesting extends AbstractBeanstalkMojo
-    {
+    private static class BeanstalkMojoForTesting extends AbstractBeanstalkMojo {
         @Override
         protected void exec(final Application app, final Version version,
             final String tmpl) {
