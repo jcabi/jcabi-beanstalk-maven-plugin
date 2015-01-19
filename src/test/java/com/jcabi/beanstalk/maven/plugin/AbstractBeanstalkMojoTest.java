@@ -47,6 +47,7 @@ import org.mockito.Mockito;
  * @version $Id$
  * @since 1.0
  * @checkstyle AbstractClassNameCheck
+ * @checkstyle MultipleStringLiteralsCheck
  */
 public final class AbstractBeanstalkMojoTest {
     /**
@@ -106,7 +107,9 @@ public final class AbstractBeanstalkMojoTest {
                     Joiner.on("").join(
                         "File '.ebextensions/01run.config' in ",
                         ".ebextensions is neither valid ",
-                        "JSON, nor valid YAML"))
+                        "JSON, nor valid YAML"
+                    )
+                )
             );
         }
     }
