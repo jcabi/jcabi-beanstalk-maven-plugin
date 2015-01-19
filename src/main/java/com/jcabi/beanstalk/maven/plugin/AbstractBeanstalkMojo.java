@@ -179,7 +179,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         this.checkEbextensionsValidity();
-        final AWSCredentials creds = createServerCredentials();
+        final AWSCredentials creds = this.createServerCredentials();
         final AWSElasticBeanstalk ebt = new AWSElasticBeanstalkClient(creds);
         try {
             this.exec(
@@ -205,7 +205,13 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         }
     }
 
-    protected ServerCredentials createServerCredentials() throws MojoFailureException {
+    /**
+     * Creates server crecentials.
+     * @return Server credentials based on settings and server attributes.
+     * @throws MojoFailureException Thrown in case of error.
+     */
+    protected ServerCredentials createServerCredentials()
+        throws MojoFailureException {
         return new ServerCredentials(
             this.settings,
             this.server

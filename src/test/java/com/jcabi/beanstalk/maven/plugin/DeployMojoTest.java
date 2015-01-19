@@ -47,6 +47,7 @@ import org.mockito.Mockito;
  * Test case for {@link DeployMojo} (more detailed test is in maven invoker).
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
+ * @checkstyle MultipleStringLiteralsCheck (1 lines)
  */
 public final class DeployMojoTest {
 
@@ -63,7 +64,7 @@ public final class DeployMojoTest {
     /**
      * Verifies that execute calls checkEbextensionsValidity method.
      * @throws org.apache.maven.plugin.MojoFailureException Thrown in case
-     * of error.
+     *  of error.
      */
     @Test
     public void executeCallscheckEbextensionsValidity()
@@ -79,16 +80,21 @@ public final class DeployMojoTest {
         final Server server = Mockito.mock(Server.class);
         Mockito.when(server.getUsername()).thenReturn("A1234567890123456789");
         Mockito.when(server.getPassword()).thenReturn(
-            "1234567890123456789012345678901234567890");
+            "1234567890123456789012345678901234567890"
+        );
         final Settings settings = Mockito.mock(Settings.class);
         Mockito.when(settings.getServer("name")).thenReturn(server);
-        Mockito.doReturn(new ServerCredentials(settings,
-            "name")).when(mojo)
-            .createServerCredentials();
+        Mockito.doReturn(
+            new ServerCredentials(
+                settings,
+                "name"
+            )
+        ).when(mojo).createServerCredentials();
         Mockito.doNothing().when(mojo).exec(
             org.mockito.Matchers.isA(Application.class),
             org.mockito.Matchers.isA(OverridingVersion.class),
-            org.mockito.Matchers.anyString());
+            org.mockito.Matchers.anyString()
+        );
         mojo.execute();
         Mockito.verify(mojo).checkEbextensionsValidity();
     }
