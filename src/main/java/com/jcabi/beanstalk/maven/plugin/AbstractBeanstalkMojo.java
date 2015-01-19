@@ -281,11 +281,13 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                     files += 1;
                     final String text = this.readFile(warfile, entry);
                     if (!(this.validJson(text) || this.validYaml(text))) {
-                        throw new MojoFailureException(Joiner.on("").join(
-                            "File '",
-                            entry.getName(),
-                            "' in .ebextensions is neither valid JSON,",
-                            " nor valid YAML")
+                        throw new MojoFailureException(
+                            Joiner.on("").join(
+                                "File '",
+                                entry.getName(),
+                                "' in .ebextensions is neither valid JSON,",
+                                " nor valid YAML"
+                            )
                         );
                     }
                 }
@@ -346,7 +348,8 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      */
     protected boolean validYaml(final String text) {
         throw new NotImplementedException(
-            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson");
+            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validYaml"
+        );
     }
 
     /**

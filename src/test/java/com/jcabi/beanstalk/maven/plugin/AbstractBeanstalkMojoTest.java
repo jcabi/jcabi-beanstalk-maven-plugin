@@ -46,16 +46,9 @@ import org.mockito.Mockito;
  * @author Dmitri Pisarenko (dp@altruix.co)
  * @version $Id$
  * @since 1.0
+ * @checkstyle AbstractClassNameCheck
  */
 public final class AbstractBeanstalkMojoTest {
-    private static class BeanstalkMojoForTesting extends AbstractBeanstalkMojo
-    {
-        @Override
-        protected void exec(final Application app, final Version version,
-            final String tmpl) {
-        }
-    }
-
     /**
      * Verifies that execute calls checkEbextensionsValidity method.
      */
@@ -200,5 +193,11 @@ public final class AbstractBeanstalkMojoTest {
         Mockito.doReturn(jsonValid).when(mojo).validJson(text);
         Mockito.doReturn(yamlValid).when(mojo).validYaml(text);
         mojo.checkEbextensionsValidity();
+    }
+    private static class BeanstalkMojoForTesting extends AbstractBeanstalkMojo {
+        @Override
+        protected void exec(final Application app, final Version version,
+            final String tmpl) {
+        }
     }
 }
