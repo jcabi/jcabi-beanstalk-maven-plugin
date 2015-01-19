@@ -68,7 +68,9 @@ public final class DeployMojoTest {
     @Test
     public void executeCallscheckEbextensionsValidity()
         throws MojoFailureException {
-        final DeployMojo mojo = Mockito.spy(new DeployMojo());
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
+            new BeanstalkMojoForTesting()
+        );
         mojo.setSkip(false);
         final File war = Mockito.mock(File.class);
         Mockito.when(war.exists()).thenReturn(true);
@@ -145,7 +147,9 @@ public final class DeployMojoTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoDir()
         throws IOException {
-        final DeployMojo mojo = Mockito.spy(new DeployMojo());
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
+            new BeanstalkMojoForTesting()
+        );
         final ZipFile warfile = Mockito.mock(ZipFile.class);
         Mockito.doReturn(warfile).when(mojo).createZipFile();
         Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(null);
@@ -169,7 +173,9 @@ public final class DeployMojoTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
         throws IOException {
-        final DeployMojo mojo = Mockito.spy(new DeployMojo());
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
+            new BeanstalkMojoForTesting()
+        );
         final ZipFile warfile = Mockito.mock(ZipFile.class);
         Mockito.doReturn(warfile).when(mojo).createZipFile();
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
@@ -198,8 +204,8 @@ public final class DeployMojoTest {
      */
     private void ebextensionsValidationTestLogic(final boolean jsonvalid,
         final boolean yamlvalid) throws Exception {
-        final DeployMojo mojo = Mockito.spy(
-            new DeployMojo()
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
+            new BeanstalkMojoForTesting()
         );
         final ZipFile warfile = Mockito.mock(ZipFile.class);
         Mockito.doReturn(warfile).when(mojo).createZipFile();
@@ -222,5 +228,12 @@ public final class DeployMojoTest {
         Mockito.doReturn(jsonvalid).when(mojo).validJson(text);
         Mockito.doReturn(yamlvalid).when(mojo).validYaml(text);
         mojo.checkEbextensionsValidity();
+    }
+    private static class BeanstalkMojoForTesting extends AbstractBeanstalkMojo
+    {
+        @Override
+        protected void exec(final Application app, final Version version,
+            final String tmpl) {
+        }
     }
 }
