@@ -69,35 +69,33 @@ public final class AbstractBeanstalkMojoTest {
     /**
      * Verifies that checkEbextensionsValidity throws no exception, if a config
      * file is a valid JSON file.
-     * @throws IOException Thrown in case of error.
-     * @throws MojoFailureException Thrown in case of error.
+     * @throws Exception Thrown in case of error.
      */
     @Test
     public void checkEbextensionsValidityNoExceptionOnValidJson()
-        throws IOException, MojoFailureException {
+        throws Exception {
         ebextensionsValidationTestLogic(true, false);
     }
 
     /**
      * Verifies that checkEbextensionsValidity throws no exception, if a config
      * file is a valid YAML file.
-     * @throws IOException Thrown in case of error.
-     * @throws MojoFailureException Thrown in case of error.
+     * @throws Exception Thrown in case of error.
      */
     @Test
     public void checkEbextensionsValidityNoExceptionOnValidYaml()
-        throws IOException, MojoFailureException {
+        throws Exception {
         ebextensionsValidationTestLogic(false, true);
     }
 
     /**
      * Verifies that checkEbextensionsValidity throws an exception, if a config
      * file is neither valid JSON, nor valid YAML file.
-     * @throws IOException Thrown in case of error.
+     * @throws Exception Thrown in case of error.
      */
     @Test
     public void checkEbextensionsValidityInvalidJsonInvalidYaml()
-        throws IOException {
+        throws Exception {
         try {
             ebextensionsValidationTestLogic(false, false);
         } catch (final MojoFailureException exception) {
@@ -170,10 +168,16 @@ public final class AbstractBeanstalkMojoTest {
             );
         }
     }
-    private void ebextensionsValidationTestLogic(final boolean jsonValid,
-        final boolean yamlValid)
-        throws IOException, MojoFailureException {
-        final AbstractBeanstalkMojo mojo = Mockito.spy(
+
+    /**
+     * Encapsulates the test logic for several tests.
+     * @param jsonvalid Specifies the return value of mocked validJson method.
+     * @param yamlvalid Specifies the return value of mocked validYaml method.
+     * @throws Exception Thrown in case of error.
+     */
+    private void ebextensionsValidationTestLogic(final boolean jsonvalid,
+        final boolean yamlvalid) throws Exception {
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
             new BeanstalkMojoForTesting()
         );
         final ZipFile warfile = Mockito.mock(ZipFile.class);
@@ -188,13 +192,14 @@ public final class AbstractBeanstalkMojoTest {
             .thenReturn(false);
         final ZipEntry configfile = Mockito.mock(ZipEntry.class);
         Mockito.when(configfile.getName()).thenReturn(
-            ".ebextensions/01run.config");
+            ".ebextensions/01run.config"
+        );
         Mockito.when(configfile.isDirectory()).thenReturn(false);
         Mockito.when(entries.nextElement()).thenReturn(configfile);
         final String text = "01run.config contents";
         Mockito.doReturn(text).when(mojo).readFile(warfile, configfile);
-        Mockito.doReturn(jsonValid).when(mojo).validJson(text);
-        Mockito.doReturn(yamlValid).when(mojo).validYaml(text);
+        Mockito.doReturn(jsonvalid).when(mojo).validJson(text);
+        Mockito.doReturn(yamlvalid).when(mojo).validYaml(text);
         mojo.checkEbextensionsValidity();
     }
     private static class BeanstalkMojoForTesting extends AbstractBeanstalkMojo {
