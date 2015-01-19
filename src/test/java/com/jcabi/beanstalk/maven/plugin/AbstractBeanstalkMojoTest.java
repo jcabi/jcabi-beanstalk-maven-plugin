@@ -52,12 +52,13 @@ import org.mockito.Mockito;
 public final class AbstractBeanstalkMojoTest {
     /**
      * Verifies that execute calls checkEbextensionsValidity method.
+     * @throws MojoFailureException Thrown in case of error.
      */
     @Test
     @Ignore
     public void executeCallscheckEbextensionsValidity()
         throws MojoFailureException {
-        final AbstractBeanstalkMojo mojo = Mockito.spy(
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
             new AbstractBeanstalkMojoTest.BeanstalkMojoForTesting()
         );
         mojo.setSkip(false);
@@ -159,7 +160,7 @@ public final class AbstractBeanstalkMojoTest {
         Mockito.when(entries.hasMoreElements()).thenReturn(false);
         try {
             mojo.checkEbextensionsValidity();
-        } catch (MojoFailureException exception) {
+        } catch (final MojoFailureException exception) {
             MatcherAssert.assertThat(
                 exception.getMessage(),
                 Matchers.equalTo(

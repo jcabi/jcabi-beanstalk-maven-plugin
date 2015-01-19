@@ -328,7 +328,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             inputStream = warfile.getInputStream(entry);
             reader = new InputStreamReader(inputStream);
             text = CharStreams.toString(reader);
-        } catch (IOException exception) {
+        } catch (final IOException exception) {
             Logger.error(this, exception.getMessage());
         } finally {
             Closeables.closeQuietly(inputStream);
@@ -359,7 +359,8 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      */
     protected boolean validJson(final String text) {
         throw new NotImplementedException(
-            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson");
+            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson"
+        );
     }
 
     /**
