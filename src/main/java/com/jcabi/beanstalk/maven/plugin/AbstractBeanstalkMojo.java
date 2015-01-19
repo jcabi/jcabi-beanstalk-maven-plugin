@@ -260,8 +260,8 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * Verifies that the .ebextensions contains valid configuration file or
      * files.
      * @throws MojoFailureException Thrown, if the .ebextensions does not exist
-     * in the WAR file, is empty or one of its files is neither valid JSON,
-     * nor valid YAML.
+     *  in the WAR file, is empty or one of its files is neither valid JSON,
+     *  nor valid YAML.
      */
     protected void checkEbextensionsValidity() throws MojoFailureException {
         try {
@@ -269,7 +269,8 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             final ZipEntry ebextdir = warfile.getEntry(".ebextensions");
             if (ebextdir == null) {
                 throw new MojoFailureException(
-                    ".ebextensions directory does not exist in the WAR file");
+                    ".ebextensions directory does not exist in the WAR file"
+                );
             }
             final Enumeration<? extends ZipEntry> entries = warfile.entries();
             int files = 0;
@@ -277,9 +278,9 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 final ZipEntry entry = entries.nextElement();
                 if (entry.getName().startsWith(".ebextensions/")
                     && !entry.isDirectory()) {
-                    files++;
-                    final String text = readFile(warfile, entry);
-                    if (!(validJson(text) || validYaml(text))) {
+                    files += 1;
+                    final String text = this.readFile(warfile, entry);
+                    if (!(this.validJson(text) || this.validYaml(text))) {
                         throw new MojoFailureException(Joiner.on("").join(
                             "File '",
                             entry.getName(),
