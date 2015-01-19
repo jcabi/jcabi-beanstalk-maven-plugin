@@ -63,6 +63,11 @@ import org.slf4j.impl.StaticLoggerBinder;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
+    /**
+     * Object with the data of the project being built.
+     */
+    @MojoParameter(expression = "${project}", readonly = true, required = true)
+    private MavenProject project;
 
     /**
      * Setting.xml.
@@ -142,8 +147,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     )
     private transient File war;
 
-    @MojoParameter(expression = "${project}", readonly = true, required = true)
-    protected MavenProject project;
     /**
      * Set skip option.
      * @param skp Shall we skip execution?
@@ -167,7 +170,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 String.format("WAR file '%s' doesn't exist", this.war)
             );
         }
-        checkEbextensionsValidity();
+        this.checkEbextensionsValidity();
         final AWSCredentials creds = new ServerCredentials(
             this.settings,
             this.server
@@ -253,13 +256,21 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         return green;
     }
 
+    /**
+     * Verifies that the .ebextensions contains valid configuration file or
+     * files.
+     * @throws MojoFailureException Thrown, if the .ebextensions does not exist
+     * in the WAR file, is empty or one of its files is neither valid JSON,
+     * nor valid YAML.
+     */
     protected void checkEbextensionsValidity() throws MojoFailureException {
         try {
-            final ZipFile warfile = createZipFile();
+            final ZipFile warfile = this.createZipFile();
             final ZipEntry ebextdir = warfile.getEntry(".ebextensions");
-            if (ebextdir == null)
+            if (ebextdir == null) {
                 throw new MojoFailureException(
                     ".ebextensions directory does not exist in the WAR file");
+            }
             final Enumeration<? extends ZipEntry> entries = warfile.entries();
             int files = 0;
             while (entries.hasMoreElements()) {
