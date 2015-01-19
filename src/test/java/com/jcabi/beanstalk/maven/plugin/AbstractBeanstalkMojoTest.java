@@ -121,7 +121,7 @@ public final class AbstractBeanstalkMojoTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoDir()
         throws IOException {
-        final AbstractBeanstalkMojo mojo = Mockito.spy(
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
             new BeanstalkMojoForTesting()
         );
         final ZipFile warfile = Mockito.mock(ZipFile.class);
@@ -147,7 +147,7 @@ public final class AbstractBeanstalkMojoTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
         throws IOException {
-        final AbstractBeanstalkMojo mojo = Mockito.spy(
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
             new BeanstalkMojoForTesting()
         );
         final ZipFile warfile = Mockito.mock(ZipFile.class);
