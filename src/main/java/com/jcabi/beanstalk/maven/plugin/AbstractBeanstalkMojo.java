@@ -285,7 +285,8 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                             "File '",
                             entry.getName(),
                             "' in .ebextensions is neither valid JSON,",
-                            " nor valid YAML"));
+                            " nor valid YAML")
+                        );
                     }
                 }
             }
@@ -294,18 +295,29 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                     ".ebextensions contains no config files."
                 );
             }
-        } catch (final IOException e) {
-            Logger.error(this, e.getMessage());
+        } catch (final IOException exception) {
+            Logger.error(this, exception.getMessage());
             throw new MojoFailureException(
                 ".ebextensions validation failed"
             );
         }
     }
 
+    /**
+     * Creates a ZipFile from war.
+     * @return ZipFile, which contains the war file.
+     * @throws IOException Thrown in case of error.
+     */
     protected ZipFile createZipFile() throws IOException {
         return new ZipFile(this.war);
     }
 
+    /**
+     * Reads text from a ZIP file.
+     * @param warfile ZIP file, which contains entry.
+     * @param entry ZIP entry (compressed file) to read from.
+     * @return Text content of entry.
+     */
     protected String readFile(final ZipFile warfile, final ZipEntry entry) {
         String text = null;
         InputStream inputStream = null;
