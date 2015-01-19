@@ -46,8 +46,8 @@ import org.mockito.Mockito;
  * @author Dmitri Pisarenko (dp@altruix.co)
  * @version $Id$
  * @since 1.0
- * @checkstyle AbstractClassNameCheck
- * @checkstyle MultipleStringLiteralsCheck
+ * @checkstyle AbstractClassNameCheck (1 lines)
+ * @checkstyle MultipleStringLiteralsCheck (3 lines)
  */
 public final class AbstractBeanstalkMojoTest {
     /**
@@ -74,7 +74,7 @@ public final class AbstractBeanstalkMojoTest {
     @Test
     public void checkEbextensionsValidityNoExceptionOnValidJson()
         throws Exception {
-        ebextensionsValidationTestLogic(true, false);
+        this.ebextensionsValidationTestLogic(true, false);
     }
 
     /**
@@ -85,7 +85,7 @@ public final class AbstractBeanstalkMojoTest {
     @Test
     public void checkEbextensionsValidityNoExceptionOnValidYaml()
         throws Exception {
-        ebextensionsValidationTestLogic(false, true);
+        this.ebextensionsValidationTestLogic(false, true);
     }
 
     /**
@@ -97,7 +97,7 @@ public final class AbstractBeanstalkMojoTest {
     public void checkEbextensionsValidityInvalidJsonInvalidYaml()
         throws Exception {
         try {
-            ebextensionsValidationTestLogic(false, false);
+            this.ebextensionsValidationTestLogic(false, false);
         } catch (final MojoFailureException exception) {
             MatcherAssert.assertThat(
                 exception.getMessage(),

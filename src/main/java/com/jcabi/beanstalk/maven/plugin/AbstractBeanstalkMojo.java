@@ -328,11 +328,9 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             inputStream = warfile.getInputStream(entry);
             reader = new InputStreamReader(inputStream);
             text = CharStreams.toString(reader);
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             Logger.error(this, exception.getMessage());
-        }
-        finally {
+        } finally {
             Closeables.closeQuietly(inputStream);
             Closeables.closeQuietly(reader);
         }
