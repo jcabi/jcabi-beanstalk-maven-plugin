@@ -30,14 +30,16 @@
 package com.jcabi.beanstalk.maven.plugin;
 
 import com.google.common.base.Joiner;
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -55,14 +57,29 @@ public final class AbstractBeanstalkMojoTest {
      * @throws MojoFailureException Thrown in case of error.
      */
     @Test
-    @Ignore
     public void executeCallscheckEbextensionsValidity()
         throws MojoFailureException {
         final BeanstalkMojoForTesting mojo = Mockito.spy(
             new AbstractBeanstalkMojoTest.BeanstalkMojoForTesting()
         );
         mojo.setSkip(false);
+        final File war = Mockito.mock(File.class);
+        Mockito.when(war.exists()).thenReturn(true);
+        mojo.setWar(war);
         Mockito.doNothing().when(mojo).checkEbextensionsValidity();
+        final Server server = Mockito.mock(Server.class);
+        Mockito.when(server.getUsername()).thenReturn("A1234567890123456789");
+        Mockito.when(server.getPassword()).thenReturn(
+            "1234567890123456789012345678901234567890");
+        final Settings settings = Mockito.mock(Settings.class);
+        Mockito.when(settings.getServer("name")).thenReturn(server);
+        Mockito.doReturn(new ServerCredentials(settings,
+            "name")).when(mojo)
+            .createServerCredentials();
+        Mockito.doNothing().when(mojo).exec(
+            org.mockito.Matchers.isA(Application.class),
+            org.mockito.Matchers.isA(OverridingVersion.class),
+            org.mockito.Matchers.anyString());
         mojo.execute();
         Mockito.verify(mojo).checkEbextensionsValidity();
     }

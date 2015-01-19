@@ -148,6 +148,14 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     private transient File war;
 
     /**
+     * Set WAR file.
+     * @param file WAR file to deploy
+     */
+    public void setWar(final File file) {
+        this.war = file;
+    }
+
+    /**
      * Set skip option.
      * @param skp Shall we skip execution?
      */
@@ -171,10 +179,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         this.checkEbextensionsValidity();
-        final AWSCredentials creds = new ServerCredentials(
-            this.settings,
-            this.server
-        );
+        final AWSCredentials creds = createServerCredentials();
         final AWSElasticBeanstalk ebt = new AWSElasticBeanstalkClient(creds);
         try {
             this.exec(
@@ -198,6 +203,13 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         } finally {
             ebt.shutdown();
         }
+    }
+
+    protected ServerCredentials createServerCredentials() throws MojoFailureException {
+        return new ServerCredentials(
+            this.settings,
+            this.server
+        );
     }
 
     /**
