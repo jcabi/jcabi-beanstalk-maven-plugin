@@ -48,6 +48,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @author Dmitri Pisarenko (dp@altruix.co)
  * @version $Id$
  * @since 1.0
+ * @checkstyle DesignForExtensionCheck
  */
 public class WarFile {
     /**
@@ -55,6 +56,10 @@ public class WarFile {
      */
     private final File war;
 
+    /**
+     * Creates an instance of WarFile.
+     * @param file The location of the WAR file.
+     */
     public WarFile(final File file) {
         this.war = file;
     }
