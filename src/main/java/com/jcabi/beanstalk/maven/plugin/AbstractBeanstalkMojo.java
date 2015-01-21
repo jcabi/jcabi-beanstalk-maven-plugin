@@ -138,14 +138,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     private transient File war;
 
     /**
-     * Set WAR file.
-     * @param file WAR file to deploy
-     */
-    public void setWar(final File file) {
-        this.war = file;
-    }
-
-    /**
      * Set skip option.
      * @param skp Shall we skip execution?
      */

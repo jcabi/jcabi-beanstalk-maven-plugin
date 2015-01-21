@@ -44,11 +44,15 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
+ * Represents a WAR file with .ebextensions directory.
  * @author Dmitri Pisarenko (dp@altruix.co)
  * @version $Id$
  * @since 1.0
  */
 public class WarFile {
+    /**
+     * Location of the WAR file.
+     */
     private final File war;
 
     public WarFile(final File file) {
@@ -57,9 +61,9 @@ public class WarFile {
     /**
      * Verifies that the .ebextensions contains valid configuration file or
      * files.
-     * @throws org.apache.maven.plugin.MojoFailureException Thrown, if the .ebextensions does not exist
-     *  in the WAR file, is empty or one of its files is neither valid JSON,
-     *  nor valid YAML.
+     * @throws org.apache.maven.plugin.MojoFailureException Thrown, if the
+     *  .ebextensions does not exist in the WAR file, is empty or one of its
+     *  files is neither valid JSON, nor valid YAML.
      */
     public void checkEbextensionsValidity() throws MojoFailureException {
         try {
