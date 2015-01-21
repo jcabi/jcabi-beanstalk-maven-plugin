@@ -51,19 +51,18 @@ public class WarFileTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
         throws IOException {
-        final BeanstalkMojoForTesting mojo = Mockito.spy(
-            new BeanstalkMojoForTesting()
-        );
-        final ZipFile warfile = Mockito.mock(ZipFile.class);
-        Mockito.doReturn(warfile).when(mojo).createZipFile();
+        final File file = Mockito.mock(File.class);
+        final WarFile war = Mockito.spy(new WarFile(file));
+        final ZipFile zip = Mockito.mock(ZipFile.class);
+        Mockito.doReturn(zip).when(war).createZipFile();
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
-        Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(ebextdir);
+        Mockito.when(zip.getEntry(".ebextensions")).thenReturn(ebextdir);
         final Enumeration entries =
             Mockito.mock(Enumeration.class);
-        Mockito.when(warfile.entries()).thenReturn(entries);
+        Mockito.when(zip.entries()).thenReturn(entries);
         Mockito.when(entries.hasMoreElements()).thenReturn(false);
         try {
-            mojo.checkEbextensionsValidity();
+            war.checkEbextensionsValidity();
         } catch (final MojoFailureException exception) {
             MatcherAssert.assertThat(
                 exception.getMessage(),
