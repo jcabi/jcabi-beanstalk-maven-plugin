@@ -33,20 +33,10 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.google.common.base.Joiner;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Closeables;
 import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -178,7 +168,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 String.format("WAR file '%s' doesn't exist", this.war)
             );
         }
-        this.checkEbextensionsValidity();
+        new WarFile(this.war).checkEbextensionsValidity();
         final AWSCredentials creds = this.createServerCredentials();
         final AWSElasticBeanstalk ebt = new AWSElasticBeanstalkClient(creds);
         try {
@@ -272,113 +262,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             green = env.green();
         }
         return green;
-    }
-
-    /**
-     * Verifies that the .ebextensions contains valid configuration file or
-     * files.
-     * @throws MojoFailureException Thrown, if the .ebextensions does not exist
-     *  in the WAR file, is empty or one of its files is neither valid JSON,
-     *  nor valid YAML.
-     */
-    protected void checkEbextensionsValidity() throws MojoFailureException {
-        try {
-            final ZipFile warfile = this.createZipFile();
-            final ZipEntry ebextdir = warfile.getEntry(".ebextensions");
-            if (ebextdir == null) {
-                throw new MojoFailureException(
-                    ".ebextensions directory does not exist in the WAR file"
-                );
-            }
-            final Enumeration<? extends ZipEntry> entries = warfile.entries();
-            int files = 0;
-            while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
-                if (entry.getName().startsWith(".ebextensions/")
-                    && !entry.isDirectory()) {
-                    files += 1;
-                    final String text = this.readFile(warfile, entry);
-                    if (!(this.validJson(text) || this.validYaml(text))) {
-                        throw new MojoFailureException(
-                            Joiner.on("").join(
-                                "File '",
-                                entry.getName(),
-                                "' in .ebextensions is neither valid JSON,",
-                                " nor valid YAML"
-                            )
-                        );
-                    }
-                }
-            }
-            if (files < 1) {
-                throw new MojoFailureException(
-                    ".ebextensions contains no config files."
-                );
-            }
-        } catch (final IOException exception) {
-            Logger.error(this, exception.getMessage());
-            throw new MojoFailureException(
-                ".ebextensions validation failed"
-            );
-        }
-    }
-
-    /**
-     * Creates a ZipFile from war.
-     * @return ZipFile, which contains the war file.
-     * @throws IOException Thrown in case of error.
-     */
-    protected ZipFile createZipFile() throws IOException {
-        return new ZipFile(this.war);
-    }
-
-    /**
-     * Reads text from a ZIP file.
-     * @param warfile ZIP file, which contains entry.
-     * @param entry ZIP entry (compressed file) to read from.
-     * @return Text content of entry.
-     */
-    protected String readFile(final ZipFile warfile, final ZipEntry entry) {
-        String text = null;
-        InputStream inputStream = null;
-        InputStreamReader reader = null;
-        try {
-            inputStream = warfile.getInputStream(entry);
-            reader = new InputStreamReader(inputStream);
-            text = CharStreams.toString(reader);
-        } catch (final IOException exception) {
-            Logger.error(this, exception.getMessage());
-        } finally {
-            Closeables.closeQuietly(inputStream);
-            Closeables.closeQuietly(reader);
-        }
-        return text;
-    }
-
-    /**
-     * Validates a YAML string.
-     * @param text Text to validate
-     * @return True, if text is a valid YAML string.
-     * @todo #2:30min Implement validation of YAML inside the method
-     *  AbstractBeanstalkMojo.validYaml. Remember to unit test your solution.
-     */
-    protected boolean validYaml(final String text) {
-        throw new NotImplementedException(
-            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validYaml"
-        );
-    }
-
-    /**
-     * Validates a JSON string.
-     * @param text Text to validate
-     * @return True, if text is a valid JSON string.
-     * @todo #2:30min Implement validation of JSON inside the method
-     *  AbstractBeanstalkMojo.validJson(). Remember to unit test your solution.
-     */
-    protected boolean validJson(final String text) {
-        throw new NotImplementedException(
-            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson"
-        );
     }
 
     /**
