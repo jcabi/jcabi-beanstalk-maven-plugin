@@ -81,16 +81,15 @@ public class WarFileTest {
      */
     private void ebextensionsValidationTestLogic(final boolean jsonvalid,
         final boolean yamlvalid) throws Exception {
-        final BeanstalkMojoForTesting mojo = Mockito.spy(
-            new BeanstalkMojoForTesting()
-        );
-        final ZipFile warfile = Mockito.mock(ZipFile.class);
-        Mockito.doReturn(warfile).when(mojo).createZipFile();
+        final File file = Mockito.mock(File.class);
+        final WarFile war = Mockito.spy(new WarFile(file));
+        final ZipFile zip = Mockito.mock(ZipFile.class);
+        Mockito.doReturn(zip).when(war).createZipFile();
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
-        Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(ebextdir);
+        Mockito.when(zip.getEntry(".ebextensions")).thenReturn(ebextdir);
         final Enumeration entries =
             Mockito.mock(Enumeration.class);
-        Mockito.when(warfile.entries()).thenReturn(entries);
+        Mockito.when(zip.entries()).thenReturn(entries);
         Mockito.when(entries.hasMoreElements())
             .thenReturn(true)
             .thenReturn(false);
@@ -101,10 +100,10 @@ public class WarFileTest {
         Mockito.when(configfile.isDirectory()).thenReturn(false);
         Mockito.when(entries.nextElement()).thenReturn(configfile);
         final String text = "01run.config contents";
-        Mockito.doReturn(text).when(mojo).readFile(warfile, configfile);
-        Mockito.doReturn(jsonvalid).when(mojo).validJson(text);
-        Mockito.doReturn(yamlvalid).when(mojo).validYaml(text);
-        mojo.checkEbextensionsValidity();
+        Mockito.doReturn(text).when(war).readFile(zip, configfile);
+        Mockito.doReturn(jsonvalid).when(war).validJson(text);
+        Mockito.doReturn(yamlvalid).when(war).validYaml(text);
+        war.checkEbextensionsValidity();
     }
 
     /**
