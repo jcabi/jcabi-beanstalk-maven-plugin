@@ -47,11 +47,9 @@ import org.mockito.Mockito;
  * Test case for {@link DeployMojo} (more detailed test is in maven invoker).
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
- * @checkstyle MultipleStringLiteralsCheck (1 lines)
+ * @checkstyle MultipleStringLiteralsCheck (10 lines)
  */
 public final class DeployMojoTest {
-    // @checkstyle MultipleStringLiteralsCheck (10 lines)
-
     /**
      * DeployMojo can skip execution when flag is set.
      * @throws Exception If something is wrong
@@ -85,6 +83,7 @@ public final class DeployMojoTest {
         );
         final Settings settings = Mockito.mock(Settings.class);
         Mockito.when(settings.getServer("name")).thenReturn(server);
+        // @checkstyle MultipleStringLiteralsCheck (10 lines)
         Mockito.doReturn(
             new ServerCredentials(
                 settings,
@@ -236,6 +235,42 @@ public final class DeployMojoTest {
         Mockito.doReturn(yamlvalid).when(mojo).validYaml(text);
         mojo.checkEbextensionsValidity();
     }
+
+    /**
+     * Encapsulates the test logic for several tests.
+     * @param jsonvalid Specifies the return value of mocked validJson method.
+     * @param yamlvalid Specifies the return value of mocked validYaml method.
+     * @throws Exception Thrown in case of error.
+     */
+    private void ebextensionsValidationTestLogic2(final boolean jsonvalid,
+        final boolean yamlvalid) throws Exception {
+        final BeanstalkMojoForTesting mojo = Mockito.spy(
+            new BeanstalkMojoForTesting()
+        );
+        final ZipFile warfile = Mockito.mock(ZipFile.class);
+        Mockito.doReturn(warfile).when(mojo).createZipFile();
+        final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
+        Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(ebextdir);
+        final Enumeration entries =
+            Mockito.mock(Enumeration.class);
+        Mockito.when(warfile.entries()).thenReturn(entries);
+        Mockito.when(entries.hasMoreElements())
+            .thenReturn(true)
+            .thenReturn(false);
+        final ZipEntry configfile = Mockito.mock(ZipEntry.class);
+        Mockito.when(configfile.getName()).thenReturn(
+            ".ebextensions/01run.config"
+        );
+        Mockito.when(configfile.isDirectory()).thenReturn(false);
+        Mockito.when(entries.nextElement()).thenReturn(configfile);
+        final String text = "01run.config contents";
+        Mockito.doReturn(text).when(mojo).readFile(warfile, configfile);
+        Mockito.doReturn(jsonvalid).when(mojo).validJson(text);
+        Mockito.doReturn(yamlvalid).when(mojo).validYaml(text);
+        mojo.checkEbextensionsValidity();
+    }
+
+
     private static class BeanstalkMojoForTesting extends AbstractBeanstalkMojo {
         @Override
         protected void exec(final Application app, final Version version,
