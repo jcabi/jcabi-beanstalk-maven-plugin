@@ -114,11 +114,11 @@ public class WarFileTest {
      */
     private void ebextensionsValidationTestLogic2(final boolean jsonvalid,
         final boolean yamlvalid) throws Exception {
-        final BeanstalkMojoForTesting mojo = Mockito.spy(
-            new BeanstalkMojoForTesting()
-        );
+        final File file = Mockito.mock(File.class);
+        final WarFile war = Mockito.spy(new WarFile(file));
+
         final ZipFile warfile = Mockito.mock(ZipFile.class);
-        Mockito.doReturn(warfile).when(mojo).createZipFile();
+        Mockito.doReturn(warfile).when(war).createZipFile();
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
         Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(ebextdir);
         final Enumeration entries =
@@ -134,10 +134,10 @@ public class WarFileTest {
         Mockito.when(configfile.isDirectory()).thenReturn(false);
         Mockito.when(entries.nextElement()).thenReturn(configfile);
         final String text = "01run.config contents";
-        Mockito.doReturn(text).when(mojo).readFile(warfile, configfile);
-        Mockito.doReturn(jsonvalid).when(mojo).validJson(text);
-        Mockito.doReturn(yamlvalid).when(mojo).validYaml(text);
-        mojo.checkEbextensionsValidity();
+        Mockito.doReturn(text).when(war).readFile(warfile, configfile);
+        Mockito.doReturn(jsonvalid).when(war).validJson(text);
+        Mockito.doReturn(yamlvalid).when(war).validYaml(text);
+        war.checkEbextensionsValidity();
     }
     /**
      * Verifies that checkEbextensionsValidity throws no exception, if a config
