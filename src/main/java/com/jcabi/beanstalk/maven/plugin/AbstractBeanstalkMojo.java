@@ -36,7 +36,9 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -160,7 +162,14 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 String.format("WAR file '%s' doesn't exist", this.war)
             );
         }
-        new WarFile(this.war).checkEbextensionsValidity();
+        try {
+            new WarFile(new ZipFile(this.war)).checkEbextensionsValidity();
+        } catch (final IOException ex) {
+            throw new MojoFailureException(
+                ".ebextensions validity check failed",
+                ex
+            );
+        }
         final AWSCredentials creds = this.createServerCredentials();
         final AWSElasticBeanstalk ebt = new AWSElasticBeanstalkClient(creds);
         try {
