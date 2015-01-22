@@ -70,13 +70,13 @@ public final class WarFile {
      *  files is neither valid JSON, nor valid YAML.
      */
     public void checkEbextensionsValidity() throws MojoFailureException {
-        final ZipEntry ebextdir = war.getEntry(".ebextensions");
+        final ZipEntry ebextdir = this.war.getEntry(".ebextensions");
         if (ebextdir == null) {
             throw new MojoFailureException(
                 ".ebextensions directory does not exist in the WAR file"
             );
         }
-        final Enumeration<? extends ZipEntry> entries = war.entries();
+        final Enumeration<? extends ZipEntry> entries = this.war.entries();
         int files = 0;
         while (entries.hasMoreElements()) {
             final ZipEntry entry = entries.nextElement();
@@ -109,7 +109,7 @@ public final class WarFile {
      * @param entry ZIP entry (compressed file) to read from.
      * @return Text content of entry.
      */
-    protected String readFile(final ZipFile warfile, final ZipEntry entry) {
+    private String readFile(final ZipFile warfile, final ZipEntry entry) {
         String text = null;
         InputStream inputStream = null;
         InputStreamReader reader = null;
@@ -133,7 +133,7 @@ public final class WarFile {
      * @todo #2:30min Implement validation of YAML inside the method
      *  AbstractBeanstalkMojo.validYaml. Remember to unit test your solution.
      */
-    protected boolean validYaml(final String text) {
+    private boolean validYaml(final String text) {
         throw new NotImplementedException(
             "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validYaml"
         );
@@ -146,7 +146,7 @@ public final class WarFile {
      * @todo #2:30min Implement validation of JSON inside the method
      *  AbstractBeanstalkMojo.validJson(). Remember to unit test your solution.
      */
-    protected boolean validJson(final String text) {
+    private boolean validJson(final String text) {
         throw new NotImplementedException(
             "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson"
         );
