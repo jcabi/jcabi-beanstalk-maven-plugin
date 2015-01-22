@@ -33,7 +33,6 @@ import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 import com.jcabi.log.Logger;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,17 +49,17 @@ import org.apache.maven.plugin.MojoFailureException;
  * @since 1.0
  * @checkstyle DesignForExtensionCheck
  */
-public class WarFile {
+public final class WarFile {
     /**
      * Location of the WAR file.
      */
-    private final File war;
+    private final ZipFile war;
 
     /**
      * Creates an instance of WarFile.
      * @param file The location of the WAR file.
      */
-    public WarFile(final File file) {
+    public WarFile(final ZipFile file) {
         this.war = file;
     }
     /**
@@ -71,54 +70,37 @@ public class WarFile {
      *  files is neither valid JSON, nor valid YAML.
      */
     public void checkEbextensionsValidity() throws MojoFailureException {
-        try {
-            final ZipFile warfile = this.createZipFile();
-            final ZipEntry ebextdir = warfile.getEntry(".ebextensions");
-            if (ebextdir == null) {
-                throw new MojoFailureException(
-                    ".ebextensions directory does not exist in the WAR file"
-                );
-            }
-            final Enumeration<? extends ZipEntry> entries = warfile.entries();
-            int files = 0;
-            while (entries.hasMoreElements()) {
-                final ZipEntry entry = entries.nextElement();
-                if (entry.getName().startsWith(".ebextensions/")
-                    && !entry.isDirectory()) {
-                    files += 1;
-                    final String text = this.readFile(warfile, entry);
-                    if (!(this.validJson(text) || this.validYaml(text))) {
-                        throw new MojoFailureException(
-                            Joiner.on("").join(
-                                "File '",
-                                entry.getName(),
-                                "' in .ebextensions is neither valid JSON,",
-                                " nor valid YAML"
-                            )
-                        );
-                    }
-                }
-            }
-            if (files < 1) {
-                throw new MojoFailureException(
-                    ".ebextensions contains no config files."
-                );
-            }
-        } catch (final IOException exception) {
-            Logger.error(this, exception.getMessage());
+        final ZipEntry ebextdir = war.getEntry(".ebextensions");
+        if (ebextdir == null) {
             throw new MojoFailureException(
-                ".ebextensions validation failed"
+                ".ebextensions directory does not exist in the WAR file"
             );
         }
-    }
-
-    /**
-     * Creates a ZipFile from war.
-     * @return ZipFile, which contains the war file.
-     * @throws IOException Thrown in case of error.
-     */
-    protected ZipFile createZipFile() throws IOException {
-        return new ZipFile(this.war);
+        final Enumeration<? extends ZipEntry> entries = war.entries();
+        int files = 0;
+        while (entries.hasMoreElements()) {
+            final ZipEntry entry = entries.nextElement();
+            if (entry.getName().startsWith(".ebextensions/")
+                && !entry.isDirectory()) {
+                files += 1;
+                final String text = this.readFile(war, entry);
+                if (!(this.validJson(text) || this.validYaml(text))) {
+                    throw new MojoFailureException(
+                        Joiner.on("").join(
+                            "File '",
+                            entry.getName(),
+                            "' in .ebextensions is neither valid JSON,",
+                            " nor valid YAML"
+                        )
+                    );
+                }
+            }
+        }
+        if (files < 1) {
+            throw new MojoFailureException(
+                ".ebextensions contains no config files."
+            );
+        }
     }
 
     /**

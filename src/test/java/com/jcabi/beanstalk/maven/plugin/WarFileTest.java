@@ -26,11 +26,8 @@ public class WarFileTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoDir()
         throws IOException {
-        final File file = Mockito.mock(File.class);
-        final WarFile war = Mockito.spy(new WarFile(file));
-        final ZipFile zip = Mockito.mock(ZipFile.class);
-        Mockito.doReturn(zip).when(war).createZipFile();
-        Mockito.when(zip.getEntry(".ebextensions")).thenReturn(null);
+        final ZipFile zip = new ZipFile("somename");
+        final WarFile war = new WarFile(zip);
         try {
             war.checkEbextensionsValidity();
         } catch (final MojoFailureException exception) {
@@ -51,10 +48,8 @@ public class WarFileTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
         throws IOException {
-        final File file = Mockito.mock(File.class);
-        final WarFile war = Mockito.spy(new WarFile(file));
         final ZipFile zip = Mockito.mock(ZipFile.class);
-        Mockito.doReturn(zip).when(war).createZipFile();
+        final WarFile war = new WarFile(zip);
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
         Mockito.when(zip.getEntry(".ebextensions")).thenReturn(ebextdir);
         final Enumeration entries =
@@ -81,10 +76,9 @@ public class WarFileTest {
      */
     private void ebextensionsValidationTestLogic(final boolean jsonvalid,
         final boolean yamlvalid) throws Exception {
-        final File file = Mockito.mock(File.class);
-        final WarFile war = Mockito.spy(new WarFile(file));
         final ZipFile zip = Mockito.mock(ZipFile.class);
-        Mockito.doReturn(zip).when(war).createZipFile();
+        final File file = Mockito.mock(File.class);
+        final WarFile war = Mockito.spy(new WarFile(zip));
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
         Mockito.when(zip.getEntry(".ebextensions")).thenReturn(ebextdir);
         final Enumeration entries =
@@ -115,10 +109,8 @@ public class WarFileTest {
     private void ebextensionsValidationTestLogic2(final boolean jsonvalid,
         final boolean yamlvalid) throws Exception {
         final File file = Mockito.mock(File.class);
-        final WarFile war = Mockito.spy(new WarFile(file));
-
         final ZipFile warfile = Mockito.mock(ZipFile.class);
-        Mockito.doReturn(warfile).when(war).createZipFile();
+        final WarFile war = new WarFile(warfile);
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
         Mockito.when(warfile.getEntry(".ebextensions")).thenReturn(ebextdir);
         final Enumeration entries =
