@@ -76,14 +76,14 @@ public final class WarFileTest {
      * @throws IOException Thrown in case of error.
      */
     @Test
+    @SuppressWarnings("unchecked")
     public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
         throws IOException {
         final ZipFile zip = Mockito.mock(ZipFile.class);
         final WarFile war = new WarFile(zip);
         final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
         Mockito.when(zip.getEntry(".ebextensions")).thenReturn(ebextdir);
-        final Enumeration entries =
-            Mockito.mock(Enumeration.class);
+        final Enumeration entries = Mockito.mock(Enumeration.class);
         Mockito.when(zip.entries()).thenReturn(entries);
         Mockito.when(entries.hasMoreElements()).thenReturn(false);
         try {
