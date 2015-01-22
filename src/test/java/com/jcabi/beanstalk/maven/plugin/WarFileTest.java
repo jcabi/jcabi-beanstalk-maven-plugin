@@ -26,7 +26,8 @@ public class WarFileTest {
     @Test
     public void checkEbextensionsValidityThrowsExceptionNoDir()
         throws IOException {
-        final ZipFile zip = new ZipFile("somename");
+        final ZipFile zip = Mockito.mock(ZipFile.class);
+        Mockito.when(zip.getEntry(".ebextensions")).thenReturn(null);
         final WarFile war = new WarFile(zip);
         try {
             war.checkEbextensionsValidity();
