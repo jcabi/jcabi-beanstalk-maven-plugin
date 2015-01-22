@@ -29,10 +29,12 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 import org.apache.maven.plugin.MojoFailureException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -69,7 +71,6 @@ public final class WarFileTest {
             );
         }
     }
-
     /**
      * Verifies that checkEbextensionsValidity throws an exception, if the
      * .ebextensions is empty.
@@ -79,13 +80,15 @@ public final class WarFileTest {
     @SuppressWarnings("unchecked")
     public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
         throws IOException {
-        final ZipFile zip = Mockito.mock(ZipFile.class);
-        final WarFile war = new WarFile(zip);
-        final ZipEntry ebextdir = Mockito.mock(ZipEntry.class);
-        Mockito.when(zip.getEntry(".ebextensions")).thenReturn(ebextdir);
-        final Enumeration entries = Mockito.mock(Enumeration.class);
-        Mockito.when(zip.entries()).thenReturn(entries);
-        Mockito.when(entries.hasMoreElements()).thenReturn(false);
+        final File temp = File.createTempFile("test", ".zip");
+        final FileOutputStream fos = new FileOutputStream(temp);
+        final ZipOutputStream out = new ZipOutputStream(fos);
+        out.putNextEntry(new ZipEntry(".ebextensions/"));
+        out.flush();
+        out.close();
+        fos.flush();
+        fos.close();
+        final WarFile war = new WarFile(new ZipFile(temp));
         try {
             war.checkEbextensionsValidity();
         } catch (final MojoFailureException exception) {
