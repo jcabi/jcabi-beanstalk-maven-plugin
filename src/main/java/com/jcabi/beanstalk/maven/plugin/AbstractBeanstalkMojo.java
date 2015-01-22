@@ -41,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.jfrog.maven.annomojo.annotations.MojoParameter;
 import org.slf4j.impl.StaticLoggerBinder;
@@ -55,12 +54,6 @@ import org.slf4j.impl.StaticLoggerBinder;
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
-    /**
-     * Object with the data of the project being built.
-     */
-    @MojoParameter(expression = "${project}", readonly = true, required = true)
-    private MavenProject project;
-
     /**
      * Setting.xml.
      */

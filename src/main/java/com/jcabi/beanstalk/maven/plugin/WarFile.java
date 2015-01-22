@@ -49,11 +49,12 @@ import org.apache.maven.plugin.MojoFailureException;
  * @since 1.0
  * @checkstyle DesignForExtensionCheck
  */
+@SuppressWarnings("PMD.UnusedFormalParameter")
 public final class WarFile {
     /**
      * Location of the WAR file.
      */
-    private final ZipFile war;
+    private transient ZipFile war;
 
     /**
      * Creates an instance of WarFile.
