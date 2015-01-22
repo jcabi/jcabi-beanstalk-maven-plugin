@@ -54,7 +54,7 @@ public final class WarFile {
     /**
      * Location of the WAR file.
      */
-    private transient ZipFile war;
+    private final transient ZipFile war;
 
     /**
      * Creates an instance of WarFile.
