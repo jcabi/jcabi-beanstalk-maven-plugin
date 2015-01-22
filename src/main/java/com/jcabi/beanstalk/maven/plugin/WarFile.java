@@ -83,7 +83,7 @@ public final class WarFile {
             if (entry.getName().startsWith(".ebextensions/")
                 && !entry.isDirectory()) {
                 files += 1;
-                final String text = this.readFile(war, entry);
+                final String text = this.readFile(this.war, entry);
                 if (!(this.validJson(text) || this.validYaml(text))) {
                     throw new MojoFailureException(
                         Joiner.on("").join(
