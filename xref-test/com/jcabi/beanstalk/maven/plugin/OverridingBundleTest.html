@@ -90,9 +90,29 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          );
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>      }
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>  }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     * OverridingBundle caches result of location() method.</em>
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     * @throws Exception If something is wrong</em>
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      @Test
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> cachesResultOfLocation() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">final</strong> AmazonS3 client = Mockito.mock(AmazonS3.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">final</strong> File war = <strong class="jxr_keyword">this</strong>.temp.newFile(<span class="jxr_string">"temp1.war"</span>);
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>          FileUtils.writeStringToFile(war, <span class="jxr_string">"some JAR file content"</span>);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">final</strong> String bucket = <span class="jxr_string">"some-bucket-for-cache"</span>;
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">final</strong> String key = <span class="jxr_string">"some-key-for-cache"</span>;
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          Mockito.doReturn(<strong class="jxr_keyword">new</strong> PutObjectResult())
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              .when(client).putObject(bucket, key, war);
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          Mockito.doReturn(<strong class="jxr_keyword">new</strong> ObjectListing())
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>              .when(client).listObjects(Mockito.any(ListObjectsRequest.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">final</strong> Bundle bundle = <strong class="jxr_keyword">new</strong> OverridingBundle(client, bucket, key, war);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>         bundle.location();
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         bundle.location();
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         Mockito.verify(client, Mockito.times(1)).putObject(bucket, key, war);
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>     }
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2014 <a href="http://www.jcabi.com">jcabi.com</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2015 <a href="http://www.jcabi.com">jcabi.com</a>. All rights reserved.</div>
 </body>
 </html>

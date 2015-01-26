@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>jcabi-beanstalk-maven-plugin - Using syslogd at Amazon Elastic Beanstalk</title>
+        <title>jcabi-beanstalk-maven-plugin &#x2013; Using syslogd at Amazon Elastic Beanstalk</title>
         <link media="all" rel="stylesheet" type="text/css" href="./css/jcabi.css"/>
                     <meta name="author" content="Yegor Bugayenko" />
                             <script>
@@ -138,13 +138,13 @@
                             </div>
                             <ul class="badges">
                                 <li>
-                                    <strong itemprop="version">0.10</strong>
+                                    <strong itemprop="version">0.11</strong>
                                 </li>
                                 <li>
                                     
-                                    <time itemprop="datePublished" datetime="2014-08-20T06:39:58Z">
+                                    <time itemprop="datePublished" datetime="2015-01-26T12:43:47Z">
                                         
-                                        20-Aug-2014
+                                        26-Jan-2015
                                     </time>
                                 </li>
                                 <li class="menu-button">menu</li>
@@ -156,7 +156,7 @@
                             </a>
                                                 <article role="article" itemprop="articleBody">
                             <!--  --><!-- Copyright (c) 2012-2014, jcabi.com --><!-- All rights reserved. --><!--  --><!-- Redistribution and use in source and binary forms, with or without --><!-- modification, are permitted provided that the following conditions --><!-- are met: 1) Redistributions of source code must retain the above --><!-- copyright notice, this list of conditions and the following --><!-- disclaimer. 2) Redistributions in binary form must reproduce the above --><!-- copyright notice, this list of conditions and the following --><!-- disclaimer in the documentation and/or other materials provided --><!-- with the distribution. 3) Neither the name of the jcabi.com nor --><!-- the names of its contributors may be used to endorse or promote --><!-- products derived from this software without specific prior written --><!-- permission. --><!--  --><!-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS --><!-- "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT --><!-- NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND --><!-- FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL --><!-- THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, --><!-- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES --><!-- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR --><!-- SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) --><!-- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, --><!-- STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) --><!-- ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED --><!-- OF THE POSSIBILITY OF SUCH DAMAGE. --><!--  --><div class="section">
-<h2>Using syslogd at Amazon Elastic Beanstalk<a name="Using_syslogd_at_Amazon_Elastic_Beanstalk"></a></h2>
+<h2><a name="Using_syslogd_at_Amazon_Elastic_Beanstalk"></a>Using syslogd at Amazon Elastic Beanstalk</h2>
 <p>The best way to monitor your running Elastic Beanstalk environments is through the runtime logs produced by EC2 instances and your running Java applications. We recommend to use <a class="externalLink" href="http://www.slf4j.org/">SLF4J</a> (in combination with <a href="../jcabi-log/index.html"><tt>com.jcabi:jcabi-log</tt></a>) as a logging facade and <a class="externalLink" href="http://logging.apache.org/log4j/1.2/">Apache log4j</a> as logging facility. Add these three dependencies to your <tt>pom.xml</tt>:</p>
 <div class="source">
 <pre>&lt;dependencies&gt;
@@ -178,14 +178,14 @@
     &lt;scope&gt;runtime&lt;/scope&gt;
   &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre></div>
-<p>That's all you need to start logging events in your Java classes (read more about <a href="../jcabi-log/apidocs-0.10/com/jcabi/log/Logger.html"><tt>com.jcabi.log.Logger</tt></a>):</p>
+<p>That's all you need to start logging events in your Java classes (read more about <a href="../jcabi-log/apidocs-0.11/com/jcabi/log/Logger.html"><tt>com.jcabi.log.Logger</tt></a>):</p>
 <div class="source">
 <pre>public class Foo {
   public void bar() {
     Logger.info(this, &quot;something just happened...&quot;);
   }
 }</pre></div>
-<p>The logging event produced by that <tt>info()</tt> call to <a href="../jcabi-log/apidocs-0.10/com/jcabi/log/Logger.html"><tt>com.jcabi.log.Logger</tt></a> will be forwarded to log4j through SLF4J. Now you should inform LOG4J runtime engine about the syslog, as a logging destination. Create a <tt>log4j.properties</tt> file in <tt>src/main/resources</tt> directory of your project:</p>
+<p>The logging event produced by that <tt>info()</tt> call to <a href="../jcabi-log/apidocs-0.11/com/jcabi/log/Logger.html"><tt>com.jcabi.log.Logger</tt></a> will be forwarded to log4j through SLF4J. Now you should inform LOG4J runtime engine about the syslog, as a logging destination. Create a <tt>log4j.properties</tt> file in <tt>src/main/resources</tt> directory of your project:</p>
 <div class="source">
 <pre>log4j.rootLogger=INFO, SYSLOG
 log4j.appender.SYSLOG=org.apache.log4j.net.SyslogAppender
@@ -229,7 +229,7 @@ log4j.appender.SYSLOG.layout.ConversionPattern=[%p] %t %c: %m%n</pre></div>
                 <footer class="legal-notes">
                     <div>
                         Copyright &#169;
-                                                                            2012-2014
+                                                                            2012-2015
                                             </div>
                     <div>jcabi.com, All Rights Reserved.</div>
                     <div><a href="http://maven.apache.org/privacy-policy.html">Privacy Policy</a>.</div>
