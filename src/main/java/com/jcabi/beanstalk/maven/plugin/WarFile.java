@@ -29,6 +29,8 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
@@ -144,13 +146,14 @@ public final class WarFile {
      * Validates a JSON string.
      * @param text Text to validate
      * @return True, if text is a valid JSON string.
-     * @todo #2:30min Implement validation of JSON inside the method
-     *  AbstractBeanstalkMojo.validJson(). Remember to unit test your solution.
      */
     private boolean validJson(final String text) {
-        throw new NotImplementedException(
-            "com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo.validJson"
-        );
+        boolean result = true;
+        try {
+            new JSONObject(text);
+        } catch (final JSONException ex) {
+            result = false;
+        }
+        return result;
     }
-
 }

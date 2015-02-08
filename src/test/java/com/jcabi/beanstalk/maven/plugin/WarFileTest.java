@@ -29,9 +29,12 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -99,5 +102,33 @@ public final class WarFileTest {
                 )
             );
         }
+    }
+
+    /**
+     * Verifies that checkEbextensionsValidity runs fine
+     * when .ebextensions entry has a valid json text.
+     * @throws Exception Thrown in case of error.
+     */
+    @Test
+    public void checkValidateJson() throws Exception {
+        final ZipFile zip = Mockito.mock(ZipFile.class);
+        final ZipEntry entry = Mockito.mock(ZipEntry.class);
+        Mockito.when(zip.getEntry(".ebextensions")).thenReturn(entry);
+        @SuppressWarnings("unchecked")
+        final Enumeration<ZipEntry> enumeration =
+            Mockito.mock(Enumeration.class);
+        Mockito.doReturn(enumeration).when(zip).entries();
+        Mockito.when(enumeration.hasMoreElements()).thenReturn(true)
+            .thenReturn(false);
+        Mockito.when(enumeration.nextElement()).thenReturn(entry)
+            .thenReturn(null);
+        Mockito.when(entry.getName()).thenReturn(".ebextensions/");
+        Mockito.when(zip.getInputStream(entry)).thenReturn(
+            new ByteArrayInputStream(
+                "{\"blah\":\"blah\"}".getBytes(StandardCharsets.UTF_8)
+            )
+        );
+        final WarFile war = new WarFile(zip);
+        war.checkEbextensionsValidity();
     }
 }
