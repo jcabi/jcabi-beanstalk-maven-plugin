@@ -29,6 +29,7 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
+import com.amazonaws.util.json.JSONArray;
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 import com.google.common.base.Joiner;
@@ -148,9 +149,33 @@ public final class WarFile {
      * @return True, if text is a valid JSON string.
      */
     private boolean validJson(final String text) {
+        return this.validJSONObject(text) || this.validJSONArray(text);
+    }
+
+    /**
+     * Validates a JSON string representing JSON object.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON object.
+     */
+    private boolean validJSONObject(final String text) {
         boolean result = true;
         try {
             new JSONObject(text);
+        } catch (final JSONException ex) {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * Validates a JSON string representing JSON array.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON array.
+     */
+    private boolean validJSONArray(final String text) {
+        boolean result = true;
+        try {
+            new JSONArray(text);
         } catch (final JSONException ex) {
             result = false;
         }

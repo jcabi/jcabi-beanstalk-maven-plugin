@@ -41,6 +41,8 @@ import java.util.zip.ZipOutputStream;
 import org.apache.maven.plugin.MojoFailureException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -105,12 +107,75 @@ public final class WarFileTest {
     }
 
     /**
-     * Verifies that checkEbextensionsValidity runs fine
-     * when .ebextensions entry has a valid json text.
+     * Verifies that WarFile can use a .ebextensions with valid json object
+     * string. Test passes when WarFile.checkEbextensionsValidity method
+     * doesn't throw exception.
      * @throws Exception Thrown in case of error.
      */
     @Test
-    public void checkValidateJson() throws Exception {
+    public void usesEbextensionsWithValidJsonObject() throws Exception {
+        final ZipFile zip = this.zipWithEbextensionsWithText(
+            "{\"blah\":\"blah\"}"
+        );
+        final WarFile war = new WarFile(zip);
+        war.checkEbextensionsValidity();
+    }
+
+    /**
+     * Verifies that WarFile can use a .ebextensions with valid json array
+     * string. Test passes when WarFile.checkEbextensionsValidity method
+     * doesn't throw exception.
+     * @throws Exception Thrown in case of error.
+     */
+    @Test
+    public void usesEbextensionsWithValidJsonArray() throws Exception {
+        final ZipFile zip = this.zipWithEbextensionsWithText(
+            "[{\"blah\":\"blah\"},{\"blah\":\"blah\"}]"
+        );
+        final WarFile war = new WarFile(zip);
+        war.checkEbextensionsValidity();
+    }
+
+    /**
+     * Verifies that WarFile throws exception when .ebextensions
+     * contains invalid json.
+     * @todo #16 enable test when WarFile.validYaml implemented
+     * @throws Exception Thrown in case of error.
+     */
+    @Test
+    @Ignore
+    @SuppressWarnings("StringLiteralsConcatenationCheck")
+    public void throwsExceptionWhenUsesEbextensionsWithInvalidJson()
+        throws Exception {
+        final ZipFile zip = this.zipWithEbextensionsWithText(
+            "{\"blah\":\"blah\"]"
+        );
+        final WarFile war = new WarFile(zip);
+        try {
+            war.checkEbextensionsValidity();
+            Assert.fail();
+        } catch (final MojoFailureException exception) {
+            MatcherAssert.assertThat(
+                exception.getMessage(),
+                Matchers.equalTo(
+                    new StringBuilder()
+                        .append("File '.ebextensions/' in .ebextensions is")
+                        .append(" neither valid JSON, nor valid YAML")
+                        .toString()
+                )
+            );
+        }
+    }
+
+    /**
+     * Prepares ZipFile mock containing .ebextensions entry with text
+     * provided.
+     * @param text Text .ebextensions entry contains.
+     * @return ZipFile mock.
+     * @throws IOException Thrown in case of error.
+     */
+    private ZipFile zipWithEbextensionsWithText(final String text)
+        throws IOException {
         final ZipFile zip = Mockito.mock(ZipFile.class);
         final ZipEntry entry = Mockito.mock(ZipEntry.class);
         Mockito.when(zip.getEntry(".ebextensions")).thenReturn(entry);
@@ -125,10 +190,10 @@ public final class WarFileTest {
         Mockito.when(entry.getName()).thenReturn(".ebextensions/");
         Mockito.when(zip.getInputStream(entry)).thenReturn(
             new ByteArrayInputStream(
-                "{\"blah\":\"blah\"}".getBytes(StandardCharsets.UTF_8)
+                text.getBytes(StandardCharsets.UTF_8)
             )
         );
-        final WarFile war = new WarFile(zip);
-        war.checkEbextensionsValidity();
+        return zip;
     }
+
 }
