@@ -107,38 +107,37 @@ public final class WarFileTest {
     }
 
     /**
-     * Verifies that WarFile can use a .ebextensions with valid json object
-     * string. Test passes when WarFile.checkEbextensionsValidity method
+     * WarFile can use a .ebextensions with valid json object string.
+     * Test passes when WarFile.checkEbextensionsValidity method
      * doesn't throw exception.
      * @throws Exception Thrown in case of error.
      */
     @Test
     public void usesEbextensionsWithValidJsonObject() throws Exception {
-        final ZipFile zip = this.zipWithEbextensionsWithText(
-            "{\"blah\":\"blah\"}"
-        );
-        final WarFile war = new WarFile(zip);
-        war.checkEbextensionsValidity();
+        new WarFile(
+            this.zipWithEbextensions(
+                "{\"blah\":\"blah\"}"
+            )
+        ).checkEbextensionsValidity();
     }
 
     /**
-     * Verifies that WarFile can use a .ebextensions with valid json array
-     * string. Test passes when WarFile.checkEbextensionsValidity method
+     * WarFile can use a .ebextensions with valid json array string.
+     * Test passes when WarFile.checkEbextensionsValidity method
      * doesn't throw exception.
      * @throws Exception Thrown in case of error.
      */
     @Test
     public void usesEbextensionsWithValidJsonArray() throws Exception {
-        final ZipFile zip = this.zipWithEbextensionsWithText(
-            "[{\"blah\":\"blah\"},{\"blah\":\"blah\"}]"
-        );
-        final WarFile war = new WarFile(zip);
-        war.checkEbextensionsValidity();
+        new WarFile(
+            this.zipWithEbextensions(
+                "[{\"blah\":\"blah\"},{\"blah\":\"blah\"}]"
+            )
+        ).checkEbextensionsValidity();
     }
 
     /**
-     * Verifies that WarFile throws exception when .ebextensions
-     * contains invalid json.
+     * WarFile throws exception when .ebextensions contains invalid json.
      * @todo #16 enable test when WarFile.validYaml implemented
      * @throws Exception Thrown in case of error.
      */
@@ -147,12 +146,12 @@ public final class WarFileTest {
     @SuppressWarnings("StringLiteralsConcatenationCheck")
     public void throwsExceptionWhenUsesEbextensionsWithInvalidJson()
         throws Exception {
-        final ZipFile zip = this.zipWithEbextensionsWithText(
-            "{\"blah\":\"blah\"]"
-        );
-        final WarFile war = new WarFile(zip);
         try {
-            war.checkEbextensionsValidity();
+            new WarFile(
+                this.zipWithEbextensions(
+                    "{\"blah\":\"blah\"]"
+                )
+            ).checkEbextensionsValidity();
             Assert.fail();
         } catch (final MojoFailureException exception) {
             MatcherAssert.assertThat(
@@ -174,7 +173,7 @@ public final class WarFileTest {
      * @return ZipFile mock.
      * @throws IOException Thrown in case of error.
      */
-    private ZipFile zipWithEbextensionsWithText(final String text)
+    private ZipFile zipWithEbextensions(final String text)
         throws IOException {
         final ZipFile zip = Mockito.mock(ZipFile.class);
         final ZipEntry entry = Mockito.mock(ZipEntry.class);
