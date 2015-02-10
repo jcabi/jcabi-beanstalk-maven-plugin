@@ -147,7 +147,7 @@ public final class WarFileTest {
 
     /**
      * WarFile throws exception when .ebextensions contains invalid json.
-     * @todo #16 enable test when WarFile.validYaml implemented
+     * @todo #16:15min Enable this test when WarFile.validYaml is implemented.
      * @throws Exception Thrown in case of error.
      */
     @Test
