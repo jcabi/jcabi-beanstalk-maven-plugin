@@ -41,9 +41,10 @@ import java.util.zip.ZipOutputStream;
 import org.apache.maven.plugin.MojoFailureException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 /**
@@ -54,6 +55,14 @@ import org.mockito.Mockito;
  * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 public final class WarFileTest {
+
+    /**
+     * Used to check expected exceptions.
+     * @checkstyle VisibilityModifierCheck (3 lines)
+     */
+    @Rule
+    public transient ExpectedException thrown = ExpectedException.none();
+
     /**
      * Verifies that checkEbextensionsValidity throws an exception, if there is
      * no .ebextensions directory in the WAR file.
@@ -143,27 +152,22 @@ public final class WarFileTest {
      */
     @Test
     @Ignore
-    @SuppressWarnings("StringLiteralsConcatenationCheck")
     public void throwsExceptionWhenUsesEbextensionsWithInvalidJson()
         throws Exception {
-        try {
-            new WarFile(
-                this.zipWithEbextensions(
-                    "{\"blah\":\"blah\"]"
-                )
-            ).checkEbextensionsValidity();
-            Assert.fail();
-        } catch (final MojoFailureException exception) {
-            MatcherAssert.assertThat(
-                exception.getMessage(),
-                Matchers.equalTo(
-                    new StringBuilder()
-                        .append("File '.ebextensions/' in .ebextensions is")
-                        .append(" neither valid JSON, nor valid YAML")
-                        .toString()
-                )
-            );
-        }
+        this.thrown.expect(MojoFailureException.class);
+        this.thrown.expectMessage(
+            Matchers.equalTo(
+                new StringBuilder()
+                    .append("File '.ebextensions/' in .ebextensions is")
+                    .append(" neither valid JSON, nor valid YAML")
+                    .toString()
+            )
+        );
+        new WarFile(
+            this.zipWithEbextensions(
+                "{\"blah\":\"blah\"]"
+            )
+        ).checkEbextensionsValidity();
     }
 
     /**
