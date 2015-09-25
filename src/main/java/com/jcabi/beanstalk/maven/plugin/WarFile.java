@@ -72,6 +72,7 @@ public final class WarFile {
      * @throws org.apache.maven.plugin.MojoFailureException Thrown, if the
      *  .ebextensions does not exist in the WAR file, is empty or one of its
      *  files is neither valid JSON, nor valid YAML.
+     *  @todo: move this logic to AbstractBeanstalkMojo
      */
     public void checkEbextensionsValidity() throws MojoFailureException {
         final ZipEntry ebextdir = this.war.getEntry(".ebextensions");

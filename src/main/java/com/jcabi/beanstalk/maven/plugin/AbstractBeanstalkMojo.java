@@ -33,17 +33,26 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.google.common.base.Joiner;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
 import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
 import org.jfrog.maven.annomojo.annotations.MojoParameter;
 import org.slf4j.impl.StaticLoggerBinder;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 /**
  * Abstract MOJO for this plugin.
@@ -156,6 +165,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         try {
+            this.validate(new ZipFile(this.war));
             new WarFile(new ZipFile(this.war)).checkEbextensionsValidity();
         } catch (final IOException ex) {
             throw new MojoFailureException(
@@ -256,6 +266,81 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             green = env.green();
         }
         return green;
+    }
+
+    /**
+     * Validate given text in YAML format.
+     *
+     * @param text YAML text
+     * @return Boolean true if valid else false
+     */
+    protected boolean validYaml(final String text) {
+        boolean valid = true;
+        try {
+            new Yaml().load(text);
+        } catch (final YAMLException exception) {
+            valid = false;
+        }
+        return valid;
+    }
+
+    /**
+     * Validate the war file.
+     *
+     * @param zip Zip file
+     * @throws org.apache.maven.plugin.MojoFailureException Thrown, if
+     *  validation fails.
+     */
+    protected void validate(final ZipFile zip) throws MojoFailureException {
+        final ZipEntry ebextdir = zip.getEntry(".ebextensions");
+        if (ebextdir == null) {
+            throw new MojoFailureException(
+                ".ebextensions directory does not exist in the WAR file"
+            );
+        }
+        final Enumeration<? extends ZipEntry> entries = zip.entries();
+        int files = 0;
+        while (entries.hasMoreElements()) {
+            final ZipEntry entry = entries.nextElement();
+            if (entry.getName().startsWith(".ebextensions/")
+                && !entry.isDirectory()) {
+                files += 1;
+                final String text = this.readFile(zip, entry);
+                if (this.validYaml(text)) {
+                    throw new MojoFailureException(
+                        Joiner.on("").join(
+                            "File '",
+                            entry.getName(),
+                            "' in .ebextensions is neither valid JSON,",
+                            " nor valid YAML"
+                        )
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Reads text from a ZIP file.
+     * @param warfile ZIP file, which contains entry.
+     * @param entry ZIP entry (compressed file) to read from.
+     * @return Text content of entry.
+     */
+    private String readFile(final ZipFile warfile, final ZipEntry entry) {
+        String text = null;
+        InputStream inputStream = null;
+        InputStreamReader reader = null;
+        try {
+            inputStream = warfile.getInputStream(entry);
+            reader = new InputStreamReader(inputStream);
+            text = CharStreams.toString(reader);
+        } catch (final IOException exception) {
+            Logger.error(this, exception.getMessage());
+        } finally {
+            Closeables.closeQuietly(inputStream);
+            Closeables.closeQuietly(reader);
+        }
+        return text;
     }
 
     /**
