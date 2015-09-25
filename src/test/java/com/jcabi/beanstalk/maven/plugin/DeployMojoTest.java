@@ -29,13 +29,14 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
+import junit.framework.TestCase;
 import org.junit.Test;
 
 /**
  * Test case for {@link DeployMojo} (more detailed test is in maven invoker).
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
- * @checkstyle MultipleStringLiteralsCheck (10 lines)
+ * @checkstyle MultipleStringLiteralsCheck (100 lines)
  */
 public final class DeployMojoTest {
     /**
@@ -47,5 +48,45 @@ public final class DeployMojoTest {
         final DeployMojo mojo = new DeployMojo();
         mojo.setSkip(true);
         mojo.execute();
+    }
+
+    /**
+     * Test validating an incorrect yaml format.
+     * @throws Exception If something is wrong
+     */
+    @Test
+    public void testInvalidYaml() throws Exception {
+        // @checkstyle StringLiteralsConcatenationCheck (6 lines)
+        final String invalid = "ssssd\n"
+            + "Time: 2001-11-23 15:01:42 -5\n"
+            + "User: ed\n"
+            + "Warning:\n"
+            + "  This is an error message\n"
+            + "  for the log file\n";
+        final DeployMojo mojo = new DeployMojo();
+        TestCase.assertFalse(
+            "yaml should be invalid",
+            mojo.validYaml(invalid)
+        );
+    }
+
+    /**
+     * Test validating an correct yaml format.
+     * @throws Exception If something is wrong
+     */
+    @Test
+    public void testValidYaml() throws Exception {
+        // @checkstyle StringLiteralsConcatenationCheck (6 lines)
+        final String valid =
+            "Time: 2001-11-23 15:01:42 -5\n"
+            + "User: ed\n"
+            + "Warning:\n"
+            + "  This is an error message\n"
+            + "  for the log file\n";
+        final DeployMojo mojo = new DeployMojo();
+        TestCase.assertTrue(
+            "yaml should be valid",
+            mojo.validYaml(valid)
+        );
     }
 }
