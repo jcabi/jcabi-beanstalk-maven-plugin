@@ -311,7 +311,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                         Joiner.on("").join(
                             "File '",
                             entry.getName(),
-                            "' in .ebextensions is neither valid YAML"
+                            "' in .ebextensions is not a valid YAML"
                         )
                     );
                 }
