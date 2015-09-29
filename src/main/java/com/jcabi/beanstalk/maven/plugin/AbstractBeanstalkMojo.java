@@ -387,13 +387,12 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      */
     private String readFile(final ZipFile warfile, final ZipEntry entry)
         throws MojoFailureException {
-        String text = null;
         InputStream inputStream = null;
         InputStreamReader reader = null;
         try {
             inputStream = warfile.getInputStream(entry);
             reader = new InputStreamReader(inputStream);
-            text = CharStreams.toString(reader);
+            return CharStreams.toString(reader);
         } catch (final IOException exception) {
             throw new MojoFailureException(
                 String.format(
@@ -407,7 +406,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             Closeables.closeQuietly(inputStream);
             Closeables.closeQuietly(reader);
         }
-        return text;
     }
 
     /**
