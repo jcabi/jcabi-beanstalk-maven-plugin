@@ -42,12 +42,12 @@ import org.yaml.snakeyaml.error.YAMLException;
  */
 public final class GenericMojoTest {
     /**
-     * Test {@link AbstractBeanstalkMojo#execute()} method.
+     * {@link AbstractBeanstalkMojo} can execute successfully.
      * @throws Exception If something is wrong.
      * @checkstyle ExecutableStatementCountCheck (40 lines)
      */
     @Test
-    public void testExecute() throws Exception {
+    public void executeSuccessfully() throws Exception {
         // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
             Mockito.mock(AbstractBeanstalkMojo.class);
@@ -80,11 +80,11 @@ public final class GenericMojoTest {
     }
 
     /**
-     * Test validating an incorrect yaml format.
+     * {@link AbstractBeanstalkMojo} can validate bad yaml.
      * @throws Exception If something is wrong
      */
     @Test(expected = YAMLException.class)
-    public void testInvalidYaml() throws Exception {
+    public void validateBadYaml() throws Exception {
         final String invalid = new StringBuilder()
             .append("Some illegal Prefix\n")
             .append("Time: 2005-11-23 10:01:42 -5\n")
@@ -97,11 +97,11 @@ public final class GenericMojoTest {
     }
 
     /**
-     * Test validating an correct yaml format.
+     * {@link AbstractBeanstalkMojo} can validate good yaml.
      * @throws Exception If something is wrong
      */
     @Test
-    public void testValidYaml() throws Exception {
+    public void validateGoodYaml() throws Exception {
         // @checkstyle StringLiteralsConcatenationCheck (6 lines)
         final String valid = new StringBuilder()
             .append("Time: 2001-11-23 15:01:42 -5\n")
