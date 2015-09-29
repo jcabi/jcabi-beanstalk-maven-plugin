@@ -85,13 +85,13 @@ public final class GenericMojoTest {
      */
     @Test(expected = YAMLException.class)
     public void testInvalidYaml() throws Exception {
-        // @checkstyle StringLiteralsConcatenationCheck (6 lines)
-        final String invalid = "Some illegal Prefix\n"
-                + "Time: 2005-11-23 10:01:42 -5\n"
-                + "Admin: ed\n"
-                + "Messages:\n"
-                + "  Hello is an error information\n"
-                + "  for the configuration file\n";
+        final String invalid = new StringBuilder()
+            .append("Some illegal Prefix\n")
+            .append("Time: 2005-11-23 10:01:42 -5\n")
+            .append("Admin: ed\n")
+            .append("Messages:\n")
+            .append(" Hello is an error information\n")
+            .append(" for the configuration file\n").toString();
         final DeployMojo mojo = new DeployMojo();
         mojo.validYaml(invalid);
     }
@@ -103,12 +103,12 @@ public final class GenericMojoTest {
     @Test
     public void testValidYaml() throws Exception {
         // @checkstyle StringLiteralsConcatenationCheck (6 lines)
-        final String valid =
-                "Time: 2001-11-23 15:01:42 -5\n"
-                        + "User: ed\n"
-                        + "Warning:\n"
-                        + "  This is an error message\n"
-                        + "  for the log file\n";
+        final String valid = new StringBuilder()
+            .append("Time: 2001-11-23 15:01:42 -5\n")
+            .append("User: ed\n")
+            .append("Warning:\n")
+            .append("  This is an error message\n")
+            .append("  for the log file\n").toString();
         final DeployMojo mojo = new DeployMojo();
         mojo.validYaml(valid);
     }
