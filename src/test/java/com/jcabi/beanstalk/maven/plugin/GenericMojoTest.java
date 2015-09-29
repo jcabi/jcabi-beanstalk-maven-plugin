@@ -39,7 +39,6 @@ import org.yaml.snakeyaml.error.YAMLException;
  * Test case for {@link AbstractBeanstalkMojo}.
  * @author Neo Matrix (Neo.matrix@gmail.com)
  * @version $Id$
- * @checkstyle MultipleStringLiteralsCheck (10 lines)
  */
 public final class GenericMojoTest {
     /**
