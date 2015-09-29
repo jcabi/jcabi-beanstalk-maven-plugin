@@ -72,7 +72,9 @@ public final class WarFile {
      * @throws org.apache.maven.plugin.MojoFailureException Thrown, if the
      *  .ebextensions does not exist in the WAR file, is empty or one of its
      *  files is neither valid JSON, nor valid YAML.
-     *  @todo: move this logic to AbstractBeanstalkMojo
+     * @todo: move this logic to AbstractBeanstalkMojo, since we have the
+     *  YAML validation done there, it makes sense to put JSON validation
+     *  there as well.
      */
     public void checkEbextensionsValidity() throws MojoFailureException {
         final ZipEntry ebextdir = this.war.getEntry(".ebextensions");

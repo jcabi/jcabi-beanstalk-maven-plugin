@@ -33,7 +33,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 import com.jcabi.aspects.Tv;
@@ -62,6 +61,7 @@ import org.yaml.snakeyaml.error.YAMLException;
  * @since 0.7.1
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * Setting.xml.
@@ -150,6 +150,38 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     }
 
     /**
+     * Set war file.
+     * @param warfile The war file
+     */
+    public void setWar(final File warfile) {
+        this.war = warfile;
+    }
+
+    /**
+     * Set the EBT application name, environment name, and CNAME.
+     * @param thename The application name
+     */
+    public void setName(final String thename) {
+        this.name = thename;
+    }
+
+    /**
+     * Set the Amazon S3 bucket name.
+     * @param thebucket The bucket name
+     */
+    public void setBucket(final String thebucket) {
+        this.bucket = thebucket;
+    }
+
+    /**
+     * Set the Amazon S3 bucket key.
+     * @param thekey The bucket key
+     */
+    public void setKey(final String thekey) {
+        this.key = thekey;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -165,8 +197,11 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         try {
-            this.validate(new ZipFile(this.war));
-            new WarFile(new ZipFile(this.war)).checkEbextensionsValidity();
+            final ZipFile zipFile = this.createZipFile();
+            this.validate(zipFile);
+            final WarFile warFile = this.createWarFile(zipFile);
+            this.validateWarFile(warFile);
+            zipFile.close();
         } catch (final IOException ex) {
             throw new MojoFailureException(
                 ".ebextensions validity check failed",
@@ -197,6 +232,34 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         } finally {
             ebt.shutdown();
         }
+    }
+
+    /**
+     * Creates a {@link WarFile} out of the {@link ZipFile}.
+     * @param zipfile The zip file.
+     * @return WarFile the war file.
+     */
+    protected WarFile createWarFile(final ZipFile zipfile) {
+        return new WarFile(zipfile);
+    }
+
+    /**
+     * Creates a {@link ZipFile} out of the war.
+     * @return ZipFile the zip file
+     * @throws IOException Thrown in case of IO error.
+     */
+    protected ZipFile createZipFile() throws IOException {
+        return new ZipFile(this.war);
+    }
+
+    /**
+     * Validate {@link WarFile} given.
+     * @param warfile The war file
+     * @throws MojoFailureException Throw in case of validation error.
+     */
+    protected void validateWarFile(final WarFile warfile)
+        throws MojoFailureException {
+        warfile.checkEbextensionsValidity();
     }
 
     /**
@@ -272,16 +335,9 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * Validate given text in YAML format.
      *
      * @param text YAML text
-     * @return Boolean true if valid else false
      */
-    protected boolean validYaml(final String text) {
-        boolean valid = true;
-        try {
-            new Yaml().load(text);
-        } catch (final YAMLException exception) {
-            valid = false;
-        }
-        return valid;
+    protected void validYaml(final String text) {
+        new Yaml().load(text);
     }
 
     /**
@@ -299,20 +355,23 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         final Enumeration<? extends ZipEntry> entries = zip.entries();
-        int files = 0;
         while (entries.hasMoreElements()) {
             final ZipEntry entry = entries.nextElement();
             if (entry.getName().startsWith(".ebextensions/")
                 && !entry.isDirectory()) {
-                files += 1;
                 final String text = this.readFile(zip, entry);
-                if (this.validYaml(text)) {
+                try {
+                    this.validYaml(text);
+                } catch (final YAMLException yamlException) {
+                    final String msg =
+                        "File '%s' in .ebextensions is not YAML valid. %s";
                     throw new MojoFailureException(
-                        Joiner.on("").join(
-                            "File '",
+                        String.format(
+                            msg,
                             entry.getName(),
-                            "' in .ebextensions is not a valid YAML"
-                        )
+                            yamlException.getMessage()
+                        ),
+                        yamlException
                     );
                 }
             }
@@ -324,8 +383,10 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @param warfile ZIP file, which contains entry.
      * @param entry ZIP entry (compressed file) to read from.
      * @return Text content of entry.
+     * @throws MojoFailureException thrown when encounter error.
      */
-    private String readFile(final ZipFile warfile, final ZipEntry entry) {
+    private String readFile(final ZipFile warfile, final ZipEntry entry)
+        throws MojoFailureException {
         String text = null;
         InputStream inputStream = null;
         InputStreamReader reader = null;
@@ -334,7 +395,14 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             reader = new InputStreamReader(inputStream);
             text = CharStreams.toString(reader);
         } catch (final IOException exception) {
-            Logger.error(this, exception.getMessage());
+            throw new MojoFailureException(
+                String.format(
+                    "Failed to read %s in %s",
+                    entry.getName(),
+                    warfile.getName()
+                ),
+                exception
+            );
         } finally {
             Closeables.closeQuietly(inputStream);
             Closeables.closeQuietly(reader);
