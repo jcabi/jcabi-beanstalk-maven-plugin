@@ -47,7 +47,7 @@ public final class GenericMojoTest {
      * @checkstyle ExecutableStatementCountCheck (40 lines)
      */
     @Test
-    public void executeSuccessfully() throws Exception {
+    public void executesSuccessfully() throws Exception {
         // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
             Mockito.mock(AbstractBeanstalkMojo.class);
@@ -84,7 +84,7 @@ public final class GenericMojoTest {
      * @throws Exception If something is wrong
      */
     @Test(expected = YAMLException.class)
-    public void validateBadYaml() throws Exception {
+    public void validatesBadYaml() throws Exception {
         final String invalid = new StringBuilder()
             .append("Some illegal Prefix\n")
             .append("Time: 2005-11-23 10:01:42 -5\n")
@@ -101,7 +101,7 @@ public final class GenericMojoTest {
      * @throws Exception If something is wrong
      */
     @Test
-    public void validateGoodYaml() throws Exception {
+    public void validatesGoodYaml() throws Exception {
         // @checkstyle StringLiteralsConcatenationCheck (6 lines)
         final String valid = new StringBuilder()
             .append("Time: 2001-11-23 15:01:42 -5\n")
