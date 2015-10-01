@@ -379,7 +379,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Reads text from a ZIP file.
-     * @param warfile ZIP file, which contains entry.
+     * @param warf ZIP file, which contains entry.
      * @param entry ZIP entry (compressed file) to read from.
      * @return Text content of entry.
      * @throws MojoFailureException thrown when encounter error.
