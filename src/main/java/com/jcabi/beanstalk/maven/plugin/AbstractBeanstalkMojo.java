@@ -348,8 +348,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      *  validation fails.
      */
     protected void validate(final ZipFile zip) throws MojoFailureException {
-        final ZipEntry ebextdir = zip.getEntry(".ebextensions");
-        if (ebextdir == null) {
+        if (zip.getEntry(".ebextension") == null) {
             throw new MojoFailureException(
                 ".ebextensions directory does not exist in the WAR file"
             );
@@ -362,7 +361,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 final String text = this.readFile(zip, entry);
                 try {
                     this.validYaml(text);
-                } catch (final YAMLException yamlException) {
+                } catch (final YAMLException exception) {
                     final String msg =
                         "File '%s' in .ebextensions is not YAML valid. %s";
                     throw new MojoFailureException(
@@ -371,7 +370,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                             entry.getName(),
                             yamlException.getMessage()
                         ),
-                        yamlException
+                        exception
                     );
                 }
             }
@@ -385,25 +384,25 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @return Text content of entry.
      * @throws MojoFailureException thrown when encounter error.
      */
-    private String readFile(final ZipFile warfile, final ZipEntry entry)
+    private String readFile(final ZipFile warf, final ZipEntry entry)
         throws MojoFailureException {
-        InputStream inputStream = null;
+        InputStream stream = null;
         InputStreamReader reader = null;
         try {
-            inputStream = warfile.getInputStream(entry);
-            reader = new InputStreamReader(inputStream);
+            stream = warf.getInputStream(entry);
+            reader = new InputStreamReader(stream);
             return CharStreams.toString(reader);
         } catch (final IOException exception) {
             throw new MojoFailureException(
                 String.format(
                     "Failed to read %s in %s",
                     entry.getName(),
-                    warfile.getName()
+                    warf.getName()
                 ),
                 exception
             );
         } finally {
-            Closeables.closeQuietly(inputStream);
+            Closeables.closeQuietly(stream);
             Closeables.closeQuietly(reader);
         }
     }
