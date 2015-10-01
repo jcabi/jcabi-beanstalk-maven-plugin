@@ -368,7 +368,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                         String.format(
                             msg,
                             entry.getName(),
-                            yamlException.getMessage()
+                            exception.getMessage()
                         ),
                         exception
                     );
