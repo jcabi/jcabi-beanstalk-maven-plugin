@@ -41,6 +41,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.maven.plugin.MojoFailureException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -76,6 +77,7 @@ public final class WarFileTest {
         final WarFile war = new WarFile(zip);
         try {
             war.checkEbextensionsValidity();
+            Assert.fail("Expect MojoFailureException to be thrown");
         } catch (final MojoFailureException exception) {
             MatcherAssert.assertThat(
                 exception.getMessage(),
