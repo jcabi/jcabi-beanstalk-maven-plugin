@@ -39,7 +39,6 @@ import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
@@ -358,15 +357,12 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             final ZipEntry entry = entries.nextElement();
             if (entry.getName().startsWith(".ebextensions/")
                 && !entry.isDirectory()) {
-                final String text = this.readFile(zip, entry);
                 try {
-                    this.validYaml(text);
+                    this.validYaml(this.readFile(zip, entry));
                 } catch (final YAMLException exception) {
-                    final String msg =
-                        "File '%s' in .ebextensions is not YAML valid. %s";
                     throw new MojoFailureException(
                         String.format(
-                            msg,
+                            "File '%s' in .ebextensions is not YAML valid. %s",
                             entry.getName(),
                             exception.getMessage()
                         ),
@@ -386,11 +382,9 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      */
     private String readFile(final ZipFile warf, final ZipEntry entry)
         throws MojoFailureException {
-        InputStream stream = null;
         InputStreamReader reader = null;
         try {
-            stream = warf.getInputStream(entry);
-            reader = new InputStreamReader(stream);
+            reader = new InputStreamReader(warf.getInputStream(entry));
             return CharStreams.toString(reader);
         } catch (final IOException exception) {
             throw new MojoFailureException(
@@ -402,7 +396,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 exception
             );
         } finally {
-            Closeables.closeQuietly(stream);
             Closeables.closeQuietly(reader);
         }
     }
