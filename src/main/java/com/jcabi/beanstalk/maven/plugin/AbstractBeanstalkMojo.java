@@ -33,17 +33,24 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
 import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
 import org.jfrog.maven.annomojo.annotations.MojoParameter;
 import org.slf4j.impl.StaticLoggerBinder;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 /**
  * Abstract MOJO for this plugin.
@@ -53,6 +60,7 @@ import org.slf4j.impl.StaticLoggerBinder;
  * @since 0.7.1
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * Setting.xml.
@@ -141,6 +149,38 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     }
 
     /**
+     * Set war file.
+     * @param warfile The war file
+     */
+    public void setWar(final File warfile) {
+        this.war = warfile;
+    }
+
+    /**
+     * Set the EBT application name, environment name, and CNAME.
+     * @param thename The application name
+     */
+    public void setName(final String thename) {
+        this.name = thename;
+    }
+
+    /**
+     * Set the Amazon S3 bucket name.
+     * @param thebucket The bucket name
+     */
+    public void setBucket(final String thebucket) {
+        this.bucket = thebucket;
+    }
+
+    /**
+     * Set the Amazon S3 bucket key.
+     * @param thekey The bucket key
+     */
+    public void setKey(final String thekey) {
+        this.key = thekey;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -156,7 +196,11 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         try {
-            new WarFile(new ZipFile(this.war)).checkEbextensionsValidity();
+            final ZipFile zipFile = this.createZipFile();
+            this.validate(zipFile);
+            final WarFile warFile = this.createWarFile(zipFile);
+            this.validateWarFile(warFile);
+            zipFile.close();
         } catch (final IOException ex) {
             throw new MojoFailureException(
                 ".ebextensions validity check failed",
@@ -187,6 +231,34 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         } finally {
             ebt.shutdown();
         }
+    }
+
+    /**
+     * Creates a {@link WarFile} out of the {@link ZipFile}.
+     * @param zipfile The zip file.
+     * @return WarFile the war file.
+     */
+    protected WarFile createWarFile(final ZipFile zipfile) {
+        return new WarFile(zipfile);
+    }
+
+    /**
+     * Creates a {@link ZipFile} out of the war.
+     * @return ZipFile the zip file
+     * @throws IOException Thrown in case of IO error.
+     */
+    protected ZipFile createZipFile() throws IOException {
+        return new ZipFile(this.war);
+    }
+
+    /**
+     * Validate {@link WarFile} given.
+     * @param warfile The war file
+     * @throws MojoFailureException Throw in case of validation error.
+     */
+    protected void validateWarFile(final WarFile warfile)
+        throws MojoFailureException {
+        warfile.checkEbextensionsValidity();
     }
 
     /**
@@ -256,6 +328,87 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             green = env.green();
         }
         return green;
+    }
+
+    /**
+     * Validate given text in YAML format.
+     *
+     * @param text YAML text
+     */
+    protected void validYaml(final String text) {
+        new Yaml().load(text);
+    }
+
+    /**
+     * Validate the war file.
+     *
+     * @param zip Zip file
+     * @throws org.apache.maven.plugin.MojoFailureException Thrown, if
+     *  validation fails.
+     */
+    protected void validate(final ZipFile zip) throws MojoFailureException {
+        if (zip.getEntry(".ebextension") == null) {
+            throw new MojoFailureException(
+                ".ebextensions directory does not exist in the WAR file"
+            );
+        }
+        final Enumeration<? extends ZipEntry> entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            final ZipEntry entry = entries.nextElement();
+            if (entry.getName().startsWith(".ebextensions/")
+                && !entry.isDirectory()) {
+                try {
+                    this.validYaml(this.readFile(zip, entry));
+                } catch (final YAMLException exception) {
+                    throw new MojoFailureException(
+                        String.format(
+                            "File '%s' in .ebextensions is not YAML valid. %s",
+                            entry.getName(),
+                            exception.getMessage()
+                        ),
+                        exception
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Reads text from a ZIP file.
+     * @param warf ZIP file, which contains entry.
+     * @param entry ZIP entry (compressed file) to read from.
+     * @return Text content of entry.
+     * @throws MojoFailureException thrown when encounter error.
+     */
+    private String readFile(final ZipFile warf, final ZipEntry entry)
+        throws MojoFailureException {
+        final InputStreamReader reader;
+        try {
+            reader = new InputStreamReader(warf.getInputStream(entry));
+        } catch (final IOException exception) {
+            throw new MojoFailureException(
+                String.format(
+                    "Failed to open stream of %s in %s",
+                    entry.getName(),
+                    warf.getName()
+                ),
+                exception
+            );
+        }
+        try {
+            return CharStreams.toString(reader);
+        } catch (final IOException exception) {
+            throw new MojoFailureException(
+                String.format(
+                    "Failed to read %s in %s",
+                    entry.getName(),
+                    warf.getName()
+                ),
+                exception
+            );
+        } finally {
+            Closeables.closeQuietly(reader);
+        }
     }
 
     /**
