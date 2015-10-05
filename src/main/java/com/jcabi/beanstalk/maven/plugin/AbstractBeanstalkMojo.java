@@ -382,9 +382,20 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      */
     private String readFile(final ZipFile warf, final ZipEntry entry)
         throws MojoFailureException {
-        InputStreamReader reader = null;
+        final InputStreamReader reader;
         try {
             reader = new InputStreamReader(warf.getInputStream(entry));
+        } catch (final IOException exception) {
+            throw new MojoFailureException(
+                String.format(
+                    "Failed to open stream of %s in %s",
+                    entry.getName(),
+                    warf.getName()
+                ),
+                exception
+            );
+        }
+        try {
             return CharStreams.toString(reader);
         } catch (final IOException exception) {
             throw new MojoFailureException(
