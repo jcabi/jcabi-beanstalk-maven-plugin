@@ -33,6 +33,10 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.util.json.JSONArray;
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
+import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
 import com.jcabi.aspects.Tv;
@@ -331,12 +335,27 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     }
 
     /**
-     * Validate given text in YAML format.
-     *
-     * @param text YAML text
+     * Validates a JSON string.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON string.
      */
-    protected void validYaml(final String text) {
-        new Yaml().load(text);
+    protected boolean validJson(final String text) {
+        return this.validJSONObject(text) || this.validJSONArray(text);
+    }
+
+    /**
+     * Validate given text in YAML format.
+     * @param text YAML text
+     * @return True, if text is a valid Yaml string.
+     */
+    protected boolean validYaml(final String text) {
+        boolean result = true;
+        try {
+            new Yaml().load(text);
+        } catch (final YAMLException ex) {
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -357,20 +376,50 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             final ZipEntry entry = entries.nextElement();
             if (entry.getName().startsWith(".ebextensions/")
                 && !entry.isDirectory()) {
-                try {
-                    this.validYaml(this.readFile(zip, entry));
-                } catch (final YAMLException exception) {
-                    throw new MojoFailureException(
-                        String.format(
-                            "File '%s' in .ebextensions is not YAML valid. %s",
-                            entry.getName(),
-                            exception.getMessage()
-                        ),
-                        exception
-                    );
+                final String text = this.readFile(zip, entry);
+                if (this.validJson(text) || this.validYaml(text)) {
+                    continue;
                 }
+                throw new MojoFailureException(
+                    Joiner.on("").join(
+                        "File '",
+                        entry.getName(),
+                        "' in .ebextensions is neither valid JSON,",
+                        " nor valid YAML"
+                    )
+                );
             }
         }
+    }
+
+    /**
+     * Validates a JSON string representing JSON object.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON object.
+     */
+    private boolean validJSONObject(final String text) {
+        boolean result = true;
+        try {
+            new JSONObject(text);
+        } catch (final JSONException ex) {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * Validates a JSON string representing JSON array.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON array.
+     */
+    private boolean validJSONArray(final String text) {
+        boolean result = true;
+        try {
+            new JSONArray(text);
+        } catch (final JSONException ex) {
+            result = false;
+        }
+        return result;
     }
 
     /**
