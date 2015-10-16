@@ -38,6 +38,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -123,7 +124,7 @@ public final class WarFileTest {
      * doesn't throw exception.
      * @throws Exception Thrown in case of error.
      */
-    @Test
+    @Test(expected = NotImplementedException.class)
     public void usesEbextensionsWithValidJsonObject() throws Exception {
         new WarFile(
             this.zipWithEbextensions(
@@ -138,7 +139,7 @@ public final class WarFileTest {
      * doesn't throw exception.
      * @throws Exception Thrown in case of error.
      */
-    @Test
+    @Test(expected = NotImplementedException.class)
     public void usesEbextensionsWithValidJsonArray() throws Exception {
         new WarFile(
             this.zipWithEbextensions(
