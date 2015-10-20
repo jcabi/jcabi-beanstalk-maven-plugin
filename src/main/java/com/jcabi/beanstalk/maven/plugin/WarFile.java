@@ -49,7 +49,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @since 1.0
  * @checkstyle DesignForExtensionCheck
  * @todo #26 Check and remove this class as all the functionality is in
- *   {@link AbstractBeanstalkMojo} now.
+ *  AbstractBeanstalkMojo now.
  */
 @SuppressWarnings("PMD.UnusedFormalParameter")
 public final class WarFile {
