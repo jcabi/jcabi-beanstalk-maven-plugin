@@ -55,18 +55,6 @@
         <developerConnection>scm:git:github.com:jcabi/jcabi-beanstalk-maven-plugin.git</developerConnection>
         <url>https://github.com/jcabi/jcabi-beanstalk-maven-plugin</url>
     </scm>
-    <repositories>
-        <repository>
-            <id>repo.jfrog.org</id>
-            <url>http://repo.jfrog.org/artifactory/plugins-releases</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jfrog.org</id>
-            <url>http://repo.jfrog.org/artifactory/plugins-releases</url>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
         <maven.version>3.0.5</maven.version>
         <sisu.version>2.3.4</sisu.version>
@@ -95,12 +83,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <!-- see http://wiki.jfrog.org/confluence/display/OSS/Maven+Anno+Mojo -->
-            <groupId>org.jfrog.maven.annomojo</groupId>
-            <artifactId>maven-plugin-anno</artifactId>
-            <version>1.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -212,14 +194,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jfrog.maven.annomojo</groupId>
-                        <artifactId>maven-plugin-tools-anno</artifactId>
-                        <version>1.4.1</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

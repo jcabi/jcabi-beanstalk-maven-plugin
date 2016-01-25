@@ -51,7 +51,6 @@ import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
-import org.jfrog.maven.annomojo.annotations.MojoParameter;
 import org.slf4j.impl.StaticLoggerBinder;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -68,80 +67,57 @@ import org.yaml.snakeyaml.error.YAMLException;
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * Setting.xml.
+     * @parameter name="settings" default-value="${settings}"
+     * @readonly
+     * @required
      */
-    @MojoParameter(
-        expression = "${settings}",
-        required = true,
-        readonly = true,
-        description = "Maven settings.xml reference"
-    )
     private transient Settings settings;
 
     /**
      * Shall we skip execution?
+     * @parameter name="skip" default-value="false"
      */
-    @MojoParameter(
-        defaultValue = "false",
-        required = false,
-        description = "Skips execution"
-    )
     private transient boolean skip;
 
     /**
      * Server ID to deploy to.
+     * @parameter name="server" default-value="aws.amazon.com"
      */
-    @MojoParameter(
-        defaultValue = "aws.amazon.com",
-        required = false,
-        description = "ID of the server to deploy to, from settings.xml"
-    )
     private transient String server;
 
     /**
      * Application name (also the name of environment and CNAME).
+     * @parameter name="name"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "EBT application name, environment name, and CNAME"
-    )
     private transient String name;
 
     /**
      * S3 bucket.
+     * @parameter name="bucket"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "Amazon S3 bucket name where to upload WAR file"
-    )
     private transient String bucket;
 
     /**
      * S3 key name.
+     * @parameter name="key"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "Amazon S3 bucket key where to upload WAR file"
-    )
     private transient String key;
 
     /**
      * Template name.
+     * @parameter name="template"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "Amazon Elastic Beanstalk configuration template name"
-    )
     private transient String template;
 
     /**
      * WAR file to deploy.
-     * @checkstyle LineLength (3 lines)
+     * @checkstyle LineLength (1 line)
+     * @parameter name="war" defaultValue = "${project.build.directory}/${project.build.finalName}.war"
      */
-    @MojoParameter(
-        defaultValue = "${project.build.directory}/${project.build.finalName}.war",
-        required = false,
-        description = "Location of .WAR file to deploy"
-    )
     private transient File war;
 
     /**

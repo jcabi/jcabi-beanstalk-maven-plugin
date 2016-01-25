@@ -32,8 +32,6 @@ package com.jcabi.beanstalk.maven.plugin;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import javax.validation.constraints.NotNull;
-import org.jfrog.maven.annomojo.annotations.MojoGoal;
-import org.jfrog.maven.annomojo.annotations.MojoPhase;
 
 /**
  * Update WAR artifact in AWS Elastic Beanstalk to a new version.
@@ -41,9 +39,9 @@ import org.jfrog.maven.annomojo.annotations.MojoPhase;
  * @author Yegor Bugayenko (yegor@teamed.io)
  * @version $Id$
  * @since 0.7.1
+ * @goal update
+ * @phase deploy
  */
-@MojoGoal("update")
-@MojoPhase("deploy")
 @Loggable(Loggable.INFO)
 public final class UpdateMojo extends AbstractBeanstalkMojo {
 
