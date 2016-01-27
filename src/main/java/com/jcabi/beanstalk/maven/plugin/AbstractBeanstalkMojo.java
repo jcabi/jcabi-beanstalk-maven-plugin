@@ -116,7 +116,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * WAR file to deploy.
      * @checkstyle LineLength (1 line)
-     * @parameter name="war" defaultValue = "${project.build.directory}/${project.build.finalName}.war"
+     * @parameter name="war" default-value="${project.build.directory}/${project.build.finalName}.war"
      */
     private transient File war;
 
