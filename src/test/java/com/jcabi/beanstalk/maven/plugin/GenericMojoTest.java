@@ -30,7 +30,13 @@
 package com.jcabi.beanstalk.maven.plugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+import org.apache.maven.plugin.MojoFailureException;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -72,8 +78,6 @@ public final class GenericMojoTest {
         mojo.execute();
         Mockito.verify(mojo).createZipFile();
         Mockito.verify(mojo).validate(mockZipFile);
-        Mockito.verify(mojo).createWarFile(mockZipFile);
-        Mockito.verify(mojo).validateWarFile(Mockito.any(WarFile.class));
         Mockito.verify(mojo).createServerCredentials();
         Mockito.verify(mockZipFile).close();
         Mockito.verify(mockFile, Mockito.times(2)).exists();
@@ -146,5 +150,79 @@ public final class GenericMojoTest {
                 .append("  for the log file\n").toString()
             )
         );
+    }
+
+    /**
+     * Verifies that execute throws an exception, if there is no .ebextensions
+     * directory in the WAR file.
+     * @throws Exception Thrown in case of error.
+     */
+    @Test
+    public void checkEbextensionsValidityThrowsExceptionNoDir()
+        throws Exception {
+        // @checkstyle IllegalTypeCheck (2 lines)
+        final AbstractBeanstalkMojo mojo =
+            Mockito.mock(AbstractBeanstalkMojo.class);
+        final File mockFile = Mockito.mock(File.class);
+        final ZipFile mockZipFile = Mockito.mock(ZipFile.class);
+        Mockito.when(mockFile.exists()).thenReturn(true);
+        Mockito.when(mojo.createZipFile()).thenReturn(mockZipFile);
+        Mockito.doCallRealMethod().when(mojo).execute();
+        Mockito.doCallRealMethod().when(mojo)
+            .setWar(Mockito.any(File.class));
+        Mockito.doCallRealMethod().when(mojo)
+            .validate(Mockito.any(ZipFile.class));
+        mojo.setWar(mockFile);
+        Mockito.when(mockZipFile.getEntry(".ebextensions")).thenReturn(null);
+        try {
+            mojo.execute();
+            Assert.fail("Expect MojoFailureException to be thrown");
+        } catch (final MojoFailureException exception) {
+            MatcherAssert.assertThat(
+                exception.getMessage(),
+                Matchers.equalTo(
+                    ".ebextensions directory does not exist in the WAR file"
+                )
+            );
+        }
+    }
+
+    /**
+     * Verifies that execute throws an exception, if the .ebextensions directory
+     * is empty.
+     * @throws Exception Thrown in case of error.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
+        throws Exception {
+        // @checkstyle IllegalTypeCheck (2 lines)
+        final AbstractBeanstalkMojo mojo =
+            Mockito.mock(AbstractBeanstalkMojo.class);
+        Mockito.doCallRealMethod().when(mojo).execute();
+        Mockito.doCallRealMethod().when(mojo).createZipFile();
+        Mockito.doCallRealMethod().when(mojo)
+            .setWar(Mockito.any(File.class));
+        Mockito.doCallRealMethod().when(mojo)
+            .validate(Mockito.any(ZipFile.class));
+        final File temp = File.createTempFile("test", ".zip");
+        final FileOutputStream fos = new FileOutputStream(temp);
+        final ZipOutputStream out = new ZipOutputStream(fos);
+        out.putNextEntry(new ZipEntry(".ebextensions/"));
+        out.flush();
+        out.close();
+        fos.flush();
+        fos.close();
+        mojo.setWar(temp);
+        try {
+            mojo.execute();
+        } catch (final MojoFailureException exception) {
+            MatcherAssert.assertThat(
+                exception.getMessage(),
+                Matchers.equalTo(
+                    ".ebextensions contains no config files."
+                )
+            );
+        }
     }
 }
