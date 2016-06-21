@@ -171,8 +171,17 @@ public final class GenericMojoTest {
         Mockito.doCallRealMethod().when(mojo)
             .setWar(Mockito.any(File.class));
         Mockito.doCallRealMethod().when(mojo)
+            .setName(Mockito.any(String.class));
+        Mockito.doCallRealMethod().when(mojo)
+            .setBucket(Mockito.any(String.class));
+        Mockito.doCallRealMethod().when(mojo)
+            .setKey(Mockito.any(String.class));
+        Mockito.doCallRealMethod().when(mojo)
             .validate(Mockito.any(ZipFile.class));
         mojo.setWar(mockFile);
+        mojo.setName("a");
+        mojo.setBucket("b");
+        mojo.setKey("c");
         Mockito.when(mockZipFile.getEntry(".ebextensions")).thenReturn(null);
         try {
             mojo.execute();
@@ -204,6 +213,12 @@ public final class GenericMojoTest {
         Mockito.doCallRealMethod().when(mojo)
             .setWar(Mockito.any(File.class));
         Mockito.doCallRealMethod().when(mojo)
+            .setName(Mockito.any(String.class));
+        Mockito.doCallRealMethod().when(mojo)
+            .setBucket(Mockito.any(String.class));
+        Mockito.doCallRealMethod().when(mojo)
+            .setKey(Mockito.any(String.class));
+        Mockito.doCallRealMethod().when(mojo)
             .validate(Mockito.any(ZipFile.class));
         final File temp = File.createTempFile("test", ".zip");
         final FileOutputStream fos = new FileOutputStream(temp);
@@ -214,6 +229,9 @@ public final class GenericMojoTest {
         fos.flush();
         fos.close();
         mojo.setWar(temp);
+        mojo.setName("d");
+        mojo.setBucket("e");
+        mojo.setKey("f");
         try {
             mojo.execute();
         } catch (final MojoFailureException exception) {
