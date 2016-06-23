@@ -153,13 +153,12 @@ public final class GenericMojoTest {
     }
 
     /**
-     * Verifies that execute throws an exception, if there is no .ebextensions
-     * directory in the WAR file.
+     * {@link AbstractBeanstalkMojo} can throw an exception on execute, if there
+     * is no .ebextensions directory in the WAR file.
      * @throws Exception Thrown in case of error.
      */
     @Test
-    public void checkEbextensionsValidityThrowsExceptionNoDir()
-        throws Exception {
+    public void throwsExceptionWhenNoEbextensionsDirInZip() throws Exception {
         // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
             Mockito.mock(AbstractBeanstalkMojo.class);
@@ -188,13 +187,12 @@ public final class GenericMojoTest {
     }
 
     /**
-     * Verifies that execute throws an exception, if the .ebextensions directory
-     * is empty.
+     * {@link AbstractBeanstalkMojo} can throw an exception on execute, if the
+     *  .ebextensions directory is empty.
      * @throws Exception Thrown in case of error.
      */
     @Test
-    @SuppressWarnings("unchecked")
-    public void checkEbextensionsValidityThrowsExceptionNoConfigFiles()
+    public void throwsExceptionWhenNoConfigFilesInEbextensionsDir()
         throws Exception {
         // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
