@@ -188,7 +188,7 @@ public final class GenericMojoTest {
 
     /**
      * {@link AbstractBeanstalkMojo} can throw an exception on execute, if the
-     *  .ebextensions directory is empty.
+     * .ebextensions directory is empty.
      * @throws Exception Thrown in case of error.
      */
     @Test
