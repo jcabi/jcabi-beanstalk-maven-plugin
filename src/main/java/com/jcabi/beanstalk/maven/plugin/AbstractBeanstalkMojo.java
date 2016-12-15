@@ -33,17 +33,27 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.util.json.JSONArray;
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
+import com.google.common.base.Joiner;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
 import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Settings;
-import org.jfrog.maven.annomojo.annotations.MojoParameter;
 import org.slf4j.impl.StaticLoggerBinder;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 /**
  * Abstract MOJO for this plugin.
@@ -53,83 +63,61 @@ import org.slf4j.impl.StaticLoggerBinder;
  * @since 0.7.1
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
+@SuppressWarnings("PMD.TooManyMethods")
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * Setting.xml.
+     * @parameter name="settings" default-value="${settings}"
+     * @readonly
+     * @required
      */
-    @MojoParameter(
-        expression = "${settings}",
-        required = true,
-        readonly = true,
-        description = "Maven settings.xml reference"
-    )
     private transient Settings settings;
 
     /**
      * Shall we skip execution?
+     * @parameter name="skip" default-value="false"
      */
-    @MojoParameter(
-        defaultValue = "false",
-        required = false,
-        description = "Skips execution"
-    )
     private transient boolean skip;
 
     /**
      * Server ID to deploy to.
+     * @parameter name="server" default-value="aws.amazon.com"
      */
-    @MojoParameter(
-        defaultValue = "aws.amazon.com",
-        required = false,
-        description = "ID of the server to deploy to, from settings.xml"
-    )
     private transient String server;
 
     /**
      * Application name (also the name of environment and CNAME).
+     * @parameter name="name"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "EBT application name, environment name, and CNAME"
-    )
     private transient String name;
 
     /**
      * S3 bucket.
+     * @parameter name="bucket"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "Amazon S3 bucket name where to upload WAR file"
-    )
     private transient String bucket;
 
     /**
      * S3 key name.
+     * @parameter name="key"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "Amazon S3 bucket key where to upload WAR file"
-    )
     private transient String key;
 
     /**
      * Template name.
+     * @parameter name="template"
+     * @required
      */
-    @MojoParameter(
-        required = true,
-        description = "Amazon Elastic Beanstalk configuration template name"
-    )
     private transient String template;
 
     /**
      * WAR file to deploy.
-     * @checkstyle LineLength (3 lines)
+     * @checkstyle LineLength (1 line)
+     * @parameter name="war" default-value="${project.build.directory}/${project.build.finalName}.war"
      */
-    @MojoParameter(
-        defaultValue = "${project.build.directory}/${project.build.finalName}.war",
-        required = false,
-        description = "Location of .WAR file to deploy"
-    )
     private transient File war;
 
     /**
@@ -138,6 +126,38 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      */
     public void setSkip(final boolean skp) {
         this.skip = skp;
+    }
+
+    /**
+     * Set war file.
+     * @param warfile The war file
+     */
+    public void setWar(final File warfile) {
+        this.war = warfile;
+    }
+
+    /**
+     * Set the EBT application name, environment name, and CNAME.
+     * @param thename The application name
+     */
+    public void setName(final String thename) {
+        this.name = thename;
+    }
+
+    /**
+     * Set the Amazon S3 bucket name.
+     * @param thebucket The bucket name
+     */
+    public void setBucket(final String thebucket) {
+        this.bucket = thebucket;
+    }
+
+    /**
+     * Set the Amazon S3 bucket key.
+     * @param thekey The bucket key
+     */
+    public void setKey(final String thekey) {
+        this.key = thekey;
     }
 
     /**
@@ -156,7 +176,9 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         try {
-            new WarFile(new ZipFile(this.war)).checkEbextensionsValidity();
+            final ZipFile zipFile = this.createZipFile();
+            this.validate(zipFile);
+            zipFile.close();
         } catch (final IOException ex) {
             throw new MojoFailureException(
                 ".ebextensions validity check failed",
@@ -187,6 +209,15 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         } finally {
             ebt.shutdown();
         }
+    }
+
+    /**
+     * Creates a {@link ZipFile} out of the war.
+     * @return ZipFile the zip file
+     * @throws IOException Thrown in case of IO error.
+     */
+    protected ZipFile createZipFile() throws IOException {
+        return new ZipFile(this.war);
     }
 
     /**
@@ -256,6 +287,140 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             green = env.green();
         }
         return green;
+    }
+
+    /**
+     * Validates a JSON string.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON string.
+     */
+    protected boolean validJson(final String text) {
+        return this.validJSONObject(text) || this.validJSONArray(text);
+    }
+
+    /**
+     * Validate given text in YAML format.
+     * @param text YAML text
+     * @return True, if text is a valid Yaml string.
+     */
+    protected boolean validYaml(final String text) {
+        boolean result = true;
+        try {
+            new Yaml().load(text);
+        } catch (final YAMLException ex) {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * Verifies that the .ebextensions contains valid configuration file or
+     * files.
+     * @param zip Zip file
+     * @throws org.apache.maven.plugin.MojoFailureException Thrown, if the
+     *  .ebextensions does not exist in the WAR file, is empty or one of its
+     *  files is neither valid JSON, nor valid YAML.
+     */
+    protected void validate(final ZipFile zip) throws MojoFailureException {
+        if (zip.getEntry(".ebextensions") == null) {
+            throw new MojoFailureException(
+                ".ebextensions directory does not exist in the WAR file"
+            );
+        }
+        final Enumeration<? extends ZipEntry> entries = zip.entries();
+        int files = 0;
+        while (entries.hasMoreElements()) {
+            final ZipEntry entry = entries.nextElement();
+            if (entry.getName().startsWith(".ebextensions/")
+                && !entry.isDirectory()) {
+                files += 1;
+                final String text = this.readFile(zip, entry);
+                if (this.validJson(text) || this.validYaml(text)) {
+                    continue;
+                }
+                throw new MojoFailureException(
+                    Joiner.on("").join(
+                        "File '",
+                        entry.getName(),
+                        "' in .ebextensions is neither valid JSON,",
+                        " nor valid YAML"
+                    )
+                );
+            }
+        }
+        if (files < 1) {
+            throw new MojoFailureException(
+                ".ebextensions contains no config files."
+            );
+        }
+    }
+
+    /**
+     * Validates a JSON string representing JSON object.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON object.
+     */
+    private boolean validJSONObject(final String text) {
+        boolean result = true;
+        try {
+            new JSONObject(text);
+        } catch (final JSONException ex) {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * Validates a JSON string representing JSON array.
+     * @param text Text to validate
+     * @return True, if text is a valid JSON array.
+     */
+    private boolean validJSONArray(final String text) {
+        boolean result = true;
+        try {
+            new JSONArray(text);
+        } catch (final JSONException ex) {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * Reads text from a ZIP file.
+     * @param warf ZIP file, which contains entry.
+     * @param entry ZIP entry (compressed file) to read from.
+     * @return Text content of entry.
+     * @throws MojoFailureException thrown when encounter error.
+     */
+    private String readFile(final ZipFile warf, final ZipEntry entry)
+        throws MojoFailureException {
+        final InputStreamReader reader;
+        try {
+            reader = new InputStreamReader(warf.getInputStream(entry));
+        } catch (final IOException exception) {
+            throw new MojoFailureException(
+                String.format(
+                    "Failed to open stream of %s in %s",
+                    entry.getName(),
+                    warf.getName()
+                ),
+                exception
+            );
+        }
+        try {
+            return CharStreams.toString(reader);
+        } catch (final IOException exception) {
+            throw new MojoFailureException(
+                String.format(
+                    "Failed to read %s in %s",
+                    entry.getName(),
+                    warf.getName()
+                ),
+                exception
+            );
+        } finally {
+            Closeables.closeQuietly(reader);
+        }
     }
 
     /**

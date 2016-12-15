@@ -7,7 +7,7 @@
 [![PDD status](http://www.0pdd.com/svg?name=jcabi/jcabi-beanstalk-maven-plugin)](http://www.0pdd.com/p?name=teamed/jcabi/jcabi-beanstalk-maven-plugin)
 [![Build status](https://ci.appveyor.com/api/projects/status/rudkdp50i862rhbh/branch/master?svg=true)](https://ci.appveyor.com/project/yegor256/jcabi-beanstalk-maven-plugin/branch/master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jcabi/jcabi-beanstalk-maven-plugin/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jcabi/jcabi-beanstalk-maven-plugin)
-[![JavaDoc](https://img.shields.io/badge/javadoc-html-blue.svg)](http://www.javadoc.io/doc/com.jcabi/jcabi-beanstalk-maven-plugin)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.jcabi/jcabi-beanstalk-maven-plugin/badge.svg)](http://www.javadoc.io/doc/com.jcabi/jcabi-beanstalk-maven-plugin)
 
 More details are here:
 [beanstalk.jcabi.com](http://beanstalk.jcabi.com/index.html)

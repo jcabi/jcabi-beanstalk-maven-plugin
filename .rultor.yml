@@ -14,13 +14,15 @@ merge:
   - mvn clean
   - pdd --source=$(pwd) --verbose --file=/dev/null
   commanders:
-  - caarlos0
   - carlosmiranda
   - darkled
   - dmzaytsev
   - ggajos
+  - hdouss
   - krzyk
   - longtimeago
+  - mkordas
+  - original-brownbear
   - pinaf
 deploy:
   script:
@@ -28,8 +30,6 @@ deploy:
   - mvn clean
   - pdd --source=$(pwd) --verbose --file=jcabi-beanstalk-maven-plugin.xml
   - s3cmd --no-progress put jcabi-beanstalk-maven-plugin.xml --config=../s3cfg s3://pdd.teamed.io/jcabi-beanstalk-maven-plugin.xml
-  commanders:
-  - yegor256
 env:
   MAVEN_OPTS: -XX:MaxPermSize=256m -Xmx1g
 release:
