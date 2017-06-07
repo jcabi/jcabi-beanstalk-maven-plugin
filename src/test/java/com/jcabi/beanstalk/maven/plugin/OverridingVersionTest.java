@@ -42,7 +42,7 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link OverridingVersion}.
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  */
 public final class OverridingVersionTest {

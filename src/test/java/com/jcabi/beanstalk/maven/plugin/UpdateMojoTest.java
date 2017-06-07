@@ -33,7 +33,7 @@ import org.junit.Test;
 
 /**
  * Test case for {@link UpdateMojo} (more detailed test is in maven invoker).
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  */
 public final class UpdateMojoTest {

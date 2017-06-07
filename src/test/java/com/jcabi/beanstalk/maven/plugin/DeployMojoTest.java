@@ -33,7 +33,7 @@ import org.junit.Test;
 
 /**
  * Test case for {@link DeployMojo} (more detailed test is in maven invoker).
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @checkstyle MultipleStringLiteralsCheck (10 lines)
  */

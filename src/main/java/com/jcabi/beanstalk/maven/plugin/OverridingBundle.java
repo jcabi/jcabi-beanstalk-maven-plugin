@@ -53,7 +53,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * Bundle that always overrides S3 object.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 0.3
  */

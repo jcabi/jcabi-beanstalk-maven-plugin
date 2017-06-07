@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
 /**
  * Update WAR artifact in AWS Elastic Beanstalk to a new version.
  *
- * @author Yegor Bugayenko (yegor@teamed.io)
+ * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 0.7.1
  * @goal update
