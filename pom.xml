@@ -56,7 +56,7 @@
         <url>https://github.com/jcabi/jcabi-beanstalk-maven-plugin</url>
     </scm>
     <properties>
-        <maven.version>3.0.5</maven.version>
+        <maven.version>3.6.3</maven.version>
         <sisu.version>2.3.4</sisu.version>
     </properties>
     <distributionManagement>
