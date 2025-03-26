@@ -8,6 +8,7 @@ path = [
     "**.json",
     "**.md",
     "**.txt",
+    "**.vm",
     "**/*.csv",
     "**/*.jpg",
     "**/*.json",
@@ -26,7 +27,7 @@ path = [
     ".gitattributes",
     ".gitignore",
     ".pdd",
-    "Gemfile.lock",
+    "CNAME",
     "README.md",
     "renovate.json",
 ]
