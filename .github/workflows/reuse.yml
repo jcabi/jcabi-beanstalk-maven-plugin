@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2012-2025 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 ---
-name: pdd
-on:
+name: reuse
+'on':
   push:
     branches:
       - master
@@ -10,8 +10,9 @@ on:
     branches:
       - master
 jobs:
-  pdd:
-    runs-on: ubuntu-20.04
+  reuse:
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: g4s8/pdd-action@master
+      - uses: actions/checkout@v4
+      - uses: fsfe/reuse-action@v5
