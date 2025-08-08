@@ -1,9 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2012-2025 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 ---
-# yamllint disable rule:line-length
-name: pdd
-on:
+name: markdown-lint
+'on':
   push:
     branches:
       - master
@@ -11,9 +10,9 @@ on:
     branches:
       - master
 jobs:
-  pdd:
+  markdown-lint:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: g4s8/pdd-action@master
+      - uses: DavidAnson/markdownlint-cli2-action@v20.0.0
