@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -40,7 +41,7 @@ public final class OverridingBundleTest {
         final String bucket = "some-bucket";
         final String key = "some-key";
         final File war = this.temp.newFile("temp.war");
-        FileUtils.writeStringToFile(war, "broken JAR file content");
+        FileUtils.writeStringToFile(war, "broken JAR file content", StandardCharsets.UTF_8);
         final AmazonS3 client = Mockito.mock(AmazonS3.class);
         Mockito.doReturn(new PutObjectResult())
             .when(client).putObject(bucket, key, war);
@@ -65,7 +66,7 @@ public final class OverridingBundleTest {
     public void cachesResultOfLocation() throws Exception {
         final AmazonS3 client = Mockito.mock(AmazonS3.class);
         final File war = this.temp.newFile("temp1.war");
-        FileUtils.writeStringToFile(war, "some JAR file content");
+        FileUtils.writeStringToFile(war, "some JAR file content", StandardCharsets.UTF_8);
         final String bucket = "some-bucket-for-cache";
         final String key = "some-key-for-cache";
         Mockito.doReturn(new PutObjectResult())

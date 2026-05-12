@@ -25,6 +25,7 @@ import com.jcabi.log.Logger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -140,7 +141,7 @@ public final class ApplicationTest {
         final String name = "netbout";
         final Application app = new Application(ebt, name);
         final File war = this.temp.newFile("temp.war");
-        FileUtils.writeStringToFile(war, "broken JAR file content");
+        FileUtils.writeStringToFile(war, "broken JAR file content", StandardCharsets.UTF_8);
         final Environment candidate = app.candidate(
             new OverridingVersion(
                 ebt,

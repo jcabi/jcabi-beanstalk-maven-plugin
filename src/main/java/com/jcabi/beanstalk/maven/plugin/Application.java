@@ -13,7 +13,6 @@ import com.amazonaws.services.elasticbeanstalk.model.DescribeEnvironmentsResult;
 import com.amazonaws.services.elasticbeanstalk.model.EnvironmentDescription;
 import com.amazonaws.services.elasticbeanstalk.model.SwapEnvironmentCNAMEsRequest;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -301,7 +300,7 @@ final class Application {
         return String.format(
             "%s-e%03d",
             this.name,
-            Tv.HUNDRED + new Random().nextInt(Tv.NINE * Tv.HUNDRED)
+            100 + new Random().nextInt(900)
         );
     }
 

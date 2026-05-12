@@ -4,6 +4,9 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
+import org.apache.maven.plugins.annotations.Mojo;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 /**
@@ -22,5 +25,19 @@ public final class DeployMojoTest {
         final DeployMojo mojo = new DeployMojo();
         mojo.setSkip(true);
         mojo.execute();
+    }
+
+    /**
+     * DeployMojo must carry a native Maven @Mojo annotation so that the
+     * plugin descriptor can be generated without the jfrog APT extractor,
+     * which relied on com.sun.mirror.apt removed in Java 8.
+     */
+    @Test
+    public void declaresGoalWithModernAnnotation() {
+        MatcherAssert.assertThat(
+            "DeployMojo must be annotated with @Mojo, not Javadoc @goal",
+            DeployMojo.class.isAnnotationPresent(Mojo.class),
+            Matchers.is(true)
+        );
     }
 }

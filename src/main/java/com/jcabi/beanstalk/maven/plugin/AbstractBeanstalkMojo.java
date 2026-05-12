@@ -14,7 +14,6 @@ import com.amazonaws.util.json.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
-import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
@@ -245,7 +244,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         final long start = System.currentTimeMillis();
         while (!green) {
             final long age = System.currentTimeMillis() - start;
-            if (age > TimeUnit.MINUTES.toMillis(Tv.FIFTEEN)) {
+            if (age > TimeUnit.MINUTES.toMillis(15L)) {
                 Logger.warn(this, "Waiting for %[ms]s, time to give up", age);
                 break;
             }
@@ -254,7 +253,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 "%s is not GREEN yet, let's wait another 15 second...", env
             );
             try {
-                TimeUnit.SECONDS.sleep(Tv.FIFTEEN);
+                TimeUnit.SECONDS.sleep(15L);
             } catch (final InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new DeploymentException(ex);
