@@ -24,10 +24,11 @@ import com.amazonaws.services.elasticbeanstalk.model.TerminateEnvironmentResult;
 import com.amazonaws.services.elasticbeanstalk.model.UpdateEnvironmentRequest;
 import com.amazonaws.services.elasticbeanstalk.model.UpdateEnvironmentResult;
 import com.jcabi.aspects.Loggable;
-import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,7 +53,7 @@ final class Environment {
     /**
      * For how long we can wait until env reaches certain status.
      */
-    private static final long DELAY_MS = TimeUnit.MINUTES.toMillis(Tv.THIRTY);
+    private static final long DELAY_MS = TimeUnit.MINUTES.toMillis(30L);
 
     /**
      * AWS beanstalk client.
@@ -288,7 +289,10 @@ final class Environment {
         } while (infos.isEmpty());
         final EnvironmentInfoDescription desc = infos.get(0);
         try {
-            return IOUtils.toString(new URL(desc.getMessage()).openStream());
+            return IOUtils.toString(
+                URI.create(desc.getMessage()).toURL().openStream(),
+                StandardCharsets.UTF_8
+            );
         } catch (final IOException ex) {
             throw new IllegalStateException(ex);
         }

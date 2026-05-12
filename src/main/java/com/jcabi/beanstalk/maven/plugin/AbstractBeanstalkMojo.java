@@ -14,7 +14,6 @@ import com.amazonaws.util.json.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closeables;
-import com.jcabi.aspects.Tv;
 import com.jcabi.log.Logger;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 import org.yaml.snakeyaml.Yaml;
@@ -42,57 +42,52 @@ import org.yaml.snakeyaml.error.YAMLException;
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * Setting.xml.
-     * @parameter name="settings" default-value="${settings}"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${settings}", readonly = true, required = true)
     private transient Settings settings;
 
     /**
      * Shall we skip execution?
-     * @parameter name="skip" default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private transient boolean skip;
 
     /**
      * Server ID to deploy to.
-     * @parameter name="server" default-value="aws.amazon.com"
      */
+    @Parameter(defaultValue = "aws.amazon.com")
     private transient String server;
 
     /**
      * Application name (also the name of environment and CNAME).
-     * @parameter name="name"
-     * @required
      */
+    @Parameter(required = true)
     private transient String name;
 
     /**
      * S3 bucket.
-     * @parameter name="bucket"
-     * @required
      */
+    @Parameter(required = true)
     private transient String bucket;
 
     /**
      * S3 key name.
-     * @parameter name="key"
-     * @required
      */
+    @Parameter(required = true)
     private transient String key;
 
     /**
      * Template name.
-     * @parameter name="template"
-     * @required
      */
+    @Parameter(required = true)
     private transient String template;
 
     /**
      * WAR file to deploy.
-     * @checkstyle LineLength (1 line)
-     * @parameter name="war" default-value="${project.build.directory}/${project.build.finalName}.war"
      */
+    @Parameter(
+        defaultValue = "${project.build.directory}/${project.build.finalName}.war"
+    )
     private transient File war;
 
     /**
@@ -245,7 +240,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         final long start = System.currentTimeMillis();
         while (!green) {
             final long age = System.currentTimeMillis() - start;
-            if (age > TimeUnit.MINUTES.toMillis(Tv.FIFTEEN)) {
+            if (age > TimeUnit.MINUTES.toMillis(15L)) {
                 Logger.warn(this, "Waiting for %[ms]s, time to give up", age);
                 break;
             }
@@ -254,7 +249,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 "%s is not GREEN yet, let's wait another 15 second...", env
             );
             try {
-                TimeUnit.SECONDS.sleep(Tv.FIFTEEN);
+                TimeUnit.SECONDS.sleep(15L);
             } catch (final InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new DeploymentException(ex);
