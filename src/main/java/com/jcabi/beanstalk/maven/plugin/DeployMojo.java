@@ -7,6 +7,8 @@ package com.jcabi.beanstalk.maven.plugin;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import javax.validation.constraints.NotNull;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Deploys WAR artifact to AWS Elastic Beanstalk.
@@ -14,9 +16,8 @@ import javax.validation.constraints.NotNull;
  * @author Yegor Bugayenko (yegor256@gmail.com)
  * @version $Id$
  * @since 0.3
- * @goal deploy
- * @phase deploy
  */
+@Mojo(name = "deploy", defaultPhase = LifecyclePhase.DEPLOY)
 @Loggable(Loggable.INFO)
 public final class DeployMojo extends AbstractBeanstalkMojo {
 

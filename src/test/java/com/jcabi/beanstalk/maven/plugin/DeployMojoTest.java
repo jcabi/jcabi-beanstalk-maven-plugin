@@ -4,7 +4,10 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
-import org.apache.maven.plugins.annotations.Mojo;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.IOUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -28,16 +31,24 @@ public final class DeployMojoTest {
     }
 
     /**
-     * DeployMojo must carry a native Maven @Mojo annotation so that the
-     * plugin descriptor can be generated without the jfrog APT extractor,
-     * which relied on com.sun.mirror.apt removed in Java 8.
+     * DeployMojo class file must carry the native @Mojo annotation in its
+     * constant pool, proving the jfrog APT extractor (which required
+     * com.sun.mirror.apt removed in Java 8) is no longer used to declare
+     * the plugin goal.
+     * @throws IOException If the class file cannot be read
      */
     @Test
-    public void declaresGoalWithModernAnnotation() {
+    public void classFileMentionsMojoAnnotation() throws IOException {
+        final String path = "com/jcabi/beanstalk/maven/plugin/DeployMojo.class";
+        final InputStream stream = Thread.currentThread()
+            .getContextClassLoader().getResourceAsStream(path);
+        final String bytecode = IOUtils.toString(stream, StandardCharsets.ISO_8859_1);
         MatcherAssert.assertThat(
-            "DeployMojo must be annotated with @Mojo, not Javadoc @goal",
-            DeployMojo.class.isAnnotationPresent(Mojo.class),
-            Matchers.is(true)
+            "DeployMojo.class must reference native @Mojo, not Javadoc @goal",
+            bytecode,
+            Matchers.containsString(
+                "Lorg/apache/maven/plugins/annotations/Mojo;"
+            )
         );
     }
 }

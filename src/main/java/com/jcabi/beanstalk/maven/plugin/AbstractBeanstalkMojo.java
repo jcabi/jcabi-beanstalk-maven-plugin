@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 import org.yaml.snakeyaml.Yaml;
@@ -41,57 +42,52 @@ import org.yaml.snakeyaml.error.YAMLException;
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * Setting.xml.
-     * @parameter name="settings" default-value="${settings}"
-     * @readonly
-     * @required
      */
+    @Parameter(defaultValue = "${settings}", readonly = true, required = true)
     private transient Settings settings;
 
     /**
      * Shall we skip execution?
-     * @parameter name="skip" default-value="false"
      */
+    @Parameter(defaultValue = "false")
     private transient boolean skip;
 
     /**
      * Server ID to deploy to.
-     * @parameter name="server" default-value="aws.amazon.com"
      */
+    @Parameter(defaultValue = "aws.amazon.com")
     private transient String server;
 
     /**
      * Application name (also the name of environment and CNAME).
-     * @parameter name="name"
-     * @required
      */
+    @Parameter(required = true)
     private transient String name;
 
     /**
      * S3 bucket.
-     * @parameter name="bucket"
-     * @required
      */
+    @Parameter(required = true)
     private transient String bucket;
 
     /**
      * S3 key name.
-     * @parameter name="key"
-     * @required
      */
+    @Parameter(required = true)
     private transient String key;
 
     /**
      * Template name.
-     * @parameter name="template"
-     * @required
      */
+    @Parameter(required = true)
     private transient String template;
 
     /**
      * WAR file to deploy.
-     * @checkstyle LineLength (1 line)
-     * @parameter name="war" default-value="${project.build.directory}/${project.build.finalName}.war"
      */
+    @Parameter(
+        defaultValue = "${project.build.directory}/${project.build.finalName}.war"
+    )
     private transient File war;
 
     /**
