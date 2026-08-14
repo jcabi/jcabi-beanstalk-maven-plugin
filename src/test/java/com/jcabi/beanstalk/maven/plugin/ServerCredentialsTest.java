@@ -4,53 +4,51 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
-import com.amazonaws.auth.AWSCredentials;
+import java.util.Arrays;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link ServerCredentials}.
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
+ *
+ * @since 0.3
  */
-public final class ServerCredentialsTest {
+final class ServerCredentialsTest {
 
-    /**
-     * ServerCredentials can fetch credentials from Maven settings.
-     * @throws Exception If something is wrong
-     */
     @Test
-    public void fetchesCredentialsFromMavenSettings() throws Exception {
+    void fetchesCredentialsFromMavenSettings() throws Exception {
         final String key = "AAAABBBBCCCCDDDDZ9Y1";
         final String secret = "AbCdEfGhAbCdEfG/AbCdE7GhAbCdE9Gh+bCdEfGh";
         final Server server = new Server();
         server.setUsername(key);
         server.setPassword(secret);
-        final String name = "srv1";
-        server.setId(name);
+        server.setId("srv1");
         final Settings settings = new Settings();
         settings.addServer(server);
-        final AWSCredentials creds = new ServerCredentials(settings, name);
+        final ServerCredentials creds =
+            new ServerCredentials(settings, "srv1");
         MatcherAssert.assertThat(
-            creds.getAWSAccessKeyId(),
-            Matchers.equalTo(key)
-        );
-        MatcherAssert.assertThat(
-            creds.getAWSSecretKey(),
-            Matchers.equalTo(secret)
+            "credentials cannot come from another server",
+            Arrays.asList(
+                creds.getAWSAccessKeyId(),
+                creds.getAWSSecretKey()
+            ),
+            Matchers.contains(key, secret)
         );
     }
 
-    /**
-     * ServerCredentials can throw when server is not defined.
-     * @throws Exception If something is wrong
-     */
-    @Test(expected = org.apache.maven.plugin.MojoFailureException.class)
-    public void throwsWhenServerIsNotDefined() throws Exception {
-        new ServerCredentials(new Settings(), "foo");
+    @Test
+    void throwsWhenServerIsNotDefined() {
+        Assertions.assertThrows(
+            MojoFailureException.class,
+            () -> new ServerCredentials(new Settings(), "foo"),
+            "absent server cannot be accepted"
+        );
     }
 
 }

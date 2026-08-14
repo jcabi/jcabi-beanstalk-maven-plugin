@@ -12,44 +12,41 @@ import com.amazonaws.services.elasticbeanstalk.model.DescribeApplicationVersions
 import com.amazonaws.services.elasticbeanstalk.model.DescribeApplicationVersionsResult;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
  * Test case for {@link OverridingVersion}.
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
+ *
+ * @since 0.3
  */
-public final class OverridingVersionTest {
+final class OverridingVersionTest {
 
-    /**
-     * OverridingVersion can override a version in AWS EBT.
-     * @throws Exception If something is wrong
-     */
     @Test
-    public void overridesVersionInEbt() throws Exception {
-        final String app = "some-app";
+    void overridesVersionInEbt() {
         final String key = "some-bundle-key";
         final Bundle bundle = Mockito.mock(Bundle.class);
         Mockito.doReturn(key).when(bundle).name();
         final AWSElasticBeanstalk ebt = Mockito.mock(AWSElasticBeanstalk.class);
-        Mockito.doReturn(new DescribeApplicationVersionsResult())
-            .when(ebt).describeApplicationVersions(
+        Mockito.when(
+            ebt.describeApplicationVersions(
                 Mockito.any(DescribeApplicationVersionsRequest.class)
-            );
-        Mockito.doReturn(
+            )
+        ).thenReturn(new DescribeApplicationVersionsResult());
+        Mockito.when(
+            ebt.createApplicationVersion(
+                Mockito.any(CreateApplicationVersionRequest.class)
+            )
+        ).thenReturn(
             new CreateApplicationVersionResult()
                 .withApplicationVersion(
                     new ApplicationVersionDescription()
                         .withVersionLabel(key)
-            )
-        ).when(ebt)
-            .createApplicationVersion(
-                Mockito.any(CreateApplicationVersionRequest.class)
-            );
-        final Version version = new OverridingVersion(ebt, app, bundle);
+                )
+        );
         MatcherAssert.assertThat(
-            version.label(),
+            "the label cannot differ from the name of the bundle",
+            new OverridingVersion(ebt, "some-app", bundle).label(),
             Matchers.equalTo(key)
         );
     }

@@ -15,21 +15,18 @@ import com.jcabi.aspects.Cacheable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Bundle that always overrides S3 object.
  *
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
  * @since 0.3
  */
 @ToString
@@ -112,25 +109,17 @@ final class OverridingBundle implements Bundle {
         return new S3Location(this.bucket, this.key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String name() {
         return this.key;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String etag() {
         try {
-            final InputStream stream = new FileInputStream(this.war);
-            final String hash = DigestUtils.md5Hex(stream);
-            IOUtils.closeQuietly(stream);
-            return hash;
-        } catch (final java.io.IOException ex) {
+            return new DigestUtils(MessageDigestAlgorithms.MD5)
+                .digestAsHex(this.war);
+        } catch (final IOException ex) {
             throw new DeploymentException(ex);
         }
     }

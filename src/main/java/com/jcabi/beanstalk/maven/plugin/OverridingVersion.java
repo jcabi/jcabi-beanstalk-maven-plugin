@@ -19,8 +19,6 @@ import lombok.EqualsAndHashCode;
 /**
  * EBT application version.
  *
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "application", "bundle" })
@@ -55,17 +53,11 @@ final class OverridingVersion implements Version {
         this.bundle = bndl;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return this.bundle.name();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String label() {
         if (this.exists()) {

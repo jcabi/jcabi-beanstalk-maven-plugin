@@ -4,24 +4,24 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link UpdateMojo} (more detailed test is in maven invoker).
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
+ *
+ * @since 0.7.1
  */
-public final class UpdateMojoTest {
+final class UpdateMojoTest {
 
-    /**
-     * UpdateMojo can skip execution when flag is set.
-     * @throws Exception If something is wrong
-     */
     @Test
-    public void skipsExecutionWhenRequired() throws Exception {
+    void skipsExecutionWhenRequired() {
         final UpdateMojo mojo = new UpdateMojo();
         mojo.setSkip(true);
-        mojo.execute();
+        Assertions.assertDoesNotThrow(
+            mojo::execute,
+            "skipped execution cannot fail"
+        );
     }
 
 }

@@ -17,8 +17,6 @@ import org.apache.maven.settings.Settings;
 /**
  * AWS credentials from settings.xml.
  *
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
  * @since 0.3
  */
 @ToString
@@ -42,8 +40,52 @@ final class ServerCredentials implements AWSCredentials {
      * @param name Name of server ID
      * @throws MojoFailureException If some error
      */
-    protected ServerCredentials(@NotNull final Settings settings,
+    ServerCredentials(@NotNull final Settings settings,
         @NotNull final String name)
+        throws MojoFailureException {
+        this(ServerCredentials.server(settings, name), name);
+    }
+
+    /**
+     * Private ctor.
+     * @param server Server from settings
+     * @param name Name of server ID
+     * @throws MojoFailureException If some error
+     */
+    private ServerCredentials(final Server server, final String name)
+        throws MojoFailureException {
+        this.key = ServerCredentials.matching(
+            server.getUsername().trim(),
+            "[A-Z0-9]{20}",
+            String.format("Key for server '%s' is not a valid AWS key", name)
+        );
+        this.secret = ServerCredentials.matching(
+            server.getPassword().trim(),
+            "[a-zA-Z0-9\\+/]{40}",
+            String.format(
+                "Secret for server '%s' is not a valid AWS secret", name
+            )
+        );
+    }
+
+    @Override
+    public String getAWSAccessKeyId() {
+        return this.key;
+    }
+
+    @Override
+    public String getAWSSecretKey() {
+        return this.secret;
+    }
+
+    /**
+     * Find the server in Maven settings.
+     * @param settings Maven settings
+     * @param name Name of server ID
+     * @return The server found
+     * @throws MojoFailureException If it is absent
+     */
+    private static Server server(final Settings settings, final String name)
         throws MojoFailureException {
         final Server server = settings.getServer(name);
         if (server == null) {
@@ -51,45 +93,28 @@ final class ServerCredentials implements AWSCredentials {
                 String.format("Server '%s' is absent in settings.xml", name)
             );
         }
-        this.key = server.getUsername().trim();
-        if (!this.key.matches("[A-Z0-9]{20}")) {
-            throw new MojoFailureException(
-                String.format(
-                    "Key '%s' for server '%s' is not a valid AWS key",
-                    this.key, name
-                )
-            );
-        }
-        this.secret = server.getPassword().trim();
-        if (!this.secret.matches("[a-zA-Z0-9\\+/]{40}")) {
-            throw new MojoFailureException(
-                String.format(
-                    "Secret '%s' for server '%s' is not a valid AWS secret",
-                    this.secret, name
-                )
-            );
-        }
         Logger.info(
             ServerCredentials.class,
             "Using server '%s' with AWS key '%s'",
-            name, this.key
+            name, server.getUsername().trim()
         );
+        return server;
     }
 
     /**
-     * {@inheritDoc}
+     * Check that the value matches the regular expression.
+     * @param value The value to check
+     * @param regex The regular expression to match
+     * @param error Error message if it does not match
+     * @return The same value
+     * @throws MojoFailureException If it does not match
      */
-    @Override
-    public String getAWSAccessKeyId() {
-        return this.key;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getAWSSecretKey() {
-        return this.secret;
+    private static String matching(final String value, final String regex,
+        final String error) throws MojoFailureException {
+        if (!value.matches(regex)) {
+            throw new MojoFailureException(error);
+        }
+        return value;
     }
 
 }

@@ -6,25 +6,22 @@ package com.jcabi.beanstalk.maven.plugin;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
  * Test case for {@link Bundle}.
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
+ *
+ * @since 0.3
  */
-public final class BundleTest {
+final class BundleTest {
 
-    /**
-     * Bundle.Safe can remove invalid symbols from label name.
-     * @throws Exception If something is wrong
-     */
     @Test
-    public void fixesBrokenNames() throws Exception {
+    void fixesBrokenNames() {
         final Bundle bundle = Mockito.mock(Bundle.class);
         Mockito.doReturn("safe/name").when(bundle).name();
         MatcherAssert.assertThat(
+            "slashes cannot stay in the name",
             new Bundle.Safe(bundle).name(),
             Matchers.equalTo("safe_name")
         );

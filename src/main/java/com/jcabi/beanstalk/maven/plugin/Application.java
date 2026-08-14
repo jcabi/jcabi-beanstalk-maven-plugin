@@ -23,8 +23,6 @@ import lombok.EqualsAndHashCode;
 /**
  * EBT application.
  *
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
  * @since 0.3
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
@@ -52,11 +50,6 @@ final class Application {
         @NotNull final String app) {
         this.client = clnt;
         this.name = app;
-        Logger.info(
-            Application.class,
-            "Working with application '%s'",
-            this.name
-        );
     }
 
     /**
@@ -94,9 +87,6 @@ final class Application {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return this.name;
@@ -211,12 +201,11 @@ final class Application {
      * Get all environments in this app.
      * @return Collection of envs
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private Collection<Environment> environments() {
         final DescribeEnvironmentsResult res = this.client.describeEnvironments(
             new DescribeEnvironmentsRequest().withApplicationName(this.name)
         );
-        final Collection<Environment> envs = new LinkedList<Environment>();
+        final Collection<Environment> envs = new LinkedList<>();
         for (final EnvironmentDescription desc : res.getEnvironments()) {
             envs.add(new Environment(this.client, desc.getEnvironmentId()));
         }

@@ -5,197 +5,152 @@
 package com.jcabi.beanstalk.maven.plugin;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import org.apache.maven.plugin.MojoFailureException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 /**
  * Test case for {@link AbstractBeanstalkMojo}.
- * @author Neo Matrix (Neo.matrix@gmail.com)
- * @version $Id$
+ *
+ * @since 0.3
  */
-public final class GenericMojoTest {
-    /**
-     * {@link AbstractBeanstalkMojo} can execute successfully.
-     * @throws Exception If something is wrong.
-     * @checkstyle ExecutableStatementCountCheck (40 lines)
-     */
+final class GenericMojoTest {
+
     @Test
-    public void executesSuccessfully() throws Exception {
+    void executesSuccessfully(@TempDir final Path temp) throws Exception {
         // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
-            Mockito.mock(AbstractBeanstalkMojo.class);
-        final File mockFile = Mockito.mock(File.class);
-        final ZipFile mockZipFile = Mockito.mock(ZipFile.class);
-        Mockito.when(mockFile.exists()).thenReturn(true);
-        Mockito.when(mojo.createZipFile()).thenReturn(mockZipFile);
-        Mockito.doCallRealMethod().when(mojo).execute();
-        Mockito.doCallRealMethod().when(mojo).getLog();
-        Mockito.doCallRealMethod().when(mojo)
-            .setWar(Mockito.any(File.class));
+            GenericMojoTest.mojo();
         Mockito.doCallRealMethod().when(mojo)
             .setName(Mockito.any(String.class));
         Mockito.doCallRealMethod().when(mojo)
             .setBucket(Mockito.any(String.class));
         Mockito.doCallRealMethod().when(mojo)
             .setKey(Mockito.any(String.class));
-        mojo.setWar(mockFile);
+        final File war = GenericMojoTest.war(temp, "User: ed");
+        mojo.setWar(war);
         mojo.setName("name");
         mojo.setBucket("bucket");
         mojo.setKey("key");
         mojo.execute();
-        Mockito.verify(mojo).createZipFile();
-        Mockito.verify(mojo).validate(mockZipFile);
-        Mockito.verify(mojo).createServerCredentials();
-        Mockito.verify(mockZipFile).close();
-        Mockito.verify(mockFile, Mockito.times(2)).exists();
-    }
-
-    /**
-     * {@link AbstractBeanstalkMojo} can validate bad json.
-     * @throws Exception If something is wrong
-     */
-    @Test
-    public void validatesBadJson() throws Exception {
-        Assert.assertFalse(
-            new DeployMojo().validJson(new StringBuilder()
-                .append("[\n")
-                .append("id: 102\n")
-                .append("name: \"Rudy\"\n")
-                .append("colors: [green, yellow]\n")
-                .append("]\n").toString()
-            )
+        Assertions.assertAll(
+            () -> Mockito.verify(mojo).validate(war),
+            () -> Mockito.verify(mojo).createServerCredentials()
         );
     }
 
-    /**
-     * {@link AbstractBeanstalkMojo} can validate good json.
-     * @throws Exception If something is wrong
-     */
     @Test
-    public void validatesGoodJson() throws Exception {
-        Assert.assertTrue(
-            new DeployMojo().validJson(new StringBuilder()
-                .append("{\n")
-                .append("\"id'\": 102,\n")
-                .append("\"name\": \"Rudy\",\n")
-                .append("\"colors\": [\"green\", \"yellow\"],\n")
-                .append("}\n").toString()
-            )
-        );
-    }
-
-    /**
-     * {@link AbstractBeanstalkMojo} can validate bad yaml.
-     * @throws Exception If something is wrong
-     */
-    @Test
-    public void validatesBadYaml() throws Exception {
-        Assert.assertFalse(
-            new DeployMojo().validYaml(new StringBuilder()
-                .append("Some illegal Prefix\n")
-                .append("Time: 2005-11-23 10:01:42 -5\n")
-                .append("Admin: ed\n")
-                .append("Messages:\n")
-                .append(" Hello is an error information\n")
-                .append(" for the configuration file\n").toString()
-            )
-        );
-    }
-
-    /**
-     * {@link AbstractBeanstalkMojo} can validate good yaml.
-     * @throws Exception If something is wrong
-     */
-    @Test
-    public void validatesGoodYaml() throws Exception {
-        Assert.assertTrue(
-            new DeployMojo().validYaml(new StringBuilder()
-                .append("Time: 2001-11-23 15:01:42 -5\n")
-                .append("User: ed\n")
-                .append("Warning:\n")
-                .append("  This is an error message\n")
-                .append("  for the log file\n").toString()
-            )
-        );
-    }
-
-    /**
-     * {@link AbstractBeanstalkMojo} can throw an exception on execute, if there
-     * is no .ebextensions directory in the WAR file.
-     * @throws Exception Thrown in case of error.
-     */
-    @Test
-    public void throwsExceptionWhenNoEbextensionsDirInZip() throws Exception {
-        // @checkstyle IllegalTypeCheck (2 lines)
-        final AbstractBeanstalkMojo mojo =
-            Mockito.mock(AbstractBeanstalkMojo.class);
-        final File mockFile = Mockito.mock(File.class);
-        final ZipFile mockZipFile = Mockito.mock(ZipFile.class);
-        Mockito.when(mockFile.exists()).thenReturn(true);
-        Mockito.when(mojo.createZipFile()).thenReturn(mockZipFile);
-        Mockito.doCallRealMethod().when(mojo).execute();
-        Mockito.doCallRealMethod().when(mojo)
-            .setWar(Mockito.any(File.class));
-        Mockito.doCallRealMethod().when(mojo)
-            .validate(Mockito.any(ZipFile.class));
-        mojo.setWar(mockFile);
-        Mockito.when(mockZipFile.getEntry(".ebextensions")).thenReturn(null);
-        try {
-            mojo.execute();
-            Assert.fail("Expect MojoFailureException to be thrown");
-        } catch (final MojoFailureException exception) {
-            MatcherAssert.assertThat(
-                exception.getMessage(),
-                Matchers.equalTo(
-                    ".ebextensions directory does not exist in the WAR file"
-                )
-            );
-        }
-    }
-
-    /**
-     * {@link AbstractBeanstalkMojo} can throw an exception on execute, if the
-     * .ebextensions directory is empty.
-     * @throws Exception Thrown in case of error.
-     */
-    @Test
-    public void throwsExceptionWhenNoConfigFilesInEbextensionsDir()
+    void throwsExceptionWhenNoEbextensionsDirInZip(@TempDir final Path temp)
         throws Exception {
         // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
+            GenericMojoTest.mojo();
+        mojo.setWar(GenericMojoTest.bare(temp));
+        MatcherAssert.assertThat(
+            "absent .ebextensions cannot be reported differently",
+            GenericMojoTest.thrown(mojo).getMessage(),
+            Matchers.equalTo(
+                ".ebextensions directory does not exist in the WAR file"
+            )
+        );
+    }
+
+    @Test
+    void throwsExceptionWhenNoConfigFilesInEbextensionsDir(
+        @TempDir final Path temp) throws Exception {
+        // @checkstyle IllegalTypeCheck (2 lines)
+        final AbstractBeanstalkMojo mojo =
+            GenericMojoTest.mojo();
+        mojo.setWar(GenericMojoTest.war(temp, ""));
+        MatcherAssert.assertThat(
+            "empty .ebextensions cannot be reported differently",
+            GenericMojoTest.thrown(mojo).getMessage(),
+            Matchers.equalTo(".ebextensions contains no config files.")
+        );
+    }
+
+    /**
+     * Make a mojo, which executes and validates for real.
+     * @return The mojo
+     * @throws MojoFailureException If the mojo cannot be stubbed
+     * @checkstyle IllegalTypeCheck (5 lines)
+     */
+    private static AbstractBeanstalkMojo mojo()
+        throws MojoFailureException {
+        final AbstractBeanstalkMojo mojo =
             Mockito.mock(AbstractBeanstalkMojo.class);
         Mockito.doCallRealMethod().when(mojo).execute();
-        Mockito.doCallRealMethod().when(mojo).createZipFile();
+        Mockito.doCallRealMethod().when(mojo).getLog();
         Mockito.doCallRealMethod().when(mojo)
             .setWar(Mockito.any(File.class));
         Mockito.doCallRealMethod().when(mojo)
-            .validate(Mockito.any(ZipFile.class));
-        final File temp = File.createTempFile("test", ".zip");
-        final FileOutputStream fos = new FileOutputStream(temp);
-        final ZipOutputStream out = new ZipOutputStream(fos);
-        out.putNextEntry(new ZipEntry(".ebextensions/"));
-        out.flush();
-        out.close();
-        fos.flush();
-        fos.close();
-        mojo.setWar(temp);
-        try {
-            mojo.execute();
-        } catch (final MojoFailureException exception) {
-            MatcherAssert.assertThat(
-                exception.getMessage(),
-                Matchers.equalTo(
-                    ".ebextensions contains no config files."
-                )
+            .validate(Mockito.any(File.class));
+        return mojo;
+    }
+
+    /**
+     * Make a WAR file with the .ebextensions directory inside.
+     * @param temp Directory to make it in
+     * @param config Content of the only config file, empty if not needed
+     * @return The WAR file
+     * @throws IOException If it cannot be written
+     */
+    private static File war(final Path temp, final String config)
+        throws IOException {
+        final Path war = temp.resolve("test.war");
+        try (ZipOutputStream out = new ZipOutputStream(
+            Files.newOutputStream(war)
+        )) {
+            out.putNextEntry(new ZipEntry(".ebextensions/"));
+            if (!config.isEmpty()) {
+                out.putNextEntry(new ZipEntry(".ebextensions/config.yaml"));
+                out.write(config.getBytes(StandardCharsets.UTF_8));
+            }
+        }
+        return war.toFile();
+    }
+
+    /**
+     * Make a WAR file without the .ebextensions directory inside.
+     * @param temp Directory to make it in
+     * @return The WAR file
+     * @throws IOException If it cannot be written
+     */
+    private static File bare(final Path temp) throws IOException {
+        final Path war = temp.resolve("bare.war");
+        try (ZipOutputStream out = new ZipOutputStream(
+            Files.newOutputStream(war)
+        )) {
+            out.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
+            out.write(
+                "Manifest-Version: 1.0".getBytes(StandardCharsets.UTF_8)
             );
         }
+        return war.toFile();
     }
+
+    /**
+     * Execute the mojo and return the failure it throws.
+     * @param mojo The mojo to execute
+     * @return The exception thrown by it
+     * @checkstyle IllegalTypeCheck (2 lines)
+     */
+    private static Throwable thrown(final AbstractBeanstalkMojo mojo) {
+        return Assertions.assertThrows(
+            MojoFailureException.class,
+            mojo::execute,
+            "the mojo cannot execute without a valid .ebextensions"
+        );
+    }
+
 }

@@ -5,10 +5,6 @@
 package com.jcabi.beanstalk.maven.plugin;
 
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
-import com.amazonaws.services.elasticbeanstalk.model.ConfigurationOptionSetting;
-import com.amazonaws.services.elasticbeanstalk.model.ConfigurationSettingsDescription;
-import com.amazonaws.services.elasticbeanstalk.model.DescribeConfigurationSettingsRequest;
-import com.amazonaws.services.elasticbeanstalk.model.DescribeConfigurationSettingsResult;
 import com.amazonaws.services.elasticbeanstalk.model.DescribeEnvironmentsRequest;
 import com.amazonaws.services.elasticbeanstalk.model.DescribeEnvironmentsResult;
 import com.amazonaws.services.elasticbeanstalk.model.DescribeEventsRequest;
@@ -27,7 +23,6 @@ import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -40,13 +35,11 @@ import org.apache.commons.io.IOUtils;
 /**
  * EBT environment.
  *
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
  * @since 0.3
  * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @EqualsAndHashCode(of = { "client", "eid" })
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveImports" })
+@SuppressWarnings("PMD.TooManyMethods")
 @Loggable(Loggable.DEBUG)
 final class Environment {
 
@@ -74,37 +67,8 @@ final class Environment {
         @NotNull final String idnt) {
         this.client = clnt;
         this.eid = idnt;
-        final EnvironmentDescription desc = this.description();
-        final String template = desc.getTemplateName();
-        if (template != null) {
-            final DescribeConfigurationSettingsResult res =
-                this.client.describeConfigurationSettings(
-                    new DescribeConfigurationSettingsRequest()
-                        .withApplicationName(desc.getApplicationName())
-                        .withTemplateName(template)
-                );
-            for (final ConfigurationSettingsDescription config
-                : res.getConfigurationSettings()) {
-                Logger.debug(
-                    Environment.class,
-                    "Environment '%s/%s/%s' settings:",
-                    config.getApplicationName(), config.getEnvironmentName()
-                );
-                for (final ConfigurationOptionSetting opt
-                    : config.getOptionSettings()) {
-                    Logger.debug(
-                        Environment.class,
-                        "  %s/%s: %s",
-                        opt.getNamespace(), opt.getOptionName(), opt.getValue()
-                    );
-                }
-            }
-        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         final EnvironmentDescription desc = this.description();
@@ -166,6 +130,7 @@ final class Environment {
                 public String message() {
                     return "stable state";
                 }
+
                 @Override
                 public boolean allow(final EnvironmentDescription desc) {
                     return !desc.getStatus().matches(".*ing$");
@@ -228,13 +193,13 @@ final class Environment {
         final DescribeEventsResult res = this.client.describeEvents(
             new DescribeEventsRequest().withEnvironmentId(this.eid)
         );
-        final Collection<String> events = new LinkedList<String>();
+        final Collection<String> events = new LinkedList<>();
         for (final EventDescription desc : res.getEvents()) {
             events.add(
                 String.format("[%s]: %s", desc.getSeverity(), desc.getMessage())
             );
         }
-        return events.toArray(new String[events.size()]);
+        return events.toArray(new String[0]);
     }
 
     /**
@@ -263,10 +228,6 @@ final class Environment {
                 .withEnvironmentId(this.eid)
                 .withInfoType(EnvironmentInfoType.Tail)
         );
-        final RetrieveEnvironmentInfoRequest req =
-            new RetrieveEnvironmentInfoRequest()
-                .withEnvironmentId(this.eid)
-                .withInfoType(EnvironmentInfoType.Tail);
         List<EnvironmentInfoDescription> infos;
         final long start = System.currentTimeMillis();
         do {
@@ -283,14 +244,11 @@ final class Environment {
                 "Waiting for TAIL report of %s",
                 this.eid
             );
-            infos = this.client
-                .retrieveEnvironmentInfo(req)
-                .getEnvironmentInfo();
+            infos = this.infos();
         } while (infos.isEmpty());
-        final EnvironmentInfoDescription desc = infos.get(0);
         try {
             return IOUtils.toString(
-                URI.create(desc.getMessage()).toURL().openStream(),
+                URI.create(infos.get(0).getMessage()).toURL().openStream(),
                 StandardCharsets.UTF_8
             );
         } catch (final IOException ex) {
@@ -313,6 +271,18 @@ final class Environment {
             "Environment '%s' updated to '%s'",
             res.getEnvironmentId(), res.getVersionLabel()
         );
+    }
+
+    /**
+     * Get TAIL reports available at the moment.
+     * @return Collection of reports, may be empty
+     */
+    private List<EnvironmentInfoDescription> infos() {
+        return this.client.retrieveEnvironmentInfo(
+            new RetrieveEnvironmentInfoRequest()
+                .withEnvironmentId(this.eid)
+                .withInfoType(EnvironmentInfoType.Tail)
+        ).getEnvironmentInfo();
     }
 
     /**
@@ -392,6 +362,8 @@ final class Environment {
 
     /**
      * Barrier before the next operation.
+     *
+     * @since 0.3
      */
     private interface Barrier {
         /**
@@ -401,6 +373,7 @@ final class Environment {
          *  is required
          */
         boolean allow(EnvironmentDescription desc);
+
         /**
          * What are we waiting for?
          * @return Message to show in log

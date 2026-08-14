@@ -13,8 +13,6 @@ import lombok.ToString;
 /**
  * Bundle with a WAR application.
  *
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
  * @since 0.3
  */
 interface Bundle {
@@ -40,39 +38,37 @@ interface Bundle {
 
     /**
      * Safe bundle, with a safe name.
+     *
+     * @since 0.3
      */
     @ToString
     @EqualsAndHashCode(of = "origin")
     @Loggable(Loggable.DEBUG)
     final class Safe implements Bundle {
+
         /**
          * Original bundle.
          */
         private final transient Bundle origin;
+
         /**
          * Public ctor.
          * @param bundle Original bundle
          */
-        public Safe(@NotNull final Bundle bundle) {
+        Safe(@NotNull final Bundle bundle) {
             this.origin = bundle;
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         public String name() {
             return this.origin.name().replace("/", "_");
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         public S3Location location() {
             return this.origin.location();
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         public String etag() {
             return this.origin.etag();

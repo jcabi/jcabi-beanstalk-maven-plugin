@@ -13,21 +13,16 @@ import org.apache.maven.plugins.annotations.Mojo;
 /**
  * Update WAR artifact in AWS Elastic Beanstalk to a new version.
  *
- * @author Yegor Bugayenko (yegor256@gmail.com)
- * @version $Id$
  * @since 0.7.1
  */
 @Mojo(name = "update", defaultPhase = LifecyclePhase.DEPLOY)
 @Loggable(Loggable.INFO)
 public final class UpdateMojo extends AbstractBeanstalkMojo {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void exec(@NotNull final Application app,
         @NotNull final Version version, @NotNull final String template) {
-        Environment primary;
+        final Environment primary;
         if (app.hasPrimary()) {
             primary = app.primary();
             primary.update(version);
