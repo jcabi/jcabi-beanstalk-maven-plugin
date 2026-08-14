@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link ConfigFile}.
- *
  * @since 0.14
  */
 final class ConfigFileTest {
@@ -21,7 +20,7 @@ final class ConfigFileTest {
             "valid JSON cannot be rejected",
             new ConfigFile(
                 String.join(
-                    "\n",
+                    System.lineSeparator(),
                     "{",
                     "\"id'\": 102,",
                     "\"name\": \"Rudy\",",
@@ -39,7 +38,7 @@ final class ConfigFileTest {
             "valid YAML cannot be rejected",
             new ConfigFile(
                 String.join(
-                    "\n",
+                    System.lineSeparator(),
                     "Time: 2001-11-23 15:01:42 -5",
                     "User: ed",
                     "Warning:",
@@ -57,7 +56,7 @@ final class ConfigFileTest {
             "broken JSON cannot be accepted",
             new ConfigFile(
                 String.join(
-                    "\n",
+                    System.lineSeparator(),
                     "[",
                     "id: 102",
                     "name: \"Rudy\"",
@@ -75,7 +74,7 @@ final class ConfigFileTest {
             "broken YAML cannot be accepted",
             new ConfigFile(
                 String.join(
-                    "\n",
+                    System.lineSeparator(),
                     "Some illegal Prefix",
                     "Time: 2005-11-23 10:01:42 -5",
                     "Admin: ed",
@@ -87,5 +86,4 @@ final class ConfigFileTest {
             Matchers.is(false)
         );
     }
-
 }

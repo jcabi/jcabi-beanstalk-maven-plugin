@@ -12,7 +12,6 @@ import lombok.ToString;
 
 /**
  * Bundle with a WAR application.
- *
  * @since 0.3
  */
 interface Bundle {
@@ -38,7 +37,6 @@ interface Bundle {
 
     /**
      * Safe bundle, with a safe name.
-     *
      * @since 0.3
      */
     @ToString
@@ -74,5 +72,4 @@ interface Bundle {
             return this.origin.etag();
         }
     }
-
 }

@@ -12,7 +12,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Update WAR artifact in AWS Elastic Beanstalk to a new version.
- *
  * @since 0.7.1
  */
 @Mojo(name = "update", defaultPhase = LifecyclePhase.DEPLOY)
@@ -44,5 +43,4 @@ public final class UpdateMojo extends AbstractBeanstalkMojo {
             primary, version
         );
     }
-
 }

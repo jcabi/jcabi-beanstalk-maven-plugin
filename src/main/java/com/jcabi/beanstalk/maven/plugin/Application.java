@@ -14,20 +14,17 @@ import com.amazonaws.services.elasticbeanstalk.model.EnvironmentDescription;
 import com.amazonaws.services.elasticbeanstalk.model.SwapEnvironmentCNAMEsRequest;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Random;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 
 /**
  * EBT application.
- *
  * @since 0.3
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @EqualsAndHashCode(of = { "client", "name" })
-@SuppressWarnings("PMD.TooManyMethods")
 @Loggable(Loggable.DEBUG)
 final class Application {
 
@@ -46,17 +43,22 @@ final class Application {
      * @param clnt The client
      * @param app Application name
      */
-    protected Application(@NotNull final AWSElasticBeanstalk clnt,
+    Application(@NotNull final AWSElasticBeanstalk clnt,
         @NotNull final String app) {
         this.client = clnt;
         this.name = app;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
     /**
      * Clean it up beforehand.
      * @param wipe Kill all existing environments no matter what?
      */
-    public void clean(final boolean wipe) {
+    void clean(final boolean wipe) {
         for (final Environment env : this.environments()) {
             if (env.primary() && env.green() && !wipe) {
                 Logger.info(
@@ -72,7 +74,6 @@ final class Application {
             if (wipe) {
                 Logger.info(
                     this,
-                    // @checkstyle LineLength (1 line)
                     "Wiping out environment '%s' as required by configuration...",
                     env
                 );
@@ -87,16 +88,11 @@ final class Application {
         }
     }
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
     /**
      * Get primary environment or throws a runtime exception if it is absent.
      * @return Primary environment
      */
-    public Environment primary() {
+    Environment primary() {
         Environment primary = null;
         for (final Environment env : this.environments()) {
             if (env.primary()) {
@@ -119,7 +115,7 @@ final class Application {
      * This application has a primary environment?
      * @return TRUE if it exists
      */
-    public boolean hasPrimary() {
+    boolean hasPrimary() {
         boolean has = false;
         for (final Environment env : this.environments()) {
             if (env.primary() && env.green()) {
@@ -134,7 +130,7 @@ final class Application {
      * Activate candidate environment by swap of CNAMEs.
      * @param candidate The candidate to make a primary environment
      */
-    public void swap(@NotNull final Environment candidate) {
+    void swap(@NotNull final Environment candidate) {
         final Environment primary = this.primary();
         this.client.swapEnvironmentCNAMEs(
             new SwapEnvironmentCNAMEsRequest()
@@ -171,7 +167,7 @@ final class Application {
      * @param template EBT configuration template
      * @return The environment
      */
-    public Environment candidate(@NotNull final Version version,
+    Environment candidate(@NotNull final Version version,
         @NotNull final String template) {
         final CreateEnvironmentRequest request = this.suggest();
         Logger.info(
@@ -188,7 +184,6 @@ final class Application {
         );
         Logger.info(
             this,
-            // @checkstyle LineLength (1 line)
             "Candidate environment '%s/%s/%s' created at CNAME '%s' (status:%s, health:%s)",
             res.getApplicationName(), res.getEnvironmentName(),
             res.getEnvironmentId(), res.getCNAME(),
@@ -205,7 +200,7 @@ final class Application {
         final DescribeEnvironmentsResult res = this.client.describeEnvironments(
             new DescribeEnvironmentsRequest().withApplicationName(this.name)
         );
-        final Collection<Environment> envs = new LinkedList<>();
+        final Collection<Environment> envs = new ArrayList<>(0);
         for (final EnvironmentDescription desc : res.getEnvironments()) {
             envs.add(new Environment(this.client, desc.getEnvironmentId()));
         }
@@ -292,5 +287,4 @@ final class Application {
             100 + new Random().nextInt(900)
         );
     }
-
 }

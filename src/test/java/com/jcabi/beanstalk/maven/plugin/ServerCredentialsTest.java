@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link ServerCredentials}.
- *
  * @since 0.3
  */
 final class ServerCredentialsTest {
@@ -50,5 +49,4 @@ final class ServerCredentialsTest {
             "absent server cannot be accepted"
         );
     }
-
 }

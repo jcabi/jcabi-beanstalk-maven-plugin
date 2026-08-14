@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link UpdateMojo} (more detailed test is in maven invoker).
- *
  * @since 0.7.1
  */
 final class UpdateMojoTest {
@@ -23,5 +22,4 @@ final class UpdateMojoTest {
             "skipped execution cannot fail"
         );
     }
-
 }

@@ -12,7 +12,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Deploys WAR artifact to AWS Elastic Beanstalk.
- *
  * @since 0.3
  */
 @Mojo(name = "deploy", defaultPhase = LifecyclePhase.DEPLOY)
@@ -64,5 +63,4 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
             );
         }
     }
-
 }

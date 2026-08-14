@@ -10,16 +10,15 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * The .ebextensions directory inside a WAR file.
- *
  * @since 0.14
  */
 final class Ebextensions {
@@ -79,7 +78,6 @@ final class Ebextensions {
         if (!new ConfigFile(Ebextensions.text(zip, entry)).valid()) {
             throw new MojoFailureException(
                 String.format(
-                    // @checkstyle LineLength (1 line)
                     "File '%s' in .ebextensions is neither valid JSON, nor valid YAML",
                     entry.getName()
                 )
@@ -93,7 +91,7 @@ final class Ebextensions {
      * @return Collection of entries, may be empty
      */
     private static Collection<ZipEntry> configs(final ZipFile zip) {
-        final Collection<ZipEntry> configs = new LinkedList<>();
+        final Collection<ZipEntry> configs = new ArrayList<>(0);
         final Enumeration<? extends ZipEntry> entries = zip.entries();
         while (entries.hasMoreElements()) {
             final ZipEntry entry = entries.nextElement();
@@ -115,9 +113,11 @@ final class Ebextensions {
     private static String text(final ZipFile zip, final ZipEntry entry)
         throws MojoFailureException {
         final StringWriter writer = new StringWriter();
-        try (Reader reader = new InputStreamReader(
-            zip.getInputStream(entry), StandardCharsets.UTF_8
-        )) {
+        try (
+            Reader reader = new InputStreamReader(
+                zip.getInputStream(entry), StandardCharsets.UTF_8
+            )
+        ) {
             reader.transferTo(writer);
         } catch (final IOException ex) {
             throw new MojoFailureException(
@@ -131,5 +131,4 @@ final class Ebextensions {
         }
         return writer.toString();
     }
-
 }

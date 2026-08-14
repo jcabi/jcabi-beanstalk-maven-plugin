@@ -24,8 +24,8 @@ import com.jcabi.log.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.validation.constraints.NotNull;
@@ -34,12 +34,9 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * EBT environment.
- *
  * @since 0.3
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 @EqualsAndHashCode(of = { "client", "eid" })
-@SuppressWarnings("PMD.TooManyMethods")
 @Loggable(Loggable.DEBUG)
 final class Environment {
 
@@ -63,7 +60,7 @@ final class Environment {
      * @param clnt The client
      * @param idnt Environment ID
      */
-    protected Environment(@NotNull final AWSElasticBeanstalk clnt,
+    Environment(@NotNull final AWSElasticBeanstalk clnt,
         @NotNull final String idnt) {
         this.client = clnt;
         this.eid = idnt;
@@ -82,7 +79,7 @@ final class Environment {
      * Is it primary environment in the application?
      * @return TRUE if this environment is attached to the main CNAME
      */
-    public boolean primary() {
+    boolean primary() {
         final EnvironmentDescription desc = this.description();
         final String prefix = String.format("%s.", desc.getApplicationName());
         final boolean primary = this.stable()
@@ -95,7 +92,6 @@ final class Environment {
         } else {
             Logger.info(
                 this,
-                // @checkstyle LineLength (1 line)
                 "Environment '%s' considered secondary since its CNAME doesn't start with '%s'",
                 this, prefix
             );
@@ -107,7 +103,7 @@ final class Environment {
      * Get environment name.
      * @return Name of it
      */
-    public String name() {
+    String name() {
         return this.description().getEnvironmentName();
     }
 
@@ -115,7 +111,7 @@ final class Environment {
      * Environment is in Green health?
      * @return TRUE if environment is in Green health
      */
-    public boolean green() {
+    boolean green() {
         return this.stable() && "Green".equals(this.description().getHealth());
     }
 
@@ -123,7 +119,7 @@ final class Environment {
      * Wait for stable state, and return TRUE if achieved or FALSE if not.
      * @return TRUE if environment is stable
      */
-    public boolean stable() {
+    boolean stable() {
         return this.until(
             new Environment.Barrier() {
                 @Override
@@ -143,7 +139,7 @@ final class Environment {
      * Is it terminated?
      * @return Yes or no
      */
-    public boolean terminated() {
+    boolean terminated() {
         return this.stable()
             && "Terminated".equals(this.description().getStatus());
     }
@@ -151,7 +147,7 @@ final class Environment {
     /**
      * Terminate environment.
      */
-    public void terminate() {
+    void terminate() {
         if (!this.stable()) {
             throw new DeploymentException(
                 String.format(
@@ -181,7 +177,7 @@ final class Environment {
      * Get latest events.
      * @return Collection of events
      */
-    public String[] events() {
+    String[] events() {
         if (!this.stable()) {
             throw new DeploymentException(
                 String.format(
@@ -193,7 +189,7 @@ final class Environment {
         final DescribeEventsResult res = this.client.describeEvents(
             new DescribeEventsRequest().withEnvironmentId(this.eid)
         );
-        final Collection<String> events = new LinkedList<>();
+        final Collection<String> events = new ArrayList<>(0);
         for (final EventDescription desc : res.getEvents()) {
             events.add(
                 String.format("[%s]: %s", desc.getSeverity(), desc.getMessage())
@@ -206,7 +202,7 @@ final class Environment {
      * Tail log.
      * @return Full text of tail log from the environment
      */
-    public String tail() {
+    String tail() {
         if (!this.stable()) {
             throw new DeploymentException(
                 String.format(
@@ -260,7 +256,7 @@ final class Environment {
      * Update this environment with a new version.
      * @param version The version to update to
      */
-    public void update(final Version version) {
+    void update(final Version version) {
         final UpdateEnvironmentResult res = this.client.updateEnvironment(
             new UpdateEnvironmentRequest()
                 .withEnvironmentId(this.eid)
@@ -302,7 +298,6 @@ final class Environment {
         final EnvironmentDescription desc = res.getEnvironments().get(0);
         Logger.debug(
             this,
-            // @checkstyle LineLength (1 line)
             "ID=%s, env=%s, app=%s, CNAME=%s, label=%s, template=%s, status=%s, health=%s",
             desc.getEnvironmentId(), desc.getEnvironmentName(),
             desc.getApplicationName(), desc.getCNAME(),
@@ -335,7 +330,6 @@ final class Environment {
             }
             Logger.info(
                 this,
-                // @checkstyle LineLength (1 line)
                 "Environment '%s/%s/%s': health=%s, status=%s (waiting for %s, %[ms]s)",
                 desc.getApplicationName(), desc.getEnvironmentName(),
                 desc.getEnvironmentId(), desc.getHealth(),
@@ -362,10 +356,10 @@ final class Environment {
 
     /**
      * Barrier before the next operation.
-     *
      * @since 0.3
      */
     private interface Barrier {
+
         /**
          * Can we continue?
          * @param desc Description of environment
@@ -380,5 +374,4 @@ final class Environment {
          */
         String message();
     }
-
 }

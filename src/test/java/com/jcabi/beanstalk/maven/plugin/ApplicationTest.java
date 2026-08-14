@@ -32,9 +32,7 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link Application}.
- *
  * @since 0.3
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 final class ApplicationTest {
 
@@ -133,5 +131,4 @@ final class ApplicationTest {
         ).thenReturn(new TerminateEnvironmentResult());
         return ebt;
     }
-
 }

@@ -18,7 +18,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * EBT application version.
- *
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "application", "bundle" })
@@ -46,7 +45,7 @@ final class OverridingVersion implements Version {
      * @param app Application name
      * @param bndl Bundle
      */
-    protected OverridingVersion(@NotNull final AWSElasticBeanstalk clnt,
+    OverridingVersion(@NotNull final AWSElasticBeanstalk clnt,
         @NotNull final String app, @NotNull final Bundle bndl) {
         this.client = clnt;
         this.application = app;
@@ -139,7 +138,6 @@ final class OverridingVersion implements Version {
                 );
                 Logger.info(
                     this,
-                    // @checkstyle LineLength (1 line)
                     "Version '%s' deleted in '%s' because of its outdated S3 location",
                     this.bundle.name(),
                     this.application
@@ -148,5 +146,4 @@ final class OverridingVersion implements Version {
         }
         return exists;
     }
-
 }

@@ -19,7 +19,6 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link Environment}.
- *
  * @since 0.3
  */
 final class EnvironmentTest {
@@ -82,5 +81,4 @@ final class EnvironmentTest {
             Matchers.not(Matchers.emptyArray())
         );
     }
-
 }

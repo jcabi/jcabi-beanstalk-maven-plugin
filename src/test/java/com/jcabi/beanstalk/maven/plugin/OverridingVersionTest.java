@@ -17,7 +17,6 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link OverridingVersion}.
- *
  * @since 0.3
  */
 final class OverridingVersionTest {
@@ -38,11 +37,10 @@ final class OverridingVersionTest {
                 Mockito.any(CreateApplicationVersionRequest.class)
             )
         ).thenReturn(
-            new CreateApplicationVersionResult()
-                .withApplicationVersion(
-                    new ApplicationVersionDescription()
-                        .withVersionLabel(key)
-                )
+            new CreateApplicationVersionResult().withApplicationVersion(
+                new ApplicationVersionDescription()
+                    .withVersionLabel(key)
+            )
         );
         MatcherAssert.assertThat(
             "the label cannot differ from the name of the bundle",
@@ -50,5 +48,4 @@ final class OverridingVersionTest {
             Matchers.equalTo(key)
         );
     }
-
 }

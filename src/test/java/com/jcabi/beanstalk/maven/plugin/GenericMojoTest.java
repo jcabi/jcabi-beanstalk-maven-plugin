@@ -21,14 +21,12 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link AbstractBeanstalkMojo}.
- *
  * @since 0.3
  */
 final class GenericMojoTest {
 
     @Test
     void executesSuccessfully(@TempDir final Path temp) throws Exception {
-        // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
             GenericMojoTest.mojo();
         Mockito.doCallRealMethod().when(mojo)
@@ -52,7 +50,6 @@ final class GenericMojoTest {
     @Test
     void throwsExceptionWhenNoEbextensionsDirInZip(@TempDir final Path temp)
         throws Exception {
-        // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
             GenericMojoTest.mojo();
         mojo.setWar(GenericMojoTest.bare(temp));
@@ -68,7 +65,6 @@ final class GenericMojoTest {
     @Test
     void throwsExceptionWhenNoConfigFilesInEbextensionsDir(
         @TempDir final Path temp) throws Exception {
-        // @checkstyle IllegalTypeCheck (2 lines)
         final AbstractBeanstalkMojo mojo =
             GenericMojoTest.mojo();
         mojo.setWar(GenericMojoTest.war(temp, ""));
@@ -83,10 +79,8 @@ final class GenericMojoTest {
      * Make a mojo, which executes and validates for real.
      * @return The mojo
      * @throws MojoFailureException If the mojo cannot be stubbed
-     * @checkstyle IllegalTypeCheck (5 lines)
      */
-    private static AbstractBeanstalkMojo mojo()
-        throws MojoFailureException {
+    private static AbstractBeanstalkMojo mojo() throws MojoFailureException {
         final AbstractBeanstalkMojo mojo =
             Mockito.mock(AbstractBeanstalkMojo.class);
         Mockito.doCallRealMethod().when(mojo).execute();
@@ -108,9 +102,11 @@ final class GenericMojoTest {
     private static File war(final Path temp, final String config)
         throws IOException {
         final Path war = temp.resolve("test.war");
-        try (ZipOutputStream out = new ZipOutputStream(
-            Files.newOutputStream(war)
-        )) {
+        try (
+            ZipOutputStream out = new ZipOutputStream(
+                Files.newOutputStream(war)
+            )
+        ) {
             out.putNextEntry(new ZipEntry(".ebextensions/"));
             if (!config.isEmpty()) {
                 out.putNextEntry(new ZipEntry(".ebextensions/config.yaml"));
@@ -128,9 +124,11 @@ final class GenericMojoTest {
      */
     private static File bare(final Path temp) throws IOException {
         final Path war = temp.resolve("bare.war");
-        try (ZipOutputStream out = new ZipOutputStream(
-            Files.newOutputStream(war)
-        )) {
+        try (
+            ZipOutputStream out = new ZipOutputStream(
+                Files.newOutputStream(war)
+            )
+        ) {
             out.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
             out.write(
                 "Manifest-Version: 1.0".getBytes(StandardCharsets.UTF_8)
@@ -143,7 +141,6 @@ final class GenericMojoTest {
      * Execute the mojo and return the failure it throws.
      * @param mojo The mojo to execute
      * @return The exception thrown by it
-     * @checkstyle IllegalTypeCheck (2 lines)
      */
     private static Throwable thrown(final AbstractBeanstalkMojo mojo) {
         return Assertions.assertThrows(
@@ -152,5 +149,4 @@ final class GenericMojoTest {
             "the mojo cannot execute without a valid .ebextensions"
         );
     }
-
 }

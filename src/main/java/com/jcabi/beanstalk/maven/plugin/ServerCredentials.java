@@ -16,7 +16,6 @@ import org.apache.maven.settings.Settings;
 
 /**
  * AWS credentials from settings.xml.
- *
  * @since 0.3
  */
 @ToString
@@ -54,18 +53,32 @@ final class ServerCredentials implements AWSCredentials {
      */
     private ServerCredentials(final Server server, final String name)
         throws MojoFailureException {
-        this.key = ServerCredentials.matching(
-            server.getUsername().trim(),
-            "[A-Z0-9]{20}",
-            String.format("Key for server '%s' is not a valid AWS key", name)
-        );
-        this.secret = ServerCredentials.matching(
-            server.getPassword().trim(),
-            "[a-zA-Z0-9\\+/]{40}",
-            String.format(
-                "Secret for server '%s' is not a valid AWS secret", name
+        this(
+            ServerCredentials.matching(
+                server.getUsername().trim(),
+                "[A-Z0-9]{20}",
+                String.format(
+                    "Key for server '%s' is not a valid AWS key", name
+                )
+            ),
+            ServerCredentials.matching(
+                server.getPassword().trim(),
+                "[a-zA-Z0-9\\+/]{40}",
+                String.format(
+                    "Secret for server '%s' is not a valid AWS secret", name
+                )
             )
         );
+    }
+
+    /**
+     * Private ctor.
+     * @param akey AWS key
+     * @param scrt AWS secret
+     */
+    private ServerCredentials(final String akey, final String scrt) {
+        this.key = akey;
+        this.secret = scrt;
     }
 
     @Override
@@ -116,5 +129,4 @@ final class ServerCredentials implements AWSCredentials {
         }
         return value;
     }
-
 }

@@ -6,7 +6,6 @@ package com.jcabi.beanstalk.maven.plugin;
 
 /**
  * Version to deploy.
- *
  * @since 0.3
  */
 @FunctionalInterface
@@ -17,5 +16,4 @@ interface Version {
      * @return The label
      */
     String label();
-
 }

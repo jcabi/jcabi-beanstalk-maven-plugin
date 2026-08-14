@@ -19,11 +19,10 @@ import org.slf4j.impl.StaticLoggerBinder;
 
 /**
  * Abstract MOJO for this plugin.
- *
  * @since 0.7.1
- * @checkstyle ClassDataAbstractionCoupling (500 lines)
  */
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
+
     /**
      * Setting.xml.
      */
@@ -74,46 +73,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     )
     private transient File war;
 
-    /**
-     * Set skip option.
-     * @param skp Shall we skip execution?
-     */
-    public void setSkip(final boolean skp) {
-        this.skip = skp;
-    }
-
-    /**
-     * Set war file.
-     * @param warfile The war file
-     */
-    public void setWar(final File warfile) {
-        this.war = warfile;
-    }
-
-    /**
-     * Set the EBT application name, environment name, and CNAME.
-     * @param thename The application name
-     */
-    public void setName(final String thename) {
-        this.name = thename;
-    }
-
-    /**
-     * Set the Amazon S3 bucket name.
-     * @param thebucket The bucket name
-     */
-    public void setBucket(final String thebucket) {
-        this.bucket = thebucket;
-    }
-
-    /**
-     * Set the Amazon S3 bucket key.
-     * @param thekey The bucket key
-     */
-    public void setKey(final String thekey) {
-        this.key = thekey;
-    }
-
     @Override
     public void execute() throws MojoFailureException {
         StaticLoggerBinder.getSingleton().setMavenLog(this.getLog());
@@ -156,7 +115,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Creates server crecentials.
-     * @return Server credentials based on settings and server attributes.
+     * @return Server credentials based on settings and server attributes
      * @throws MojoFailureException Thrown in case of error.
      */
     protected ServerCredentials createServerCredentials()
@@ -173,8 +132,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @param version Version to deploy
      * @param tmpl Template to use
      */
-    protected abstract void exec(Application app, Version version,
-        String tmpl);
+    protected abstract void exec(Application app, Version version, String tmpl);
 
     /**
      * Report when environment is failed.
@@ -187,7 +145,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                 this,
                 "TAIL report should explain the cause of failure:"
             );
-            this.log(env.tail().split("\n"));
+            this.log(env.tail().lines().toArray(String[]::new));
         }
         Logger.error(this, "Latest EBT events (in reverse order):");
         this.log(env.events());
@@ -237,6 +195,46 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     }
 
     /**
+     * Set skip option.
+     * @param skp Shall we skip execution?
+     */
+    void setSkip(final boolean skp) {
+        this.skip = skp;
+    }
+
+    /**
+     * Set war file.
+     * @param warfile The war file
+     */
+    void setWar(final File warfile) {
+        this.war = warfile;
+    }
+
+    /**
+     * Set the EBT application name, environment name, and CNAME.
+     * @param thename The application name
+     */
+    void setName(final String thename) {
+        this.name = thename;
+    }
+
+    /**
+     * Set the Amazon S3 bucket name.
+     * @param thebucket The bucket name
+     */
+    void setBucket(final String thebucket) {
+        this.bucket = thebucket;
+    }
+
+    /**
+     * Set the Amazon S3 bucket key.
+     * @param thekey The bucket key
+     */
+    void setKey(final String thekey) {
+        this.key = thekey;
+    }
+
+    /**
      * Log all lines from the collection.
      * @param lines All lines to log
      */
@@ -245,5 +243,4 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             Logger.info(this, ">> %s", line);
         }
     }
-
 }

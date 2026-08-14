@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link DeployMojo} (more detailed test is in maven invoker).
- *
  * @since 0.3
  */
 final class DeployMojoTest {
@@ -42,5 +41,4 @@ final class DeployMojoTest {
             )
         );
     }
-
 }

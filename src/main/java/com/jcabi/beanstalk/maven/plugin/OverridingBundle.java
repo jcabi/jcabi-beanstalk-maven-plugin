@@ -26,7 +26,6 @@ import org.apache.commons.io.FileUtils;
 
 /**
  * Bundle that always overrides S3 object.
- *
  * @since 0.3
  */
 @ToString
@@ -60,20 +59,26 @@ final class OverridingBundle implements Bundle {
      * @param bckt S3 bucket
      * @param label Location of S3 object, label name
      * @param file WAR file location
-     * @checkstyle ParameterNumber (4 lines)
      */
-    protected OverridingBundle(@NotNull final AmazonS3 clnt,
+    OverridingBundle(@NotNull final AmazonS3 clnt,
         @NotNull final String bckt, @NotNull final String label,
         @NotNull final File file) {
+        this(OverridingBundle.existing(file), clnt, bckt, label);
+    }
+
+    /**
+     * Private ctor.
+     * @param file WAR file location
+     * @param clnt The client
+     * @param bckt S3 bucket
+     * @param label Location of S3 object, label name
+     */
+    private OverridingBundle(final File file, final AmazonS3 clnt,
+        final String bckt, final String label) {
         this.client = clnt;
         this.bucket = bckt;
         this.key = label;
         this.war = file;
-        if (!this.war.exists()) {
-            throw new DeploymentException(
-                String.format("WAR file %s doesn't exist", this.war)
-            );
-        }
     }
 
     @Cacheable
@@ -99,7 +104,6 @@ final class OverridingBundle implements Bundle {
             );
             Logger.info(
                 this,
-                // @checkstyle LineLength (1 line)
                 "Uploaded successfully to S3, etag=%s, expires=%s, exp.rule=%s, encryption=%s, version=%s",
                 res.getETag(), res.getExpirationTime(),
                 res.getExpirationTimeRuleId(), res.getServerSideEncryption(),
@@ -138,7 +142,6 @@ final class OverridingBundle implements Bundle {
             if (meta.getETag().equals(etag)) {
                 Logger.info(
                     this,
-                    // @checkstyle LineLength (1 line)
                     "MD5 ETag '%s' of existing S3 object '%s' (%s) equals to the one of the local file (%s)",
                     meta.getETag(), this.key,
                     FileUtils.byteCountToDisplaySize(meta.getContentLength()),
@@ -148,7 +151,6 @@ final class OverridingBundle implements Bundle {
             } else {
                 Logger.info(
                     this,
-                    // @checkstyle LineLength (1 line)
                     "MD5 ETag '%s' of S3 object '%s' (%s) differs from '%s' of the local file (%s)",
                     meta.getETag(), this.key,
                     FileUtils.byteCountToDisplaySize(meta.getContentLength()),
@@ -183,7 +185,6 @@ final class OverridingBundle implements Bundle {
             final S3ObjectSummary summary = summaries.get(0);
             Logger.info(
                 this,
-                // @checkstyle LineLength (1 line)
                 "S3 object '%s' found in '%s' bucket (size=%d, last-modified=%s, etag=%s)",
                 summary.getKey(), summary.getBucketName(), summary.getSize(),
                 summary.getLastModified(), summary.getETag()
@@ -193,4 +194,17 @@ final class OverridingBundle implements Bundle {
         return exists;
     }
 
+    /**
+     * Make sure the file exists.
+     * @param file WAR file location
+     * @return The same file
+     */
+    private static File existing(final File file) {
+        if (!file.exists()) {
+            throw new DeploymentException(
+                String.format("WAR file %s doesn't exist", file)
+            );
+        }
+        return file;
+    }
 }

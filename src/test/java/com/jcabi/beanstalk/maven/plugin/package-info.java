@@ -5,7 +5,6 @@
 
 /**
  * Amazon Elastic Beanstalk Maven plugin, tests.
- *
  * @since 0.3
  */
 package com.jcabi.beanstalk.maven.plugin;
