@@ -3,21 +3,24 @@
 ---
 # yamllint disable rule:line-length
 name: codecov
-on:
+'on':
   push:
     branches:
       - master
+permissions:
+  contents: read
+  id-token: write
 jobs:
   codecov:
     timeout-minutes: 15
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 11
-      - uses: actions/cache@v3
+          java-version: 21
+      - uses: actions/cache@v6
         with:
           path: ~/.m2/repository
           key: maven-${{ hashFiles('**/pom.xml') }}
@@ -26,5 +29,6 @@ jobs:
       - run: mvn install -Pjacoco
       - uses: codecov/codecov-action@v5
         with:
-          file: ./target/site/jacoco/jacoco.xml
+          use_oidc: true
+          files: ./target/site/jacoco/jacoco.xml
           fail_ci_if_error: true
