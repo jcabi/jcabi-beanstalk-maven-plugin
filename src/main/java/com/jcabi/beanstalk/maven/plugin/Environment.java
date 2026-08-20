@@ -269,10 +269,6 @@ final class Environment {
         );
     }
 
-    /**
-     * Get TAIL reports available at the moment.
-     * @return Collection of reports, may be empty
-     */
     private List<EnvironmentInfoDescription> infos() {
         return this.client.retrieveEnvironmentInfo(
             new RetrieveEnvironmentInfoRequest()
@@ -281,10 +277,6 @@ final class Environment {
         ).getEnvironmentInfo();
     }
 
-    /**
-     * Get environment description of this.
-     * @return The description
-     */
     private EnvironmentDescription description() {
         final DescribeEnvironmentsResult res = this.client.describeEnvironments(
             new DescribeEnvironmentsRequest()
@@ -307,11 +299,6 @@ final class Environment {
         return desc;
     }
 
-    /**
-     * Wait for the barrier to pass.
-     * @param barrier The barrier
-     * @return TRUE if passed, FALSE if timeout
-     */
     private boolean until(final Environment.Barrier barrier) {
         boolean passed = false;
         final long start = System.currentTimeMillis();

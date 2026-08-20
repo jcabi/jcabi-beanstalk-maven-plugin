@@ -87,11 +87,6 @@ final class ApplicationTest {
         );
     }
 
-    /**
-     * Make a beanstalk client, which is ready to create an environment.
-     * @param name Name of the application
-     * @return The client
-     */
     private static AWSElasticBeanstalk beanstalk(final String name) {
         final AWSElasticBeanstalk ebt = Mockito.mock(AWSElasticBeanstalk.class);
         Mockito.when(

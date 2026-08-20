@@ -234,10 +234,6 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         this.key = thekey;
     }
 
-    /**
-     * Log all lines from the collection.
-     * @param lines All lines to log
-     */
     private void log(final String... lines) {
         for (final String line : lines) {
             Logger.info(this, ">> %s", line);

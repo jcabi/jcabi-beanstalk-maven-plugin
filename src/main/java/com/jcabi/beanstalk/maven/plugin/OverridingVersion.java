@@ -98,10 +98,6 @@ final class OverridingVersion implements Version {
         return this.bundle.name();
     }
 
-    /**
-     * This label exists already?
-     * @return Yes or no
-     */
     private boolean exists() {
         final DescribeApplicationVersionsResult res =
             this.client.describeApplicationVersions(

@@ -38,10 +38,6 @@ final class ConfigFile {
         return this.object() || this.array() || this.yaml();
     }
 
-    /**
-     * This is a valid JSON object?
-     * @return TRUE if it is
-     */
     private boolean object() {
         boolean valid = true;
         try {
@@ -52,10 +48,6 @@ final class ConfigFile {
         return valid;
     }
 
-    /**
-     * This is a valid JSON array?
-     * @return TRUE if it is
-     */
     private boolean array() {
         boolean valid = true;
         try {
@@ -66,10 +58,6 @@ final class ConfigFile {
         return valid;
     }
 
-    /**
-     * This is a valid YAML document?
-     * @return TRUE if it is
-     */
     private boolean yaml() {
         boolean valid = true;
         try {

@@ -128,10 +128,6 @@ final class OverridingBundle implements Bundle {
         }
     }
 
-    /**
-     * This object already exists in the bucket.
-     * @return TRUE if exists already
-     */
     private boolean exists() {
         boolean exists = false;
         if (this.keyExists()) {
@@ -161,10 +157,6 @@ final class OverridingBundle implements Bundle {
         return exists;
     }
 
-    /**
-     * This key already exists in the bucket.
-     * @return TRUE if key exists already
-     */
     private boolean keyExists() {
         final ObjectListing listing = this.client.listObjects(
             new ListObjectsRequest()
@@ -194,11 +186,6 @@ final class OverridingBundle implements Bundle {
         return exists;
     }
 
-    /**
-     * Make sure the file exists.
-     * @param file WAR file location
-     * @return The same file
-     */
     private static File existing(final File file) {
         if (!file.exists()) {
             throw new DeploymentException(

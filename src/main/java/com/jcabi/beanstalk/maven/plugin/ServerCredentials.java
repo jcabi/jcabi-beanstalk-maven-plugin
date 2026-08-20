@@ -91,13 +91,6 @@ final class ServerCredentials implements AWSCredentials {
         return this.secret;
     }
 
-    /**
-     * Find the server in Maven settings.
-     * @param settings Maven settings
-     * @param name Name of server ID
-     * @return The server found
-     * @throws MojoFailureException If it is absent
-     */
     private static Server server(final Settings settings, final String name)
         throws MojoFailureException {
         final Server server = settings.getServer(name);
@@ -114,14 +107,6 @@ final class ServerCredentials implements AWSCredentials {
         return server;
     }
 
-    /**
-     * Check that the value matches the regular expression.
-     * @param value The value to check
-     * @param regex The regular expression to match
-     * @param error Error message if it does not match
-     * @return The same value
-     * @throws MojoFailureException If it does not match
-     */
     private static String matching(final String value, final String regex,
         final String error) throws MojoFailureException {
         if (!value.matches(regex)) {

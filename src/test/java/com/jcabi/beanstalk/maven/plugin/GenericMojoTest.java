@@ -75,11 +75,6 @@ final class GenericMojoTest {
         );
     }
 
-    /**
-     * Make a mojo, which executes and validates for real.
-     * @return The mojo
-     * @throws MojoFailureException If the mojo cannot be stubbed
-     */
     private static AbstractBeanstalkMojo mojo() throws MojoFailureException {
         final AbstractBeanstalkMojo mojo =
             Mockito.mock(AbstractBeanstalkMojo.class);
@@ -92,13 +87,6 @@ final class GenericMojoTest {
         return mojo;
     }
 
-    /**
-     * Make a WAR file with the .ebextensions directory inside.
-     * @param temp Directory to make it in
-     * @param config Content of the only config file, empty if not needed
-     * @return The WAR file
-     * @throws IOException If it cannot be written
-     */
     private static File war(final Path temp, final String config)
         throws IOException {
         final Path war = temp.resolve("test.war");
@@ -116,12 +104,6 @@ final class GenericMojoTest {
         return war.toFile();
     }
 
-    /**
-     * Make a WAR file without the .ebextensions directory inside.
-     * @param temp Directory to make it in
-     * @return The WAR file
-     * @throws IOException If it cannot be written
-     */
     private static File bare(final Path temp) throws IOException {
         final Path war = temp.resolve("bare.war");
         try (
@@ -137,11 +119,6 @@ final class GenericMojoTest {
         return war.toFile();
     }
 
-    /**
-     * Execute the mojo and return the failure it throws.
-     * @param mojo The mojo to execute
-     * @return The exception thrown by it
-     */
     private static Throwable thrown(final AbstractBeanstalkMojo mojo) {
         return Assertions.assertThrows(
             MojoFailureException.class,

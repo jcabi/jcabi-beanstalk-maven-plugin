@@ -192,10 +192,6 @@ final class Application {
         return new Environment(this.client, res.getEnvironmentId());
     }
 
-    /**
-     * Get all environments in this app.
-     * @return Collection of envs
-     */
     private Collection<Environment> environments() {
         final DescribeEnvironmentsResult res = this.client.describeEnvironments(
             new DescribeEnvironmentsRequest().withApplicationName(this.name)
@@ -207,11 +203,6 @@ final class Application {
         return envs;
     }
 
-    /**
-     * Suggest new candidate environment CNAME (and at the same time it will
-     * be used as a name of environment).
-     * @return The environment create request with data inside
-     */
     private CreateEnvironmentRequest suggest() {
         final CreateEnvironmentRequest request = new CreateEnvironmentRequest();
         while (true) {
@@ -236,10 +227,6 @@ final class Application {
         return request;
     }
 
-    /**
-     * Make up a nice CNAME in this application.
-     * @return The CNAME, suggested and not occupied
-     */
     private String makeup() {
         String cname;
         do {
@@ -249,22 +236,12 @@ final class Application {
         return cname;
     }
 
-    /**
-     * This CNAME is occupied?
-     * @param cname The CNAME to check
-     * @return TRUE if it's occupied
-     */
     private boolean occupied(final String cname) {
         return !this.client.checkDNSAvailability(
             new CheckDNSAvailabilityRequest(cname)
         ).getAvailable();
     }
 
-    /**
-     * This environment exists?
-     * @param ename The name of environment to check
-     * @return TRUE if it exists
-     */
     private boolean exists(final String ename) {
         boolean exists = false;
         for (final Environment env : this.environments()) {
@@ -276,10 +253,6 @@ final class Application {
         return exists;
     }
 
-    /**
-     * Generate random name.
-     * @return Random name
-     */
     private String random() {
         return String.format(
             "%s-e%03d",

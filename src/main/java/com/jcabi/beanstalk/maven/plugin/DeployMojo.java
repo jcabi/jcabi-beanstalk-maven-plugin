@@ -29,12 +29,6 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
         }
     }
 
-    /**
-     * Deploy using this EBT client.
-     * @param app The application to deploy to
-     * @param version Version to deploy
-     * @param template Template to use
-     */
     private void deploy(final Application app, final Version version,
         final String template) {
         app.clean(false);
