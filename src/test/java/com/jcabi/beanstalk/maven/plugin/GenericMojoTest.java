@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link AbstractBeanstalkMojo}.
+ *
  * @since 0.3
  */
 final class GenericMojoTest {

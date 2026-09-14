@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 
 /**
  * Bundle that always overrides S3 object.
+ *
  * @since 0.3
  */
 @ToString
@@ -55,6 +56,7 @@ final class OverridingBundle implements Bundle {
 
     /**
      * Public ctor.
+     *
      * @param clnt The client
      * @param bckt S3 bucket
      * @param label Location of S3 object, label name
@@ -68,6 +70,7 @@ final class OverridingBundle implements Bundle {
 
     /**
      * Private ctor.
+     *
      * @param file WAR file location
      * @param clnt The client
      * @param bckt S3 bucket

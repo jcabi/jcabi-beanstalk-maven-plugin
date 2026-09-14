@@ -34,6 +34,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * EBT environment.
+ *
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "eid" })
@@ -57,6 +58,7 @@ final class Environment {
 
     /**
      * Public ctor.
+     *
      * @param clnt The client
      * @param idnt Environment ID
      */
@@ -77,6 +79,7 @@ final class Environment {
 
     /**
      * Is it primary environment in the application?
+     *
      * @return TRUE if this environment is attached to the main CNAME
      */
     boolean primary() {
@@ -101,6 +104,7 @@ final class Environment {
 
     /**
      * Get environment name.
+     *
      * @return Name of it
      */
     String name() {
@@ -109,6 +113,7 @@ final class Environment {
 
     /**
      * Environment is in Green health?
+     *
      * @return TRUE if environment is in Green health
      */
     boolean green() {
@@ -117,6 +122,7 @@ final class Environment {
 
     /**
      * Wait for stable state, and return TRUE if achieved or FALSE if not.
+     *
      * @return TRUE if environment is stable
      */
     boolean stable() {
@@ -137,6 +143,7 @@ final class Environment {
 
     /**
      * Is it terminated?
+     *
      * @return Yes or no
      */
     boolean terminated() {
@@ -175,6 +182,7 @@ final class Environment {
 
     /**
      * Get latest events.
+     *
      * @return Collection of events
      */
     String[] events() {
@@ -200,6 +208,7 @@ final class Environment {
 
     /**
      * Tail log.
+     *
      * @return Full text of tail log from the environment
      */
     String tail() {
@@ -254,6 +263,7 @@ final class Environment {
 
     /**
      * Update this environment with a new version.
+     *
      * @param version The version to update to
      */
     void update(final Version version) {
@@ -343,12 +353,14 @@ final class Environment {
 
     /**
      * Barrier before the next operation.
+     *
      * @since 0.3
      */
     private interface Barrier {
 
         /**
          * Can we continue?
+         *
          * @param desc Description of environment
          * @return TRUE if we can continue, FALSE if extra cycle of waiting
          *  is required
@@ -357,6 +369,7 @@ final class Environment {
 
         /**
          * What are we waiting for?
+         *
          * @return Message to show in log
          */
         String message();

@@ -19,6 +19,7 @@ import org.slf4j.impl.StaticLoggerBinder;
 
 /**
  * Abstract MOJO for this plugin.
+ *
  * @since 0.7.1
  */
 abstract class AbstractBeanstalkMojo extends AbstractMojo {
@@ -115,6 +116,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Creates server crecentials.
+     *
      * @return Server credentials based on settings and server attributes
      * @throws MojoFailureException Thrown in case of error.
      */
@@ -128,6 +130,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Deploy using this EBT client.
+     *
      * @param app Application to deploy to
      * @param version Version to deploy
      * @param tmpl Template to use
@@ -136,6 +139,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Report when environment is failed.
+     *
      * @param env The environment
      */
     protected void postMortem(final Environment env) {
@@ -154,6 +158,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Wait for green status.
+     *
      * @param env The environment
      * @return TRUE if green
      */
@@ -184,6 +189,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
     /**
      * Verifies that the .ebextensions contains valid configuration file or
      * files.
+     *
      * @param file WAR file
      * @throws MojoFailureException Thrown, if the .ebextensions does not
      *  exist in the WAR file, is empty or one of its files is neither valid
@@ -196,6 +202,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Set skip option.
+     *
      * @param skp Shall we skip execution?
      */
     void setSkip(final boolean skp) {
@@ -204,6 +211,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Set war file.
+     *
      * @param warfile The war file
      */
     void setWar(final File warfile) {
@@ -212,6 +220,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Set the EBT application name, environment name, and CNAME.
+     *
      * @param thename The application name
      */
     void setName(final String thename) {
@@ -220,6 +229,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Set the Amazon S3 bucket name.
+     *
      * @param thebucket The bucket name
      */
     void setBucket(final String thebucket) {
@@ -228,6 +238,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
 
     /**
      * Set the Amazon S3 bucket key.
+     *
      * @param thekey The bucket key
      */
     void setKey(final String thekey) {

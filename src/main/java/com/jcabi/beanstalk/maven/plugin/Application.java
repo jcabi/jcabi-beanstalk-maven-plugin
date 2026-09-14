@@ -22,6 +22,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * EBT application.
+ *
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "name" })
@@ -40,6 +41,7 @@ final class Application {
 
     /**
      * Public ctor.
+     *
      * @param clnt The client
      * @param app Application name
      */
@@ -56,6 +58,7 @@ final class Application {
 
     /**
      * Clean it up beforehand.
+     *
      * @param wipe Kill all existing environments no matter what?
      */
     void clean(final boolean wipe) {
@@ -90,6 +93,7 @@ final class Application {
 
     /**
      * Get primary environment or throws a runtime exception if it is absent.
+     *
      * @return Primary environment
      */
     Environment primary() {
@@ -113,6 +117,7 @@ final class Application {
 
     /**
      * This application has a primary environment?
+     *
      * @return TRUE if it exists
      */
     boolean hasPrimary() {
@@ -128,6 +133,7 @@ final class Application {
 
     /**
      * Activate candidate environment by swap of CNAMEs.
+     *
      * @param candidate The candidate to make a primary environment
      */
     void swap(@NotNull final Environment candidate) {
@@ -163,6 +169,7 @@ final class Application {
 
     /**
      * Create candidate environment.
+     *
      * @param version Version to deploy
      * @param template EBT configuration template
      * @return The environment

@@ -6,6 +6,7 @@ package com.jcabi.beanstalk.maven.plugin;
 
 /**
  * Deployment exception (if something goes wrong in between).
+ *
  * @since 0.3
  */
 final class DeploymentException extends RuntimeException {
@@ -17,6 +18,7 @@ final class DeploymentException extends RuntimeException {
 
     /**
      * Public ctor.
+     *
      * @param cause The cause of it
      */
     DeploymentException(final String cause) {
@@ -25,6 +27,7 @@ final class DeploymentException extends RuntimeException {
 
     /**
      * Public ctor.
+     *
      * @param cause The cause of it
      */
     // @checkstyle ConstructorsOrderCheck (3 lines)

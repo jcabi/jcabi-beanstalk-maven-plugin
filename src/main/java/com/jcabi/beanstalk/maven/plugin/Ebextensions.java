@@ -19,6 +19,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * The .ebextensions directory inside a WAR file.
+ *
  * @since 0.14
  */
 final class Ebextensions {
@@ -30,6 +31,7 @@ final class Ebextensions {
 
     /**
      * Public ctor.
+     *
      * @param file WAR file
      */
     Ebextensions(final File file) {
@@ -38,6 +40,7 @@ final class Ebextensions {
 
     /**
      * Verify that the directory exists and contains valid config files.
+     *
      * @throws MojoFailureException Thrown, if the .ebextensions does not
      *  exist in the WAR file, is empty or one of its files is neither valid
      *  JSON, nor valid YAML

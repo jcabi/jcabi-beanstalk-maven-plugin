@@ -13,6 +13,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 /**
  * Configuration file from the .ebextensions directory, either
  * in JSON or in YAML format.
+ *
  * @since 0.14
  */
 final class ConfigFile {
@@ -24,6 +25,7 @@ final class ConfigFile {
 
     /**
      * Public ctor.
+     *
      * @param txt Text of the file
      */
     ConfigFile(final String txt) {
@@ -32,6 +34,7 @@ final class ConfigFile {
 
     /**
      * This file is a valid config file?
+     *
      * @return TRUE if it is valid JSON or valid YAML
      */
     boolean valid() {

@@ -12,24 +12,28 @@ import lombok.ToString;
 
 /**
  * Bundle with a WAR application.
+ *
  * @since 0.3
  */
 interface Bundle {
 
     /**
      * Name of this version to use.
+     *
      * @return The name
      */
     String name();
 
     /**
      * Get S3 location of an app.
+     *
      * @return The location
      */
     S3Location location();
 
     /**
      * Get MD5 ETag hex of the bundle, according to RFC-1864.
+     *
      * @return The ETag
      * @since 0.7.1
      */
@@ -37,6 +41,7 @@ interface Bundle {
 
     /**
      * Safe bundle, with a safe name.
+     *
      * @since 0.3
      */
     @ToString
@@ -51,6 +56,7 @@ interface Bundle {
 
         /**
          * Public ctor.
+         *
          * @param bundle Original bundle
          */
         Safe(@NotNull final Bundle bundle) {

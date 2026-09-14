@@ -16,6 +16,7 @@ import org.apache.maven.settings.Settings;
 
 /**
  * AWS credentials from settings.xml.
+ *
  * @since 0.3
  */
 @ToString
@@ -35,6 +36,7 @@ final class ServerCredentials implements AWSCredentials {
 
     /**
      * Public ctor.
+     *
      * @param settings Maven settings
      * @param name Name of server ID
      * @throws MojoFailureException If some error
@@ -47,6 +49,7 @@ final class ServerCredentials implements AWSCredentials {
 
     /**
      * Private ctor.
+     *
      * @param server Server from settings
      * @param name Name of server ID
      * @throws MojoFailureException If some error
@@ -73,6 +76,7 @@ final class ServerCredentials implements AWSCredentials {
 
     /**
      * Private ctor.
+     *
      * @param akey AWS key
      * @param scrt AWS secret
      */

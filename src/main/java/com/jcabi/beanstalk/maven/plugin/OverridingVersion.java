@@ -18,6 +18,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * EBT application version.
+ *
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "application", "bundle" })
@@ -41,6 +42,7 @@ final class OverridingVersion implements Version {
 
     /**
      * Public ctor.
+     *
      * @param clnt Client
      * @param app Application name
      * @param bndl Bundle
