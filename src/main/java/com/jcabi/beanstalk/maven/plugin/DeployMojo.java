@@ -6,7 +6,6 @@ package com.jcabi.beanstalk.maven.plugin;
 
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
-import jakarta.validation.constraints.NotNull;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
@@ -27,8 +26,8 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
     }
 
     @Override
-    public void exec(@NotNull final Application app,
-        @NotNull final Version version, @NotNull final String template) {
+    public void exec(final Application app,
+        final Version version, final String template) {
         try {
             this.deploy(app, version, template);
         } catch (final DeploymentException ex) {

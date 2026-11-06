@@ -130,6 +130,56 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>com.jcabi</groupId>
+        <artifactId>jcabi-maven-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <!-- The inherited 1.9.8.M1 weaver predates Java 17. -->
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjtools</artifactId>
+            <version>1.9.26</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${project.basedir}</directory>
+              <includes>
+                <include>ajcore.*.txt</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>reject-weaver-aborts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <!-- jcabi ajc does not treat ABORT messages as errors. -->
+                <fail message="AspectJ aborted; inspect ajcore diagnostics">
+                  <condition>
+                    <resourcecount when="greater" count="0">
+                      <fileset dir="${project.basedir}" includes="ajcore.*.txt"/>
+                    </resourcecount>
+                  </condition>
+                </fail>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>${maven.compiler.source}</source>

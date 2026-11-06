@@ -9,6 +9,7 @@ import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.jcabi.log.Logger;
+import jakarta.validation.constraints.NotNull;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import org.apache.maven.plugin.AbstractMojo;
@@ -135,7 +136,8 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
      * @param version Version to deploy
      * @param tmpl Template to use
      */
-    protected abstract void exec(Application app, Version version, String tmpl);
+    protected abstract void exec(@NotNull Application app,
+        @NotNull Version version, @NotNull String tmpl);
 
     /**
      * Report when environment is failed.

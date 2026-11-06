@@ -14,6 +14,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.DeclarePrecedence;
 import org.aspectj.lang.reflect.ConstructorSignature;
 import org.aspectj.lang.reflect.MethodSignature;
 
@@ -23,6 +24,7 @@ import org.aspectj.lang.reflect.MethodSignature;
  * @since 1.0
  */
 @Aspect
+@DeclarePrecedence("JakartaValidator, com.jcabi.aspects.aj.MethodLogger, *")
 public final class JakartaValidator {
 
     /**
@@ -52,7 +54,7 @@ public final class JakartaValidator {
      *
      * @param point Method invocation
      */
-    @Before("execution(* com.jcabi.beanstalk.maven.plugin..*.*(.., @(jakarta.validation.* || jakarta.validation.constraints.*) (*), ..))")
+    @Before("execution(* com.jcabi.beanstalk.maven.plugin..*.*(.., @(jakarta.validation.* || jakarta.validation.constraints.*) (*), ..)) || execution(* com.jcabi.beanstalk.maven.plugin.AbstractBeanstalkMojo+.exec(..))")
     public void method(final JoinPoint point) {
         JakartaValidator.check(
             this.validator.forExecutables().validateParameters(
