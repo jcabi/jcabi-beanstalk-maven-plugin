@@ -7,7 +7,7 @@ package com.jcabi.beanstalk.maven.plugin;
 import com.amazonaws.auth.AWSCredentials;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.maven.plugin.MojoFailureException;

@@ -31,8 +31,8 @@
   <properties>
     <maven.version>3.10.0</maven.version>
     <sisu.version>2.3.4</sisu.version>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
   </properties>
   <distributionManagement>
     <site>
@@ -107,23 +107,24 @@
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
       <version>9.1.6.Final</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <!--
-          The same classes come from javax.validation:validation-api,
-          which is inherited from the parent POM.
-          -->
-          <groupId>jakarta.validation</groupId>
-          <artifactId>jakarta.validation-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.glassfish.web</groupId>
-      <artifactId>javax.el</artifactId>
-      <version>2.2.6</version>
-      <scope>test</scope>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.expressly</groupId>
+      <artifactId>expressly</artifactId>
+      <version>6.0.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- jcabi-aspects 0.26.0 links to this API; our constraints use Jakarta. -->
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
@@ -131,8 +132,8 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>8</source>
-          <target>8</target>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
         <executions>
           <execution>
@@ -166,6 +167,9 @@
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.16.0</version>
+        <configuration>
+          <requiredJavaVersion>17</requiredJavaVersion>
+        </configuration>
         <executions>
           <execution>
             <id>generated-helpmojo</id>

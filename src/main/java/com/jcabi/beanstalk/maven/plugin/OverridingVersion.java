@@ -13,7 +13,7 @@ import com.amazonaws.services.elasticbeanstalk.model.DescribeApplicationVersions
 import com.amazonaws.services.elasticbeanstalk.model.DescribeApplicationVersionsResult;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 
 /**

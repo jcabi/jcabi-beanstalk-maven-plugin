@@ -6,7 +6,7 @@ package com.jcabi.beanstalk.maven.plugin;
 
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
