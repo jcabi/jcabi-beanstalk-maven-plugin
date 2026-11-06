@@ -137,7 +137,7 @@
             <!-- The inherited 1.9.8.M1 weaver predates Java 17. -->
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjtools</artifactId>
-            <version>1.9.26</version>
+            <version>1.9.27</version>
           </dependency>
         </dependencies>
       </plugin>
