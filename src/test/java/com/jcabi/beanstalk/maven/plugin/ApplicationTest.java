@@ -20,12 +20,16 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
@@ -55,6 +59,123 @@ final class ApplicationTest {
                     && "some-template".equals(request.getTemplateName())
                     && name.equals(request.getCNAMEPrefix())
             )
+        );
+    }
+
+    @Test
+    void pausesBeforeRetryingOccupiedCname() {
+        final String name = "released-app";
+        final AWSElasticBeanstalk ebt = ApplicationTest.beanstalk(name);
+        Mockito.when(
+            ebt.checkDNSAvailability(Mockito.any(CheckDNSAvailabilityRequest.class))
+        ).thenReturn(
+            new CheckDNSAvailabilityResult().withAvailable(false),
+            new CheckDNSAvailabilityResult().withAvailable(true)
+        );
+        final long started = System.nanoTime();
+        new Application(ebt, name).candidate(Mockito.mock(Version.class), "template");
+        MatcherAssert.assertThat(
+            "occupied CNAME must be polled no sooner than five seconds later",
+            System.nanoTime() - started,
+            Matchers.greaterThanOrEqualTo(TimeUnit.SECONDS.toNanos(5L))
+        );
+        Mockito.verify(ebt, Mockito.times(2)).checkDNSAvailability(
+            Mockito.any(CheckDNSAvailabilityRequest.class)
+        );
+        Mockito.verify(ebt).createEnvironment(
+            Mockito.argThat(request -> name.equals(request.getCNAMEPrefix()))
+        );
+    }
+
+    @Test
+    void timesOutWaitingForOccupiedCname() {
+        final String name = "occupied-app";
+        final AWSElasticBeanstalk ebt = ApplicationTest.beanstalk(name);
+        Mockito.when(
+            ebt.checkDNSAvailability(Mockito.any(CheckDNSAvailabilityRequest.class))
+        ).thenReturn(new CheckDNSAvailabilityResult().withAvailable(false))
+            .thenThrow(new IllegalStateException("Unexpected extra DNS poll"));
+        final Clock clock = Mockito.mock(Clock.class);
+        Mockito.when(clock.millis()).thenReturn(0L, TimeUnit.MINUTES.toMillis(10L));
+        final MockedStatic<Clock> clocks = Mockito.mockStatic(
+            Clock.class, invocation -> clock
+        );
+        try (clocks) {
+            MatcherAssert.assertThat(
+                "timeout must identify the occupied CNAME",
+                Assertions.assertThrows(
+                    DeploymentException.class,
+                    () -> new Application(ebt, name).candidate(
+                        Mockito.mock(Version.class), "template"
+                    )
+                ).getMessage(),
+                Matchers.containsString(String.format("Timed out waiting for '%s'", name))
+            );
+        }
+        Mockito.verify(ebt, Mockito.never()).createEnvironment(
+            Mockito.any(CreateEnvironmentRequest.class)
+        );
+    }
+
+    @Test
+    void preservesInterruptionWhileWaitingForCname() {
+        final String name = "interrupted-app";
+        final AWSElasticBeanstalk ebt = ApplicationTest.beanstalk(name);
+        Mockito.when(
+            ebt.checkDNSAvailability(Mockito.any(CheckDNSAvailabilityRequest.class))
+        ).thenReturn(new CheckDNSAvailabilityResult().withAvailable(false))
+            .thenThrow(new IllegalStateException("Retry continued after interrupt"));
+        Thread.currentThread().interrupt();
+        try {
+            MatcherAssert.assertThat(
+                "interruption must retain its cause and remain visible to the caller",
+                Assertions.assertThrows(
+                    DeploymentException.class,
+                    () -> new Application(ebt, name).candidate(
+                        Mockito.mock(Version.class), "template"
+                    )
+                ).getCause() instanceof InterruptedException
+                    && Thread.currentThread().isInterrupted(),
+                Matchers.is(true)
+            );
+        } finally {
+            Thread.interrupted();
+        }
+        Mockito.verify(ebt, Mockito.never()).createEnvironment(
+            Mockito.any(CreateEnvironmentRequest.class)
+        );
+    }
+
+    @Test
+    void usesAlternateCnameForGreenPrimary() {
+        final String name = "green-app";
+        final AWSElasticBeanstalk ebt = ApplicationTest.beanstalk(name);
+        Mockito.when(
+            ebt.checkDNSAvailability(Mockito.any(CheckDNSAvailabilityRequest.class))
+        ).thenAnswer(
+            invocation -> new CheckDNSAvailabilityResult().withAvailable(
+                !name.equals(
+                    invocation.<CheckDNSAvailabilityRequest>getArgument(0)
+                        .getCNAMEPrefix()
+                )
+            )
+        );
+        Mockito.when(
+            ebt.describeEnvironments(Mockito.any(DescribeEnvironmentsRequest.class))
+        ).thenReturn(
+            new DescribeEnvironmentsResult().withEnvironments(
+                new EnvironmentDescription()
+                    .withApplicationName(name)
+                    .withCNAME(String.format("%s.elasticbeanstalk.com", name))
+                    .withEnvironmentName("primary-env")
+                    .withEnvironmentId("primary-id")
+                    .withStatus("Ready")
+                    .withHealth("Green")
+            )
+        );
+        new Application(ebt, name).candidate(Mockito.mock(Version.class), "template");
+        Mockito.verify(ebt).createEnvironment(
+            Mockito.argThat(request -> !name.equals(request.getCNAMEPrefix()))
         );
     }
 
