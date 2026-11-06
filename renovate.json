@@ -1,8 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "automerge": true,
   "extends": [
     "config:base"
   ],
-  "automerge": true,
+  "packageRules": [
+    {
+      "description": "Keep GitHub Actions on Ubuntu 24.04",
+      "enabled": false,
+      "matchDepNames": [
+        "ubuntu"
+      ],
+      "matchManagers": [
+        "github-actions"
+      ]
+    }
+  ],
   "platformAutomerge": false
 }
