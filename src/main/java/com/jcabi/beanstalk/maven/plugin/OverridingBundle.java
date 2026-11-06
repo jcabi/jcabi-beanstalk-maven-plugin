@@ -184,7 +184,7 @@ final class OverridingBundle implements Bundle {
                 summary.getKey(), summary.getBucketName(), summary.getSize(),
                 summary.getLastModified(), summary.getETag()
             );
-            exists = true;
+            exists = this.key.equals(summary.getKey());
         }
         return exists;
     }
