@@ -12,11 +12,19 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  * Deploys WAR artifact to AWS Elastic Beanstalk.
+ *
  * @since 0.3
  */
 @Mojo(name = "deploy", defaultPhase = LifecyclePhase.DEPLOY)
 @Loggable(Loggable.INFO)
 public final class DeployMojo extends AbstractBeanstalkMojo {
+
+    /**
+     * Ctor.
+     */
+    public DeployMojo() {
+        // ctor
+    }
 
     @Override
     public void exec(@NotNull final Application app,
@@ -29,12 +37,6 @@ public final class DeployMojo extends AbstractBeanstalkMojo {
         }
     }
 
-    /**
-     * Deploy using this EBT client.
-     * @param app The application to deploy to
-     * @param version Version to deploy
-     * @param template Template to use
-     */
     private void deploy(final Application app, final Version version,
         final String template) {
         app.clean(false);

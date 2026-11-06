@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link OverridingVersion}.
+ *
  * @since 0.3
  */
 final class OverridingVersionTest {

@@ -1,4 +1,4 @@
-<img src="http://img.jcabi.com/logo-square.png" width="64px" height="64px" />
+# [![logo](http://img.jcabi.com/logo-square.png)](http://img.jcabi.com/logo-square.png)
 
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
 [![Managed by Zerocracy](https://www.0crat.com/badge/C3RUBL5H9.svg)](https://www.0crat.com/p/C3RUBL5H9)
@@ -19,16 +19,16 @@ The plugin is designed with a minimalistic
 approach, so that you don't need to provide a lot of configuration
 options. Instead, there are a few conventions:
 
- * CNAME of a "primary" environment is always the same as the application name
+* CNAME of a "primary" environment is always the same as the application name
 
- * Environments are configured only by
-   [saved configuration templates](http://docs.amazonwebservices.com/elasticbeanstalk/latest/dg/using-features.managing.html#using-features.managing.saving)
+* Environments are configured only by
+  [saved configuration templates](http://docs.amazonwebservices.com/elasticbeanstalk/latest/dg/using-features.managing.html#using-features.managing.saving)
 
- * Deployment is done either by
-   [CNAME swap](http://docs.amazonwebservices.com/elasticbeanstalk/latest/dg/using-features.CNAMESwap.html)
-   or version update
+* Deployment is done either by
+  [CNAME swap](http://docs.amazonwebservices.com/elasticbeanstalk/latest/dg/using-features.CNAMESwap.html)
+  or version update
 
- * An application always contains only one "primary" environment.
+* An application always contains only one "primary" environment.
 
 Details are explained in [usage documentation](http://www.jcabi.com/jcabi-beanstalk-maven-plugin/index.html),
 but in short it works like this:
@@ -72,6 +72,6 @@ the `master` branch, if they look correct.
 
 Please run Maven build before submitting a pull request:
 
-```
-$ mvn clean install -Pqulice
+```bash
+mvn clean install -Pqulice
 ```

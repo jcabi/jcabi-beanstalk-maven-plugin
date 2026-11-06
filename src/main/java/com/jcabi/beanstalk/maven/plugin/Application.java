@@ -22,6 +22,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * EBT application.
+ *
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "name" })
@@ -40,6 +41,7 @@ final class Application {
 
     /**
      * Public ctor.
+     *
      * @param clnt The client
      * @param app Application name
      */
@@ -56,6 +58,7 @@ final class Application {
 
     /**
      * Clean it up beforehand.
+     *
      * @param wipe Kill all existing environments no matter what?
      */
     void clean(final boolean wipe) {
@@ -90,6 +93,7 @@ final class Application {
 
     /**
      * Get primary environment or throws a runtime exception if it is absent.
+     *
      * @return Primary environment
      */
     Environment primary() {
@@ -113,6 +117,7 @@ final class Application {
 
     /**
      * This application has a primary environment?
+     *
      * @return TRUE if it exists
      */
     boolean hasPrimary() {
@@ -128,6 +133,7 @@ final class Application {
 
     /**
      * Activate candidate environment by swap of CNAMEs.
+     *
      * @param candidate The candidate to make a primary environment
      */
     void swap(@NotNull final Environment candidate) {
@@ -163,6 +169,7 @@ final class Application {
 
     /**
      * Create candidate environment.
+     *
      * @param version Version to deploy
      * @param template EBT configuration template
      * @return The environment
@@ -192,10 +199,6 @@ final class Application {
         return new Environment(this.client, res.getEnvironmentId());
     }
 
-    /**
-     * Get all environments in this app.
-     * @return Collection of envs
-     */
     private Collection<Environment> environments() {
         final DescribeEnvironmentsResult res = this.client.describeEnvironments(
             new DescribeEnvironmentsRequest().withApplicationName(this.name)
@@ -207,11 +210,6 @@ final class Application {
         return envs;
     }
 
-    /**
-     * Suggest new candidate environment CNAME (and at the same time it will
-     * be used as a name of environment).
-     * @return The environment create request with data inside
-     */
     private CreateEnvironmentRequest suggest() {
         final CreateEnvironmentRequest request = new CreateEnvironmentRequest();
         while (true) {
@@ -236,10 +234,6 @@ final class Application {
         return request;
     }
 
-    /**
-     * Make up a nice CNAME in this application.
-     * @return The CNAME, suggested and not occupied
-     */
     private String makeup() {
         String cname;
         do {
@@ -249,22 +243,12 @@ final class Application {
         return cname;
     }
 
-    /**
-     * This CNAME is occupied?
-     * @param cname The CNAME to check
-     * @return TRUE if it's occupied
-     */
     private boolean occupied(final String cname) {
         return !this.client.checkDNSAvailability(
             new CheckDNSAvailabilityRequest(cname)
         ).getAvailable();
     }
 
-    /**
-     * This environment exists?
-     * @param ename The name of environment to check
-     * @return TRUE if it exists
-     */
     private boolean exists(final String ename) {
         boolean exists = false;
         for (final Environment env : this.environments()) {
@@ -276,10 +260,6 @@ final class Application {
         return exists;
     }
 
-    /**
-     * Generate random name.
-     * @return Random name
-     */
     private String random() {
         return String.format(
             "%s-e%03d",

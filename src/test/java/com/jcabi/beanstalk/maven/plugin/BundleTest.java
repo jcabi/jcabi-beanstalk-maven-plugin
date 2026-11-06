@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 /**
  * Test case for {@link Bundle}.
+ *
  * @since 0.3
  */
 final class BundleTest {

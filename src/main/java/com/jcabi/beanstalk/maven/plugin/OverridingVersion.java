@@ -18,6 +18,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * EBT application version.
+ *
  * @since 0.3
  */
 @EqualsAndHashCode(of = { "client", "application", "bundle" })
@@ -41,6 +42,7 @@ final class OverridingVersion implements Version {
 
     /**
      * Public ctor.
+     *
      * @param clnt Client
      * @param app Application name
      * @param bndl Bundle
@@ -98,10 +100,6 @@ final class OverridingVersion implements Version {
         return this.bundle.name();
     }
 
-    /**
-     * This label exists already?
-     * @return Yes or no
-     */
     private boolean exists() {
         final DescribeApplicationVersionsResult res =
             this.client.describeApplicationVersions(

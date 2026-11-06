@@ -19,6 +19,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * The .ebextensions directory inside a WAR file.
+ *
  * @since 0.14
  */
 final class Ebextensions {
@@ -30,6 +31,7 @@ final class Ebextensions {
 
     /**
      * Public ctor.
+     *
      * @param file WAR file
      */
     Ebextensions(final File file) {
@@ -38,6 +40,7 @@ final class Ebextensions {
 
     /**
      * Verify that the directory exists and contains valid config files.
+     *
      * @throws MojoFailureException Thrown, if the .ebextensions does not
      *  exist in the WAR file, is empty or one of its files is neither valid
      *  JSON, nor valid YAML
@@ -66,13 +69,6 @@ final class Ebextensions {
         }
     }
 
-    /**
-     * Verify that this entry is a valid config file.
-     * @param zip WAR file
-     * @param entry ZIP entry to validate
-     * @throws MojoFailureException Thrown, if it is neither valid JSON,
-     *  nor valid YAML
-     */
     private static void validate(final ZipFile zip, final ZipEntry entry)
         throws MojoFailureException {
         if (!new ConfigFile(Ebextensions.text(zip, entry)).valid()) {
@@ -85,11 +81,6 @@ final class Ebextensions {
         }
     }
 
-    /**
-     * Find all config files in the .ebextensions directory.
-     * @param zip WAR file
-     * @return Collection of entries, may be empty
-     */
     private static Collection<ZipEntry> configs(final ZipFile zip) {
         final Collection<ZipEntry> configs = new ArrayList<>(0);
         final Enumeration<? extends ZipEntry> entries = zip.entries();
@@ -103,13 +94,6 @@ final class Ebextensions {
         return configs;
     }
 
-    /**
-     * Read the text of one entry.
-     * @param zip WAR file
-     * @param entry ZIP entry (compressed file) to read from
-     * @return Text content of the entry
-     * @throws MojoFailureException Thrown, if it cannot be read
-     */
     private static String text(final ZipFile zip, final ZipEntry entry)
         throws MojoFailureException {
         final StringWriter writer = new StringWriter();

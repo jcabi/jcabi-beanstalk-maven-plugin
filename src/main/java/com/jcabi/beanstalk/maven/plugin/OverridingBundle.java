@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 
 /**
  * Bundle that always overrides S3 object.
+ *
  * @since 0.3
  */
 @ToString
@@ -55,6 +56,7 @@ final class OverridingBundle implements Bundle {
 
     /**
      * Public ctor.
+     *
      * @param clnt The client
      * @param bckt S3 bucket
      * @param label Location of S3 object, label name
@@ -68,6 +70,7 @@ final class OverridingBundle implements Bundle {
 
     /**
      * Private ctor.
+     *
      * @param file WAR file location
      * @param clnt The client
      * @param bckt S3 bucket
@@ -128,10 +131,6 @@ final class OverridingBundle implements Bundle {
         }
     }
 
-    /**
-     * This object already exists in the bucket.
-     * @return TRUE if exists already
-     */
     private boolean exists() {
         boolean exists = false;
         if (this.keyExists()) {
@@ -161,10 +160,6 @@ final class OverridingBundle implements Bundle {
         return exists;
     }
 
-    /**
-     * This key already exists in the bucket.
-     * @return TRUE if key exists already
-     */
     private boolean keyExists() {
         final ObjectListing listing = this.client.listObjects(
             new ListObjectsRequest()
@@ -194,11 +189,6 @@ final class OverridingBundle implements Bundle {
         return exists;
     }
 
-    /**
-     * Make sure the file exists.
-     * @param file WAR file location
-     * @return The same file
-     */
     private static File existing(final File file) {
         if (!file.exists()) {
             throw new DeploymentException(
