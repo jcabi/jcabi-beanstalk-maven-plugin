@@ -80,6 +80,8 @@ final class GenericMojoTest {
         final AbstractBeanstalkMojo mojo =
             Mockito.mock(AbstractBeanstalkMojo.class);
         Mockito.doCallRealMethod().when(mojo).execute();
+        Mockito.doReturn(Mockito.mock(ServerCredentials.class))
+            .when(mojo).createServerCredentials();
         Mockito.doCallRealMethod().when(mojo).getLog();
         Mockito.doCallRealMethod().when(mojo)
             .setWar(Mockito.any(File.class));

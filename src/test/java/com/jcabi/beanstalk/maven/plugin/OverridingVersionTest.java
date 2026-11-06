@@ -10,6 +10,7 @@ import com.amazonaws.services.elasticbeanstalk.model.CreateApplicationVersionReq
 import com.amazonaws.services.elasticbeanstalk.model.CreateApplicationVersionResult;
 import com.amazonaws.services.elasticbeanstalk.model.DescribeApplicationVersionsRequest;
 import com.amazonaws.services.elasticbeanstalk.model.DescribeApplicationVersionsResult;
+import com.amazonaws.services.elasticbeanstalk.model.S3Location;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ final class OverridingVersionTest {
         final String key = "some-bundle-key";
         final Bundle bundle = Mockito.mock(Bundle.class);
         Mockito.doReturn(key).when(bundle).name();
+        final S3Location location = new S3Location("deploy-bucket", key);
+        Mockito.doReturn(location).when(bundle).location();
+        Mockito.doReturn("bundle-etag").when(bundle).etag();
         final AWSElasticBeanstalk ebt = Mockito.mock(AWSElasticBeanstalk.class);
         Mockito.when(
             ebt.describeApplicationVersions(
@@ -47,6 +51,13 @@ final class OverridingVersionTest {
             "the label cannot differ from the name of the bundle",
             new OverridingVersion(ebt, "some-app", bundle).label(),
             Matchers.equalTo(key)
+        );
+        Mockito.verify(ebt).createApplicationVersion(
+            new CreateApplicationVersionRequest()
+                .withApplicationName("some-app")
+                .withVersionLabel(key)
+                .withSourceBundle(location)
+                .withDescription("bundle-etag")
         );
     }
 }

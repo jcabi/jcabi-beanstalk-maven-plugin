@@ -4,10 +4,8 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
-import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.jcabi.log.Logger;
 import jakarta.validation.constraints.NotNull;
 import java.io.File;
@@ -88,8 +86,9 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
             );
         }
         this.validate(this.war);
-        final AWSCredentials creds = this.createServerCredentials();
-        final AWSElasticBeanstalk ebt = new AWSElasticBeanstalkClient(creds);
+        final AwsClients clients = new AwsClients(this.createServerCredentials());
+        final AWSElasticBeanstalk ebt = clients.beanstalk();
+        final AmazonS3 storage = clients.storage();
         Logger.info(this, "Working with application '%s'", this.name);
         try {
             this.exec(
@@ -99,7 +98,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
                     this.name,
                     new Bundle.Safe(
                         new OverridingBundle(
-                            new AmazonS3Client(creds),
+                            storage,
                             this.bucket,
                             this.key,
                             this.war
@@ -111,6 +110,7 @@ abstract class AbstractBeanstalkMojo extends AbstractMojo {
         } catch (final DeploymentException ex) {
             throw new MojoFailureException("failed to deploy", ex);
         } finally {
+            storage.shutdown();
             ebt.shutdown();
         }
     }

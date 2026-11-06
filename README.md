@@ -81,3 +81,12 @@ Hibernate Validator 9 and Expressly 6. The local `JakartaValidator` aspect
 checks constructor arguments, method arguments and return values.
 Jcabi-aspects continues to provide logging and caching; its legacy validation
 API remains provided for linkage, while plugin constraints use Jakarta.
+
+The plugin uses the S3, Elastic Beanstalk and core modules of AWS SDK for Java
+1.12.797. Clients continue to use the configured Maven server credentials,
+the global S3 endpoint and the US East (N. Virginia) Beanstalk endpoint.
+They do not require an AWS region or credentials from the host environment.
+AWS SDK v1 reached [end of support on December 31, 2025](https://aws.amazon.com/blogs/developer/announcing-end-of-support-for-aws-sdk-for-java-v1-x-on-december-31-2025/).
+This compatibility update does not restore upstream security fixes or support
+for new service features and regions; migration to SDK v2 remains necessary
+for ongoing upstream support.
