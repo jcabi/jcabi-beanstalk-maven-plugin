@@ -212,6 +212,7 @@ final class Application {
 
     private CreateEnvironmentRequest suggest() {
         final CreateEnvironmentRequest request = new CreateEnvironmentRequest();
+        final CnameRetry retry = new CnameRetry();
         while (true) {
             if (!this.occupied(this.name)) {
                 request.withCNAMEPrefix(this.name);
@@ -221,7 +222,7 @@ final class Application {
                 request.withCNAMEPrefix(this.makeup());
                 break;
             }
-            Logger.info(this, "Waiting for '%s' CNAME", this.name);
+            retry.pause(this.name);
         }
         while (true) {
             final String ename = this.random();
