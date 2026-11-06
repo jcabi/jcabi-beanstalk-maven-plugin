@@ -14,10 +14,10 @@ import com.amazonaws.services.elasticbeanstalk.model.EnvironmentDescription;
 import com.amazonaws.services.elasticbeanstalk.model.SwapEnvironmentCNAMEsRequest;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.log.Logger;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
-import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 
 /**

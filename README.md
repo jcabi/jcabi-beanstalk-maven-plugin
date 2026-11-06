@@ -75,3 +75,9 @@ Please run Maven build before submitting a pull request:
 ```bash
 mvn clean install -Pqulice
 ```
+
+The plugin requires Java 17 or later. Validation uses Jakarta Validation 3.1,
+Hibernate Validator 9 and Expressly 6. The local `JakartaValidator` aspect
+checks constructor arguments, method arguments and return values.
+Jcabi-aspects continues to provide logging and caching; its legacy validation
+API remains provided for linkage, while plugin constraints use Jakarta.

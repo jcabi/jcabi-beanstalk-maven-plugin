@@ -6,7 +6,7 @@ package com.jcabi.beanstalk.maven.plugin;
 
 import com.amazonaws.services.elasticbeanstalk.model.S3Location;
 import com.jcabi.aspects.Loggable;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
