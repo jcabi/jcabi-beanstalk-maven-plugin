@@ -4,9 +4,9 @@
  */
 package com.jcabi.beanstalk.maven.plugin;
 
-import com.amazonaws.util.json.JSONArray;
-import com.amazonaws.util.json.JSONException;
-import com.amazonaws.util.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -44,7 +44,7 @@ final class ConfigFile {
     private boolean object() {
         boolean valid = true;
         try {
-            new JSONObject(this.text);
+            new JSONObject(new LegacyJson(this.text).normalized());
         } catch (final JSONException ex) {
             valid = false;
         }
@@ -54,7 +54,7 @@ final class ConfigFile {
     private boolean array() {
         boolean valid = true;
         try {
-            new JSONArray(this.text);
+            new JSONArray(new LegacyJson(this.text).normalized());
         } catch (final JSONException ex) {
             valid = false;
         }
