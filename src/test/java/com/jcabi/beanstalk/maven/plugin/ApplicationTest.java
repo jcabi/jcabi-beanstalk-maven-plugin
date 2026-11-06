@@ -7,7 +7,6 @@ package com.jcabi.beanstalk.maven.plugin;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
-import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.elasticbeanstalk.model.CheckDNSAvailabilityRequest;
 import com.amazonaws.services.elasticbeanstalk.model.CheckDNSAvailabilityResult;
 import com.amazonaws.services.elasticbeanstalk.model.CreateEnvironmentRequest;
@@ -17,7 +16,6 @@ import com.amazonaws.services.elasticbeanstalk.model.DescribeEnvironmentsResult;
 import com.amazonaws.services.elasticbeanstalk.model.EnvironmentDescription;
 import com.amazonaws.services.elasticbeanstalk.model.TerminateEnvironmentRequest;
 import com.amazonaws.services.elasticbeanstalk.model.TerminateEnvironmentResult;
-import com.amazonaws.services.s3.AmazonS3Client;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -40,14 +38,23 @@ final class ApplicationTest {
     @Test
     void createsNewEnvironment() {
         final String name = "some-app-name";
-        final Application app = new Application(
-            ApplicationTest.beanstalk(name), name
-        );
+        final AWSElasticBeanstalk ebt = ApplicationTest.beanstalk(name);
+        final Application app = new Application(ebt, name);
+        final Version version = Mockito.mock(Version.class);
+        Mockito.doReturn("uploaded-version").when(version).label();
         app.clean(false);
         MatcherAssert.assertThat(
             "candidate environment cannot be absent",
-            app.candidate(Mockito.mock(Version.class), "some-template"),
+            app.candidate(version, "some-template"),
             Matchers.notNullValue()
+        );
+        Mockito.verify(ebt).createEnvironment(
+            Mockito.argThat(
+                request -> name.equals(request.getApplicationName())
+                    && "uploaded-version".equals(request.getVersionLabel())
+                    && "some-template".equals(request.getTemplateName())
+                    && name.equals(request.getCNAMEPrefix())
+            )
         );
     }
 
@@ -59,7 +66,7 @@ final class ApplicationTest {
             System.getProperty("aws.key"),
             System.getProperty("aws.secret")
         );
-        final AWSElasticBeanstalk ebt = new AWSElasticBeanstalkClient(creds);
+        final AWSElasticBeanstalk ebt = new AwsClients(creds).beanstalk();
         final String name = "netbout";
         final File war = Files.write(
             temp.resolve("temp.war"),
@@ -70,7 +77,7 @@ final class ApplicationTest {
                 ebt,
                 name,
                 new OverridingBundle(
-                    new AmazonS3Client(creds),
+                    new AwsClients(creds).storage(),
                     "webapps.netbout.com",
                     war.getName(),
                     war

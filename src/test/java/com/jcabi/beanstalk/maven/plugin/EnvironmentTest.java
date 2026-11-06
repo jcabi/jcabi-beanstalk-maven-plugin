@@ -6,7 +6,6 @@ package com.jcabi.beanstalk.maven.plugin;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalk;
-import com.amazonaws.services.elasticbeanstalk.AWSElasticBeanstalkClient;
 import com.amazonaws.services.elasticbeanstalk.model.DescribeEnvironmentsRequest;
 import com.amazonaws.services.elasticbeanstalk.model.DescribeEnvironmentsResult;
 import com.amazonaws.services.elasticbeanstalk.model.EnvironmentDescription;
@@ -53,12 +52,12 @@ final class EnvironmentTest {
         MatcherAssert.assertThat(
             "live environment cannot report an empty TAIL",
             new Environment(
-                new AWSElasticBeanstalkClient(
+                new AwsClients(
                     new BasicAWSCredentials(
                         System.getProperty("aws.key"),
                         System.getProperty("aws.secret")
                     )
-                ),
+                ).beanstalk(),
                 "e-2n2mqauqae"
             ).tail(),
             Matchers.not(Matchers.emptyString())
@@ -71,12 +70,12 @@ final class EnvironmentTest {
         MatcherAssert.assertThat(
             "live environment cannot report no events",
             new Environment(
-                new AWSElasticBeanstalkClient(
+                new AwsClients(
                     new BasicAWSCredentials(
                         System.getProperty("aws.key"),
                         System.getProperty("aws.secret")
                     )
-                ),
+                ).beanstalk(),
                 "e-nxmcbf3pvk"
             ).events(),
             Matchers.not(Matchers.emptyArray())

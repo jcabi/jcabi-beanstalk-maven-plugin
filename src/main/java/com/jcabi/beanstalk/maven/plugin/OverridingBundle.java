@@ -109,7 +109,7 @@ final class OverridingBundle implements Bundle {
                 this,
                 "Uploaded successfully to S3, etag=%s, expires=%s, exp.rule=%s, encryption=%s, version=%s",
                 res.getETag(), res.getExpirationTime(),
-                res.getExpirationTimeRuleId(), res.getServerSideEncryption(),
+                res.getExpirationTimeRuleId(), res.getSSEAlgorithm(),
                 res.getVersionId()
             );
         }
