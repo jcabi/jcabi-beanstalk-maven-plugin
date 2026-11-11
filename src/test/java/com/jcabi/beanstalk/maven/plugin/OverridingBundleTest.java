@@ -112,6 +112,33 @@ final class OverridingBundleTest {
     }
 
     @Test
+    void replacesExactKeyWithDifferentEtag(@TempDir final Path temp) throws Exception {
+        final String bucket = "replace-bucket";
+        final String key = "outdated.war";
+        final File war = Files.write(
+            temp.resolve(key), "updated bundle".getBytes(StandardCharsets.UTF_8)
+        ).toFile();
+        final AmazonS3 client = Mockito.mock(AmazonS3.class);
+        final S3ObjectSummary summary = new S3ObjectSummary();
+        summary.setKey(key);
+        final ObjectListing listing = new ObjectListing();
+        listing.getObjectSummaries().add(summary);
+        Mockito.doReturn(listing)
+            .when(client).listObjects(Mockito.any(ListObjectsRequest.class));
+        final ObjectMetadata metadata = Mockito.mock(ObjectMetadata.class);
+        Mockito.doReturn("old-etag").when(metadata).getETag();
+        Mockito.doReturn(metadata).when(client).getObjectMetadata(bucket, key);
+        Mockito.doReturn(new PutObjectResult())
+            .when(client).putObject(bucket, key, war);
+        MatcherAssert.assertThat(
+            "the updated file must retain the exact deployment key",
+            new OverridingBundle(client, bucket, key, war).location().getS3Key(),
+            Matchers.equalTo(key)
+        );
+        Mockito.verify(client).putObject(bucket, key, war);
+    }
+
+    @Test
     void cachesResultOfLocation(@TempDir final Path temp) throws Exception {
         final AmazonS3 client = Mockito.mock(AmazonS3.class);
         final String bucket = "some-bucket-for-cache";

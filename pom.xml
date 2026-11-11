@@ -40,6 +40,16 @@
       <url>http://beanstalk.jcabi.com/</url>
     </site>
   </distributionManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <!-- Align the SDK and HttpClient logging dependency. -->
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.2</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>com.jcabi</groupId>
@@ -52,8 +62,18 @@
     </dependency>
     <dependency>
       <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk</artifactId>
-      <version>1.5.8</version>
+      <artifactId>aws-java-sdk-s3</artifactId>
+      <version>1.12.797</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-elasticbeanstalk</artifactId>
+      <version>1.12.797</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-core</artifactId>
+      <version>1.12.797</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
