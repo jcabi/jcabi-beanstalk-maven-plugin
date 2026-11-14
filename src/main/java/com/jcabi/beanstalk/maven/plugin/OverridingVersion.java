@@ -118,8 +118,8 @@ final class OverridingVersion implements Version {
         } else {
             final ApplicationVersionDescription ver =
                 res.getApplicationVersions().get(0);
-            if (ver.getSourceBundle().equals(this.bundle.location())
-                && ver.getDescription().equals(this.bundle.etag())) {
+            if (this.bundle.location().equals(ver.getSourceBundle())
+                && this.bundle.etag().equals(ver.getDescription())) {
                 Logger.info(
                     this,
                     "Version '%s' already exists for '%s', etag='%s'",
