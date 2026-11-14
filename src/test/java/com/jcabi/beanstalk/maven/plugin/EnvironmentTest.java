@@ -47,6 +47,29 @@ final class EnvironmentTest {
     }
 
     @Test
+    void treatsEnvironmentWithoutCnameAsSecondary() {
+        final AWSElasticBeanstalk ebt = Mockito.mock(AWSElasticBeanstalk.class);
+        Mockito.when(
+            ebt.describeEnvironments(
+                Mockito.any(DescribeEnvironmentsRequest.class)
+            )
+        ).thenReturn(
+            new DescribeEnvironmentsResult().withEnvironments(
+                Collections.singletonList(
+                    new EnvironmentDescription()
+                        .withApplicationName("app")
+                        .withStatus("Terminated")
+                )
+            )
+        );
+        MatcherAssert.assertThat(
+            "environment without CNAME cannot be primary",
+            new Environment(ebt, "no-cname-id").primary(),
+            Matchers.is(false)
+        );
+    }
+
+    @Test
     void fetchesTailReportFromLiveEnvironment() {
         Assumptions.assumeTrue(System.getProperty("aws.key") != null);
         MatcherAssert.assertThat(

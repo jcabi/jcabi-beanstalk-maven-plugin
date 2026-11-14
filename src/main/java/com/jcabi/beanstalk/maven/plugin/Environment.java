@@ -85,8 +85,9 @@ final class Environment {
     boolean primary() {
         final EnvironmentDescription desc = this.description();
         final String prefix = String.format("%s.", desc.getApplicationName());
+        final String cname = desc.getCNAME();
         final boolean primary = this.stable()
-            && desc.getCNAME().startsWith(prefix);
+            && cname != null && cname.startsWith(prefix);
         if (primary) {
             Logger.info(
                 this,
