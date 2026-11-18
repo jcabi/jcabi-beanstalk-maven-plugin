@@ -46,7 +46,7 @@
         <!-- Align the SDK and HttpClient logging dependency. -->
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.2</version>
+        <version>1.4.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
