@@ -29,7 +29,7 @@
     <url>https://github.com/jcabi/jcabi-beanstalk-maven-plugin</url>
   </scm>
   <properties>
-    <maven.version>3.10.1</maven.version>
+    <maven.version>3.10.2</maven.version>
     <sisu.version>2.3.4</sisu.version>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
@@ -42,6 +42,12 @@
   </distributionManagement>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <!-- Align the runtime API with the inherited test logging binding. -->
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.20</version>
+      </dependency>
       <dependency>
         <!-- Align the SDK and HttpClient logging dependency. -->
         <groupId>commons-logging</groupId>
@@ -131,7 +137,7 @@
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>9.1.6.Final</version>
+      <version>9.2.0.Final</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
