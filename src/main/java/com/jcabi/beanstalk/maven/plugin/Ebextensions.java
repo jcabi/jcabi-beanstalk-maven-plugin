@@ -47,13 +47,13 @@ final class Ebextensions {
      */
     void validate() throws MojoFailureException {
         try (ZipFile zip = new ZipFile(this.war)) {
-            if (zip.getEntry(".ebextensions") == null) {
-                throw new MojoFailureException(
-                    ".ebextensions directory does not exist in the WAR file"
-                );
-            }
             final Collection<ZipEntry> configs = Ebextensions.configs(zip);
             if (configs.isEmpty()) {
+                if (zip.getEntry(".ebextensions") == null) {
+                    throw new MojoFailureException(
+                        ".ebextensions directory does not exist in the WAR file"
+                    );
+                }
                 throw new MojoFailureException(
                     ".ebextensions contains no config files."
                 );
